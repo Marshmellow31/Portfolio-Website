@@ -45,7 +45,7 @@ export default function Blog() {
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                   <div className="flex-1">
                     {/* Tags */}
-                    <div className="flex gap-2 mb-3">
+                    <div className="flex flex-wrap gap-2 mb-3">
                       {post.tags.map(tag => (
                         <span key={tag} className="px-2 py-0.5 border border-card-border rounded-full font-mono text-[10px] uppercase tracking-widest text-text-muted">
                           {tag}

@@ -4,6 +4,7 @@ import { SiGmail } from 'react-icons/si';
 import TextPressure from '../components/TextPressure/TextPressure';
 import Folder from '../components/Folder/Folder';
 import Section from '../components/Section/Section';
+import MacTerminal from '../components/MacTerminal/MacTerminal';
 import { fadeUp } from '../utils/animations';
 
 export default function Contact() {
@@ -14,14 +15,20 @@ export default function Contact() {
   ];
 
   return (
-    <div className="min-h-screen flex items-center justify-center pt-20">
-      {/* ──── Contact / Terminal ──── */}
+    <div className="min-h-screen flex flex-col items-center justify-center pt-20">
+      {/* ──── Contact ──── */}
       <Section id="contact" className="w-full py-12 overflow-visible">
         <div className="grid lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-6 relative z-10 lg:-ml-8">
             <motion.p variants={fadeUp} className="text-accent font-mono text-sm tracking-[0.2em] uppercase mb-6">04 — Status: Online</motion.p>
             <div className="relative">
-              <div className="flex flex-col">
+              {/* Static headings below lg: TextPressure's min font size
+                  overflows small screens and its effect needs a mouse */}
+              <div className="lg:hidden">
+                <h1 className="font-heading uppercase leading-[0.85] text-6xl sm:text-7xl text-white m-0">LET'S BUILD</h1>
+                <h1 className="font-heading uppercase leading-[0.85] text-6xl sm:text-7xl text-white m-0">SOMETHING</h1>
+              </div>
+              <div className="hidden lg:flex flex-col">
                 <TextPressure
                   text="LET'S BUILD"
                   flex={true}
@@ -56,7 +63,7 @@ export default function Contact() {
 
           </div>
 
-          <motion.div variants={fadeUp} className="lg:col-span-4 lg:col-start-9 relative w-full flex flex-col items-center justify-center overflow-visible lg:translate-x-16">
+          <motion.div variants={fadeUp} className="lg:col-span-4 lg:col-start-9 relative w-full flex flex-col items-center justify-center overflow-visible mt-10 lg:mt-0 lg:translate-x-16">
             <div className="flex items-center justify-center mb-10">
               <Folder 
                 color="#ff007f"
@@ -68,6 +75,14 @@ export default function Contact() {
             <p className="font-mono text-xs text-text-muted uppercase tracking-[0.2em] text-center mt-8">Click to interact.</p>
           </motion.div>
         </div>
+      </Section>
+
+      {/* ──── Terminal ──── */}
+      <Section id="terminal" className="w-full py-12">
+        <motion.p variants={fadeUp} className="text-accent font-mono text-sm tracking-[0.2em] uppercase mb-8">05 — Terminal</motion.p>
+        <motion.div variants={fadeUp}>
+          <MacTerminal />
+        </motion.div>
       </Section>
     </div>
   );

@@ -1,10 +1,13 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { Routes, Route, NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiMenu, FiX, FiDownload } from 'react-icons/fi';
+import { FiMenu, FiX, FiDownload, FiVideo } from 'react-icons/fi';
 import CustomCursor from './components/CustomCursor/CustomCursor';
 import Preloader from './components/Preloader/Preloader';
 import Skeleton from './components/Skeleton/Skeleton';
+
+// Only loaded after the user opts in — keeps mediapipe out of the initial bundle
+const Handsfree = lazy(() => import('./components/Handsfree/Handsfree'));
 
 // Lazy-loaded Pages
 const Home = lazy(() => import('./pages/Home'));
@@ -57,7 +60,26 @@ export default function App() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  // 'off' | 'intro' | 'on'
+  const [handsfree, setHandsfree] = useState('off');
+  const [handsfreeError, setHandsfreeError] = useState(null);
   const location = useLocation();
+
+  // Auto-dismiss the handsfree error toast
+  useEffect(() => {
+    if (!handsfreeError) return;
+    const id = setTimeout(() => setHandsfreeError(null), 4000);
+    return () => clearTimeout(id);
+  }, [handsfreeError]);
+
+  const toggleHandsfree = () => {
+    setHandsfree(prev => (prev === 'off' ? 'intro' : 'off'));
+  };
+
+  const handleHandsfreeError = (message) => {
+    setHandsfreeError(message);
+    setHandsfree('off');
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -123,6 +145,19 @@ export default function App() {
               <FiDownload className="text-sm" />
               Resume
             </a>
+            {/* Handsfree Mode Toggle */}
+            <button
+              onClick={toggleHandsfree}
+              aria-label={handsfree === 'on' ? 'Disable handsfree mode' : 'Enable handsfree mode'}
+              title="Handsfree mode"
+              className={`p-2.5 border transition-all duration-300 ${
+                handsfree === 'on'
+                  ? 'border-accent bg-accent text-white'
+                  : 'border-accent text-accent hover:bg-accent hover:text-white'
+              }`}
+            >
+              <FiVideo className="text-sm" />
+            </button>
             {/* Availability Indicator */}
             <div className="flex items-center gap-2 border border-card-border px-4 py-1.5 rounded-full bg-card/50">
               <span className="relative flex h-2 w-2">
@@ -133,14 +168,28 @@ export default function App() {
             </div>
           </div>
 
-          {/* Mobile Hamburger Button */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden relative z-[60] text-white p-2"
-            aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-          >
-            {isMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
-          </button>
+          {/* Mobile: Handsfree Toggle + Hamburger */}
+          <div className="md:hidden flex items-center gap-3">
+            <button
+              onClick={toggleHandsfree}
+              aria-label={handsfree === 'on' ? 'Disable handsfree mode' : 'Enable handsfree mode'}
+              title="Handsfree mode"
+              className={`p-2 border transition-all duration-300 ${
+                handsfree === 'on'
+                  ? 'border-accent bg-accent text-white'
+                  : 'border-accent text-accent'
+              }`}
+            >
+              <FiVideo size={16} />
+            </button>
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="relative z-[60] text-white p-2"
+              aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+            >
+              {isMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+            </button>
+          </div>
         </div>
       </nav>
 
@@ -219,6 +268,68 @@ export default function App() {
           </Routes>
         </AnimatePresence>
       </Suspense>
+
+      {/* ──── Handsfree intro modal (no mediapipe loaded yet) ──── */}
+      <AnimatePresence>
+        {handsfree === 'intro' && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 z-[9900] bg-black/85 backdrop-blur-sm flex items-center justify-center px-6"
+          >
+            <div className="w-full max-w-md border border-card-border bg-surface p-8">
+              <p className="font-mono text-xs text-accent uppercase tracking-[0.2em] mb-3">Experimental</p>
+              <h2 className="font-heading text-3xl uppercase tracking-wide text-white mb-4">Enable Handsfree Mode</h2>
+              <p className="text-sm text-text-muted leading-relaxed mb-2">
+                Navigate this site with hand gestures using your webcam — move the cursor with an open palm, pinch to click, pinch and drag to scroll.
+              </p>
+              <p className="text-sm text-text-muted leading-relaxed mb-8">
+                Video is processed locally and never leaves your device.
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setHandsfree('on')}
+                  className="flex-1 font-mono text-xs tracking-widest uppercase px-4 py-3 bg-accent text-white hover:bg-accent/80 transition-colors duration-300"
+                >
+                  Enable
+                </button>
+                <button
+                  onClick={() => setHandsfree('off')}
+                  className="font-mono text-xs tracking-widest uppercase px-4 py-3 border border-card-border text-text-muted hover:text-white transition-colors duration-300"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ──── Handsfree mode (lazy — mediapipe chunk loads only now) ──── */}
+      {handsfree === 'on' && (
+        <Suspense fallback={null}>
+          <Handsfree
+            onExit={() => setHandsfree('off')}
+            onError={handleHandsfreeError}
+          />
+        </Suspense>
+      )}
+
+      {/* ──── Handsfree error toast ──── */}
+      <AnimatePresence>
+        {handsfreeError && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9950] border border-accent bg-surface px-5 py-3"
+          >
+            <p className="font-mono text-xs text-accent uppercase tracking-widest">{handsfreeError}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ──── Footer ──── */}
       <footer className="py-8 text-center border-t border-card-border relative z-20 bg-bg">

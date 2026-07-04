@@ -1,7 +1,7 @@
+import { lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import InfiniteMenu from '../components/InfiniteMenu/InfiniteMenu';
-import Lanyard from '../components/Lanyard/Lanyard';
 import TextReveal from '../components/TextReveal/TextReveal';
 import Experience from '../components/Experience/Experience';
 import SkillsMarquee from '../components/SkillsMarquee/SkillsMarquee';
@@ -10,17 +10,27 @@ import Capabilities from '../components/Capabilities/Capabilities';
 import Testimonials from '../components/Testimonials/Testimonials';
 import { items } from '../data/portfolio';
 import { fadeUp } from '../utils/animations';
+import useMediaQuery from '../utils/useMediaQuery';
+
+// Desktop-only: keeps three.js + physics (the heaviest chunk) off phones
+const Lanyard = lazy(() => import('../components/Lanyard/Lanyard'));
 
 export default function Home({ isLoaded }) {
+  const isDesktop = useMediaQuery('(min-width: 1024px)');
 
   return (
     <div className="pt-20">
       {/* ──── Hero ──── */}
       <section className="relative w-full min-h-[calc(100vh-80px)] pb-12 flex items-center overflow-hidden border-b border-card-border">
-        {/* Lanyard Graphic - Right Side Layer */}
-        <div className="absolute inset-y-0 right-0 w-full lg:w-1/2 z-0 cursor-grab active:cursor-grabbing">
-          <Lanyard position={[0, 0, 20]} gravity={[0, -40, 0]} transparent={true} />
-        </div>
+        {/* Lanyard Graphic - Right Side Layer (desktop only: on mobile it
+            covers the hero text and costs a WebGL context + physics sim) */}
+        {isDesktop && (
+          <div className="absolute inset-y-0 right-0 w-1/2 z-0 cursor-grab active:cursor-grabbing">
+            <Suspense fallback={null}>
+              <Lanyard position={[0, 0, 20]} gravity={[0, -40, 0]} transparent={true} />
+            </Suspense>
+          </div>
+        )}
 
         {/* Text Content */}
         <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 w-full relative z-20 pointer-events-none">

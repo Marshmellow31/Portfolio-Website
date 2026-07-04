@@ -1,27 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #050507;
-  --color-surface: #0d0d14;
-  --color-card: rgba(20, 20, 32, 0.6);
-  --color-card-border: rgba(255, 255, 255, 0.06);
-  --color-accent: #7C5CFF;
-  --color-accent-glow: rgba(124, 92, 255, 0.15);
-  --color-text: #f0f0f5;
-  --color-text-muted: #6b6b80;
-  --font-heading: 'Space Grotesk', system-ui, sans-serif;
+  --color-bg: #000000;
+  --color-surface: #0a0a0a;
+  --color-card: rgba(15, 15, 15, 0.8);
+  --color-card-border: rgba(255, 255, 255, 0.1);
+  --color-accent: #ff007f;
+  --color-accent-glow: rgba(255, 0, 127, 0.15);
+  --color-text: #ffffff;
+  --color-text-muted: #888888;
+  --font-heading: 'Bebas Neue', system-ui, sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;
+  --font-serif: 'Playfair Display', serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
-}
-
-@font-face {
-  font-family: 'Space Grotesk';
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Inter';
-  font-display: swap;
 }
 
 @layer base {
@@ -36,12 +28,38 @@
     color: var(--color-text);
     font-family: var(--font-body);
     line-height: 1.6;
-    overflow-x: hidden;
+    overflow-x: clip;
+  }
+  
+  /* Hide default cursor on desktop */
+  @media (pointer: fine) {
+    body, a, button, input, select, textarea, [role="button"] {
+      cursor: none !important;
+    }
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Bebas Neue', cursive;
   }
 
   ::selection {
     background: var(--color-accent);
     color: white;
+  }
+}
+
+@layer utilities {
+  .bg-grid {
+    background-size: 50px 50px;
+    background-image: 
+      linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-position: center top;
+  }
+  
+  .text-outline {
+    -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.6);
   }
 }
 

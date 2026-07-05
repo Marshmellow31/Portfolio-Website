@@ -238,6 +238,7 @@
     }
     _seedParticles() {
       this._particles = [];
+      this._particleState = { score: 0, timeLeft: 60, lastTick: performance.now(), gameOver: false };
       for (let i = 0; i < 700; i++) {
         this._particles.push({
           x: Math.random() * (this._W || 800), y: Math.random() * (this._H || 600),
@@ -450,19 +451,65 @@
       const W = this._W, H = this._H;
       const tips = [];
       const time = performance.now() * 0.001;
+      const now = performance.now();
+      
+      const state = this._particleState || { score: 0, timeLeft: 60, lastTick: now, gameOver: false };
+      this._particleState = state;
+      
+      if (!state.gameOver) {
+        if (now - state.lastTick > 1000) {
+           state.timeLeft--;
+           state.lastTick = now;
+           if (state.timeLeft <= 0) state.gameOver = true;
+        }
+      }
+
+      // UI
+      ctx.fillStyle = 'white';
+      ctx.font = 'bold 24px JetBrains Mono, monospace';
+      ctx.textAlign = 'center';
+      if (state.gameOver) {
+        ctx.fillText('TIME UP!', W / 2, 80);
+        ctx.font = '16px JetBrains Mono, monospace';
+        ctx.fillText(`HARVESTED: ${state.score} ENERGY  —  PINCH to Restart`, W / 2, 110);
+        for (const h of this._hands) {
+          if (h.pinchStart) {
+            this._seedParticles();
+            return;
+          }
+        }
+      } else {
+        ctx.textAlign = 'left';
+        ctx.font = 'bold 16px JetBrains Mono, monospace';
+        ctx.fillText(`ENERGY: ${state.score.toString().padStart(5, '0')}`, 32, 80);
+        ctx.fillText(`TIME: ${state.timeLeft}s`, 32, 104);
+      }
+
       for (const h of this._hands) {
         for (const t of [4, 8, 12, 16, 20]) tips.push({ p: h.lm[t], pinch: h.pinch, fist: h.fist, c: h.pinchPt });
       }
+      
       for (const pt of this._particles) {
         for (const t of tips) {
+          if (state.gameOver) break;
           const cx = t.fist ? t.c.x : t.p.x, cy = t.fist ? t.c.y : t.p.y;
           const dx = cx - pt.x, dy = cy - pt.y;
           const d2 = dx * dx + dy * dy;
           const d = Math.sqrt(d2) || 1;
+          
           if (t.pinch) {           // pinch = supernova shockwave
             if (d < 400) { pt.vx -= (dx / d) * 1800 / d2 * 150; pt.vy -= (dy / d) * 1800 / d2 * 150; }
           } else if (t.fist) {     // fist = black hole vortex
-            if (d < 500) {
+            if (d < 35) { // HARVEST!
+               state.score += 1;
+               pt.x = Math.random() < 0.5 ? 0 : W; // respawn at edge
+               pt.y = Math.random() * H;
+               pt.vx = (Math.random() - 0.5) * 5;
+               pt.vy = (Math.random() - 0.5) * 5;
+               // visual flash
+               ctx.fillStyle = 'white';
+               ctx.fillRect(cx - 2, cy - 2, 4, 4);
+            } else if (d < 500) {
               const pull = 2.2;
               const spin = 4.0;
               pt.vx += (dx / d) * pull + (-dy / d) * spin;

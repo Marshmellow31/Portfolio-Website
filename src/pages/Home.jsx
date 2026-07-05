@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { FiGithub, FiLinkedin, FiMail } from 'react-icons/fi';
 import InfiniteMenu from '../components/InfiniteMenu/InfiniteMenu';
 import TextReveal from '../components/TextReveal/TextReveal';
 import Experience from '../components/Experience/Experience';
@@ -63,14 +64,29 @@ export default function Home({ isLoaded }) {
               initial={{ opacity: 0 }}
               animate={isLoaded ? { opacity: 1 } : { opacity: 0 }}
               transition={{ delay: 0.6, duration: 0.8 }}
-              className="mt-12 flex flex-wrap gap-6 pointer-events-auto"
+              className="mt-12 flex flex-col md:flex-row items-stretch md:items-center gap-4 w-full md:w-auto pointer-events-auto"
             >
               <a
                 href="#interactive"
-                className="font-mono uppercase tracking-widest text-xs px-8 py-4 border border-accent text-accent hover:bg-accent hover:text-white transition-all duration-300"
+                className="w-full md:w-auto text-center font-mono uppercase tracking-widest text-xs px-8 py-4 border border-accent text-accent hover:bg-accent hover:text-white transition-all duration-300 flex items-center justify-center"
               >
                 Explore Work
               </a>
+              
+              {/* Quick Navigation Buttons (Mobile Only) */}
+              <Link
+                to="/projects"
+                className="w-full md:hidden text-center font-mono uppercase tracking-widest text-xs px-8 py-4 border border-card-border text-white hover:border-white transition-all duration-300 flex items-center justify-center"
+              >
+                All Projects
+              </Link>
+              
+              <Link
+                to="/contact"
+                className="w-full md:hidden text-center font-mono uppercase tracking-widest text-xs px-8 py-4 border border-card-border text-white hover:border-white transition-all duration-300 flex items-center justify-center"
+              >
+                Contact Me
+              </Link>
             </motion.div>
           </div>
         </div>

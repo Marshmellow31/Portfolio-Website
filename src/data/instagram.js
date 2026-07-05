@@ -12,38 +12,38 @@ export const featuredReels = [
   {
     title: 'Night Drive Edit',
     views: '5.2M',
-    thumbnail: null, // Replace with actual thumbnail path
-    link: 'https://www.instagram.com/guywithblack350/',
+    thumbnail: null, // Replace with your actual thumbnail path (e.g. '/thumbnails/reel1.jpg')
+    link: 'https://www.instagram.com/p/DYKYmBVNxoW/',
   },
   {
     title: 'City Lights Cinematic',
     views: '3.8M',
     thumbnail: null,
-    link: 'https://www.instagram.com/guywithblack350/',
+    link: 'https://www.instagram.com/p/DXoKuTHj_fu/',
   },
   {
     title: 'Sunset Chase',
     views: '2.1M',
     thumbnail: null,
-    link: 'https://www.instagram.com/guywithblack350/',
+    link: 'https://www.instagram.com/p/DXrqaoFCRQV/',
   },
   {
     title: 'Midnight Run',
     views: '1.9M',
     thumbnail: null,
-    link: 'https://www.instagram.com/guywithblack350/',
+    link: 'https://www.instagram.com/p/DXY36UOiQ9e/',
   },
   {
     title: 'Rain Drive POV',
     views: '1.5M',
     thumbnail: null,
-    link: 'https://www.instagram.com/guywithblack350/',
+    link: 'https://www.instagram.com/p/DXJQD0niasw/',
   },
   {
     title: 'Highway Drone Shot',
     views: '1.2M',
     thumbnail: null,
-    link: 'https://www.instagram.com/guywithblack350/',
+    link: 'https://www.instagram.com/reel/DZ_42noKLDg/',
   },
 ];
 

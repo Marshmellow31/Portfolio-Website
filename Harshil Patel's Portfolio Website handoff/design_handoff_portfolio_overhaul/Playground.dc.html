@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; background: #0A0A0B; color: #F2F2F3; -webkit-font-smoothing: antialiased; overflow: hidden; }
+    @keyframes hpPulse { 0%,100% { opacity: .3; } 50% { opacity: 1; } }
+  </style>
+</helmet>
+
+<div data-screen-label="Playground" style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;height:100vh;display:flex;flex-direction:column;background:#0A0A0B;color:#F2F2F3;">
+
+  <!-- top bar -->
+  <div style="flex:0 0 auto;display:flex;align-items:center;gap:clamp(12px,2vw,24px);height:60px;padding:0 clamp(14px,3vw,32px);border-bottom:1px solid rgba(255,255,255,.09);">
+    <a href="Portfolio.dc.html" style="display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;color:#8A8A93;text-decoration:none;white-space:nowrap;" style-hover="color:#F2F2F3">← SITE</a>
+    <div style="width:1px;height:20px;background:rgba(255,255,255,.12);"></div>
+    <div style="font-size:14px;font-weight:600;letter-spacing:-.01em;white-space:nowrap;">Playground</div>
+
+    <!-- mode switcher -->
+    <div style="display:flex;gap:2px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:3px;margin-left:auto;">
+      <sc-for list="{{ modes }}" as="m" hint-placeholder-count="3">
+        <button onClick="{{ m.select }}" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;border:none;border-radius:5px;padding:7px 12px;cursor:pointer;background:{{ m.bg }};color:{{ m.fg }};transition:background .2s,color .2s;">{{ m.label }}</button>
+      </sc-for>
+    </div>
+
+    <!-- stats -->
+    <div style="display:none;"></div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;color:#5A5A62;white-space:nowrap;">{{ statsLine }}</div>
+
+    <!-- start / stop -->
+    <sc-if value="{{ isRunning }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ stopCam }}" style="display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;background:transparent;color:#F2F2F3;border:1px solid rgba(255,255,255,.3);border-radius:6px;padding:8px 14px;cursor:pointer;white-space:nowrap;" style-hover="border-color:#F2F2F3"><span style="width:7px;height:7px;border-radius:50%;background:#F2F2F3;animation:hpPulse 1.4s ease-in-out infinite;"></span>STOP</button>
+    </sc-if>
+    <sc-if value="{{ isIdle }}" hint-placeholder-val="{{ true }}">
+      <button onClick="{{ startCam }}" style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;background:#F2F2F3;color:#0A0A0B;border:none;border-radius:6px;padding:9px 16px;cursor:pointer;font-weight:500;white-space:nowrap;" style-hover="background:#ffffff">ENABLE CAMERA</button>
+    </sc-if>
+    <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:#8A8A93;white-space:nowrap;animation:hpPulse 1.2s ease-in-out infinite;">{{ statusMsg }}</div>
+    </sc-if>
+  </div>
+
+  <!-- stage -->
+  <div style="flex:1;position:relative;min-height:0;">
+    <x-import component-from-global-scope="hp-playground" from="./components/playground-engine.js" id="hp-stage" hint-size="100%,100%" style="position:absolute;inset:0;display:block;"></x-import>
+
+    <!-- intro overlay (idle only) -->
+    <sc-if value="{{ isIdle }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;">
+        <div style="pointer-events:auto;max-width:520px;margin:16px;background:rgba(12,12,14,.88);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:clamp(24px,4vw,40px);box-shadow:0 30px 90px rgba(0,0,0,.6);">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.28em;color:#8A8A93;text-transform:uppercase;margin-bottom:14px;">// handsfree</div>
+          <h1 style="margin:0 0 12px;font-size:clamp(24px,3vw,34px);font-weight:700;letter-spacing:-.03em;line-height:1.1;">Control this page with your hands</h1>
+          <p style="margin:0 0 24px;font-size:14px;line-height:1.6;color:#A8A8B0;">Video is processed locally in your browser and never leaves your device. Works best in good lighting.</p>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:28px;">
+            <div style="display:flex;gap:14px;align-items:baseline;"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#F2F2F3;flex:0 0 96px;">PINCH</span><span style="font-size:13px;color:#8A8A93;">grab an object · drag it · release to throw · pinch empty space to spawn</span></div>
+            <div style="display:flex;gap:14px;align-items:baseline;"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#F2F2F3;flex:0 0 96px;">FIST</span><span style="font-size:13px;color:#8A8A93;">attract objects · crush them up close · vortex in particle mode</span></div>
+            <div style="display:flex;gap:14px;align-items:baseline;"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#F2F2F3;flex:0 0 96px;">OPEN HAND</span><span style="font-size:13px;color:#8A8A93;">steer particles gently</span></div>
+            <div style="display:flex;gap:14px;align-items:baseline;"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#F2F2F3;flex:0 0 96px;">YOUR HEAD</span><span style="font-size:13px;color:#8A8A93;">parallaxes the scene · drives the robot in avatar mode</span></div>
+          </div>
+          <button onClick="{{ startCam }}" style="width:100%;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.12em;background:#F2F2F3;color:#0A0A0B;border:none;border-radius:7px;padding:14px;cursor:pointer;font-weight:500;" style-hover="background:#ffffff">ENABLE CAMERA</button>
+          <div style="margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;color:#5A5A62;text-align:center;">requires a webcam — nothing is recorded or uploaded</div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- error toast -->
+    <sc-if value="{{ isError }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;bottom:24px;left:50%;transform:translateX(-50%);background:#161618;border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:12px 20px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#F2F2F3;">{{ statusMsg }} — <button onClick="{{ startCam }}" style="background:none;border:none;color:#F2F2F3;text-decoration:underline;cursor:pointer;font:inherit;padding:0;">retry</button></div>
+    </sc-if>
+
+    <!-- gesture hint strip (running only) -->
+    <sc-if value="{{ isRunning }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:16px;bottom:16px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;color:#5A5A62;line-height:1.9;">{{ hintLine }}</div>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { mode: 'objects', status: 'idle', msg: '', fps: 0, hands: 0, face: false };
+
+  componentDidMount() {
+    this._onStatus = (e) => this.setState({ status: e.detail.state, msg: e.detail.msg });
+    this._onStats = (e) => this.setState({ fps: e.detail.fps, hands: e.detail.hands, face: e.detail.face });
+    window.addEventListener('hp-status', this._onStatus);
+    window.addEventListener('hp-stats', this._onStats);
+  }
+  componentWillUnmount() {
+    window.removeEventListener('hp-status', this._onStatus);
+    window.removeEventListener('hp-stats', this._onStats);
+    const el = this._stage();
+    if (el && el.stop) el.stop();
+  }
+  _stage() { return document.querySelector('hp-playground'); }
+
+  renderVals() {
+    const { mode, status, msg, fps, hands, face } = this.state;
+    const MODES = [['objects', 'Objects'], ['particles', 'Particles'], ['avatar', 'Avatar']];
+    const modes = MODES.map(([id, label]) => ({
+      label,
+      bg: mode === id ? '#F2F2F3' : 'transparent',
+      fg: mode === id ? '#0A0A0B' : '#8A8A93',
+      select: () => {
+        this.setState({ mode: id });
+        const el = this._stage();
+        if (el && el.setMode) el.setMode(id);
+      },
+    }));
+
+    const running = status === 'running';
+    const hints = {
+      objects: 'PINCH grab/throw · pinch empty space = spawn · FIST attract/crush',
+      particles: 'OPEN HAND attract · PINCH burst · FIST vortex',
+      avatar: 'move your head · blink · open mouth · smile · raise brows',
+    };
+
+    return {
+      modes,
+      isRunning: running,
+      isIdle: status === 'idle',
+      isLoading: status === 'loading',
+      isError: status === 'error',
+      statusMsg: msg,
+      hintLine: hints[mode],
+      statsLine: running ? `${fps} FPS · ${hands} HAND${hands === 1 ? '' : 'S'} · FACE ${face ? 'OK' : '—'}` : '',
+      startCam: () => { const el = this._stage(); if (el && el.start) el.start(); },
+      stopCam: () => { const el = this._stage(); if (el && el.stop) el.stop(); },
+    };
+  }
+}
+</script>
+</body>
+</html>

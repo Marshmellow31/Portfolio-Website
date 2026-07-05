@@ -1,8 +1,7 @@
 import { useRef, useEffect, useState } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { useInView } from 'framer-motion';
 import { FaInstagram, FaPlay, FaEye, FaHandshake, FaChartLine } from 'react-icons/fa';
-import Section from '../components/Section/Section';
-import { fadeUp } from '../utils/animations';
+import { Reveal } from '../components/Reveal/Reveal';
 import {
   instagramHandle,
   instagramUrl,
@@ -44,203 +43,213 @@ function StatCard({ label, value, suffix }) {
     : animatedValue.toFixed(1);
 
   return (
-    <motion.div
-      ref={ref}
-      variants={fadeUp}
-      className="relative p-6 border border-card-border bg-surface group hover:border-accent/50 transition-all duration-500"
-    >
-      <div className="font-heading text-5xl md:text-6xl text-accent mb-2">
-        {display}{suffix}
+    <Reveal>
+      <div
+        ref={ref}
+        className="relative p-6 border border-border bg-bg group hover:border-border-strong transition-all duration-500"
+      >
+        <div className="font-heading text-5xl md:text-6xl text-text-bright mb-2" style={{ letterSpacing: '-0.03em' }}>
+          {display}{suffix}
+        </div>
+        <div className="text-xs text-text-dim uppercase tracking-widest font-mono">{label}</div>
+        <div className="absolute inset-0 bg-white/[0.02] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
       </div>
-      <div className="text-xs text-text-muted uppercase tracking-widest font-mono">{label}</div>
-      <div className="absolute inset-0 bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-    </motion.div>
+    </Reveal>
   );
 }
 
 export default function Creative() {
   return (
-    <div className="pt-20">
+    <div className="pt-24">
       {/* ──── Hero ──── */}
-      <section className="relative w-full min-h-[70vh] flex items-center overflow-hidden border-b border-card-border">
-        {/* Gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-bg to-accent/10 z-0" />
-        <div className="absolute inset-0 bg-grid z-0" />
-
-        <div className="w-full px-6 md:px-12 lg:px-24 w-full relative z-10">
+      <section className="relative w-full min-h-[70vh] flex items-center overflow-hidden border-b border-border">
+        <div className="w-full px-[clamp(20px,6vw,96px)] relative z-10">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-12">
             <div>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1, duration: 0.8 }}
-                className="flex items-center gap-3 mb-6"
-              >
-                <FaInstagram className="text-accent text-xl" />
-                <p className="text-accent font-mono text-sm tracking-[0.3em] uppercase">
-                  Content Creator
+              <Reveal>
+                <div className="flex items-center gap-3 mb-6">
+                  <FaInstagram className="text-text-dim text-xl" />
+                  <span className="mono-label">Content Creator</span>
+                </div>
+              </Reveal>
+
+              <Reveal delay={0.1}>
+                <h1
+                  className="m-0 font-bold text-text-bright"
+                  style={{
+                    fontSize: 'clamp(48px,8vw,120px)',
+                    letterSpacing: '-0.045em',
+                    lineHeight: 0.92,
+                  }}
+                >
+                  GUY WITH
+                </h1>
+              </Reveal>
+              <Reveal delay={0.15}>
+                <h1
+                  className="m-0 font-bold text-text-dim"
+                  style={{
+                    fontSize: 'clamp(48px,8vw,120px)',
+                    letterSpacing: '-0.045em',
+                    lineHeight: 0.92,
+                  }}
+                >
+                  BLACK 350
+                </h1>
+              </Reveal>
+
+              <Reveal delay={0.25}>
+                <p className="mt-8 text-text-muted max-w-lg" style={{ fontSize: 'clamp(16px,1.4vw,20px)', lineHeight: 1.6 }}>
+                  Content Creator • Automotive Enthusiast • Brand Collaborator
                 </p>
-              </motion.div>
-
-              <motion.h1
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2, duration: 0.8 }}
-                className="font-heading text-6xl md:text-8xl lg:text-9xl leading-none text-white"
-              >
-                GUY WITH
-              </motion.h1>
-              <motion.h1
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 0.8 }}
-                className="font-heading text-6xl md:text-8xl lg:text-9xl leading-none text-outline"
-              >
-                BLACK 350
-              </motion.h1>
-
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4, duration: 0.8 }}
-                className="font-serif italic text-xl md:text-2xl mt-8 text-text-muted max-w-lg"
-              >
-                Content Creator • Automotive Enthusiast • Brand Collaborator
-              </motion.p>
+              </Reveal>
             </div>
 
-            <motion.a
-              href={instagramUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.5, duration: 0.6 }}
-              className="group relative overflow-hidden px-8 py-4 bg-gradient-to-r from-purple-600 via-pink-500 to-orange-400 text-white font-mono text-sm uppercase tracking-widest flex items-center gap-3 hover:shadow-lg hover:shadow-accent/20 transition-all duration-300"
-            >
-              <FaInstagram className="text-lg" />
-              <span>Follow {instagramHandle}</span>
-            </motion.a>
+            <Reveal delay={0.3}>
+              <a
+                href={instagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-3 font-mono text-[13px] uppercase tracking-widest px-[26px] py-3.5 bg-text text-bg no-underline rounded-[4px] hover:bg-white transition-colors"
+              >
+                <FaInstagram className="text-lg" />
+                <span>Follow {instagramHandle}</span>
+              </a>
+            </Reveal>
           </div>
         </div>
       </section>
 
       {/* ──── Stats ──── */}
-      <Section id="stats" className="py-24 border-b border-card-border">
-        <motion.p variants={fadeUp} className="text-accent font-mono text-sm tracking-[0.2em] uppercase mb-6">
-          The Numbers
-        </motion.p>
-        <motion.h2 variants={fadeUp} className="font-heading text-4xl md:text-5xl font-bold mb-12 uppercase">
-          Growth & Impact
-        </motion.h2>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <section className="section-pad border-b border-border">
+        <Reveal className="mb-[clamp(32px,5vw,56px)]">
+          <div className="mono-label mb-4">The Numbers</div>
+          <h2 className="m-0 font-bold" style={{ fontSize: 'clamp(34px,4.5vw,64px)', lineHeight: 1 }}>
+            Growth &amp; Impact
+          </h2>
+        </Reveal>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-px" style={{ background: 'var(--color-border)' }}>
           {stats.map((stat) => (
             <StatCard key={stat.label} {...stat} />
           ))}
         </div>
-      </Section>
+      </section>
 
       {/* ──── Featured Reels ──── */}
-      <Section id="reels" className="py-24 border-b border-card-border">
-        <motion.p variants={fadeUp} className="text-accent font-mono text-sm tracking-[0.2em] uppercase mb-6">
-          <FaPlay className="inline mr-2 text-xs" /> Top Performing
-        </motion.p>
-        <motion.h2 variants={fadeUp} className="font-heading text-4xl md:text-5xl font-bold mb-12 uppercase">
-          Featured Reels
-        </motion.h2>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <section className="section-pad border-b border-border">
+        <Reveal className="mb-[clamp(32px,5vw,56px)]">
+          <div className="mono-label mb-4">
+            <FaPlay className="inline mr-2 text-[9px]" /> Top Performing
+          </div>
+          <h2 className="m-0 font-bold" style={{ fontSize: 'clamp(34px,4.5vw,64px)', lineHeight: 1 }}>
+            Featured Reels
+          </h2>
+        </Reveal>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-px" style={{ background: 'var(--color-border)' }}>
           {featuredReels.map((reel, i) => (
-            <motion.a
-              key={reel.title}
-              href={reel.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              variants={fadeUp}
-              className="group relative aspect-[9/16] border border-card-border bg-surface overflow-hidden cursor-pointer block"
-            >
-              {/* Placeholder gradient background when no thumbnail */}
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-900/40 via-black to-accent/20" />
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 opacity-100 group-hover:opacity-0 transition-opacity duration-300">
-                <FaInstagram className="text-4xl text-white/40" />
-                <span className="font-mono text-xs text-text-muted uppercase tracking-widest">Reel {i + 1}</span>
-              </div>
+            <Reveal key={reel.title}>
+              <a
+                href={reel.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group relative border border-border bg-bg overflow-hidden cursor-pointer block no-underline"
+              >
+                {/* Thumbnail / Placeholder */}
+                {reel.thumbnail ? (
+                  <img src={reel.thumbnail} alt={reel.title} className="w-full h-auto object-cover opacity-60 group-hover:opacity-30 transition-opacity duration-500 block" />
+                ) : (
+                  <div className="w-full aspect-[4/5] bg-surface" />
+                )}
+                
+                {!reel.thumbnail && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 opacity-100 group-hover:opacity-0 transition-opacity duration-300 px-4 text-center">
+                    <FaInstagram className="text-4xl text-text-faint" />
+                    <span className="font-mono text-xs text-text-faint uppercase tracking-widest">{reel.title}</span>
+                  </div>
+                )}
 
-              {/* Hover overlay */}
-              <div className="absolute inset-0 bg-accent/10 opacity-0 group-hover:opacity-100 transition-all duration-500" />
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <FaPlay className="text-3xl text-white" />
-                <span className="font-mono text-xs text-white uppercase tracking-widest">Watch on Instagram</span>
-              </div>
-
-              {/* Bottom info strip */}
-              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
-                <p className="font-heading text-lg text-white uppercase">{reel.title}</p>
-                <div className="flex items-center gap-1 mt-1">
-                  <FaEye className="text-accent text-xs" />
-                  <span className="font-mono text-xs text-accent">{reel.views} views</span>
+                {/* Hover overlay */}
+                <div className="absolute inset-0 bg-white/[0.03] opacity-0 group-hover:opacity-100 transition-all duration-500" />
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <FaPlay className="text-3xl text-text" />
+                  <span className="font-mono text-xs text-text uppercase tracking-widest">Watch on Instagram</span>
                 </div>
-              </div>
-            </motion.a>
+
+                {/* Bottom info strip */}
+                <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-bg/90 to-transparent pointer-events-none">
+                  <p className="font-heading text-lg text-text m-0">{reel.title}</p>
+                  <div className="flex items-center gap-1 mt-1">
+                    <FaEye className="text-text-faint text-xs" />
+                    <span className="font-mono text-xs text-text-faint">{reel.views} views</span>
+                  </div>
+                </div>
+              </a>
+            </Reveal>
           ))}
         </div>
-      </Section>
+      </section>
 
       {/* ──── Brand Collaborations ──── */}
-      <Section id="collabs" className="py-24 border-b border-card-border">
-        <motion.p variants={fadeUp} className="text-accent font-mono text-sm tracking-[0.2em] uppercase mb-6">
-          <FaHandshake className="inline mr-2" /> Partnerships
-        </motion.p>
-        <motion.h2 variants={fadeUp} className="font-heading text-4xl md:text-5xl font-bold mb-12 uppercase">
-          Brand Collaborations
-        </motion.h2>
-        <div className="grid md:grid-cols-3 gap-6">
+      <section className="section-pad border-b border-border">
+        <Reveal className="mb-[clamp(32px,5vw,56px)]">
+          <div className="mono-label mb-4">
+            <FaHandshake className="inline mr-2" /> Partnerships
+          </div>
+          <h2 className="m-0 font-bold" style={{ fontSize: 'clamp(34px,4.5vw,64px)', lineHeight: 1 }}>
+            Brand Collaborations
+          </h2>
+        </Reveal>
+        <div className="grid md:grid-cols-3 gap-px" style={{ background: 'var(--color-border)' }}>
           {brandCollabs.map((collab) => (
-            <motion.div
-              key={collab.name}
-              variants={fadeUp}
-              className="group p-8 border border-card-border bg-surface hover:border-accent/50 transition-all duration-500 relative overflow-hidden"
-            >
-              <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-accent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <h3 className="font-heading text-3xl uppercase text-white group-hover:text-accent transition-colors duration-300 mb-3">
-                {collab.name}
-              </h3>
-              <p className="font-mono text-sm text-text-muted mb-4">{collab.description}</p>
-              <div className="flex items-center gap-2">
-                <FaEye className="text-accent text-xs" />
-                <span className="font-mono text-xs text-accent">{collab.reach}</span>
+            <Reveal key={collab.name}>
+              <div className="group p-8 bg-bg border border-border hover:border-border-strong transition-all duration-500 relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-text-faint to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <h3
+                  className="font-heading text-2xl md:text-3xl font-bold text-text group-hover:text-text-bright transition-colors duration-300 mb-3 m-0"
+                  style={{ letterSpacing: '-0.02em' }}
+                >
+                  {collab.name}
+                </h3>
+                <p className="text-[14px] text-text-muted mb-4 m-0">{collab.description}</p>
+                <div className="flex items-center gap-2">
+                  <FaEye className="text-text-faint text-xs" />
+                  <span className="font-mono text-xs text-text-faint">{collab.reach}</span>
+                </div>
               </div>
-            </motion.div>
+            </Reveal>
           ))}
         </div>
-      </Section>
+      </section>
 
       {/* ──── Insights ──── */}
-      <Section id="insights" className="py-24">
-        <motion.p variants={fadeUp} className="text-accent font-mono text-sm tracking-[0.2em] uppercase mb-6">
-          <FaChartLine className="inline mr-2" /> Analytics
-        </motion.p>
-        <motion.h2 variants={fadeUp} className="font-heading text-4xl md:text-5xl font-bold mb-12 uppercase">
-          Key Insights
-        </motion.h2>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <section className="section-pad">
+        <Reveal className="mb-[clamp(32px,5vw,56px)]">
+          <div className="mono-label mb-4">
+            <FaChartLine className="inline mr-2" /> Analytics
+          </div>
+          <h2 className="m-0 font-bold" style={{ fontSize: 'clamp(34px,4.5vw,64px)', lineHeight: 1 }}>
+            Key Insights
+          </h2>
+        </Reveal>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-px" style={{ background: 'var(--color-border)' }}>
           {insights.map((insight) => (
-            <motion.div
-              key={insight.label}
-              variants={fadeUp}
-              className="p-6 border border-card-border bg-surface group hover:border-accent/50 transition-all duration-500 relative overflow-hidden"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative">
-                <div className="font-heading text-4xl md:text-5xl text-white group-hover:text-accent transition-colors duration-300 mb-2">
-                  {insight.value}
+            <Reveal key={insight.label}>
+              <div className="p-6 bg-bg border border-border group hover:border-border-strong transition-all duration-500 relative overflow-hidden">
+                <div className="absolute inset-0 bg-white/[0.02] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                <div className="relative">
+                  <div
+                    className="font-heading text-4xl md:text-5xl text-text group-hover:text-text-bright transition-colors duration-300 mb-2"
+                    style={{ letterSpacing: '-0.03em' }}
+                  >
+                    {insight.value}
+                  </div>
+                  <div className="text-xs text-text-dim uppercase tracking-widest font-mono">{insight.label}</div>
                 </div>
-                <div className="text-xs text-text-muted uppercase tracking-widest font-mono">{insight.label}</div>
               </div>
-            </motion.div>
+            </Reveal>
           ))}
         </div>
-      </Section>
+      </section>
     </div>
   );
 }
-

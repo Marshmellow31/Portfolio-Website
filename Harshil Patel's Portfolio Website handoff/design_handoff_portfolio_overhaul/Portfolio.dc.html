@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: #0A0A0B; color: #F2F2F3; -webkit-font-smoothing: antialiased; overflow-x: clip; }
+    :root { --accent: #FFFFFF; }
+    @keyframes hpPulse { 0%,100% { opacity: .25; } 50% { opacity: .9; } }
+    @keyframes hpFadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  </style>
+</helmet>
+
+<div style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#0A0A0B;color:#F2F2F3;min-height:100vh;">
+
+  <!-- ───────── NAV ───────── -->
+  <nav style="position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(20px,4vw,48px);height:64px;background:{{ navBg }};backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid {{ navBorder }};transition:background .3s,border-color .3s;">
+    <a href="#top" style="font-size:14px;font-weight:600;letter-spacing:-.01em;color:#F2F2F3;text-decoration:none;">Harshil Patel</a>
+    <div style="display:flex;align-items:center;gap:clamp(16px,3vw,32px);">
+      <div style="display:none;" data-hp-desktop-links="1"></div>
+      <a href="#work" style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;color:#8A8A93;text-decoration:none;text-transform:uppercase;" style-hover="color:#F2F2F3">Work</a>
+      <a href="#about" style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;color:#8A8A93;text-decoration:none;text-transform:uppercase;" style-hover="color:#F2F2F3">About</a>
+      <a href="#experience" style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;color:#8A8A93;text-decoration:none;text-transform:uppercase;" style-hover="color:#F2F2F3">Experience</a>
+      <a href="#contact" style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;color:#8A8A93;text-decoration:none;text-transform:uppercase;" style-hover="color:#F2F2F3">Contact</a>
+      <a href="Playground.dc.html" style="display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;color:#F2F2F3;text-decoration:none;text-transform:uppercase;border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:6px 11px;" style-hover="border-color:rgba(255,255,255,.5)"><span style="width:6px;height:6px;border-radius:50%;background:#F2F2F3;"></span>Playground</a>
+      <button onClick="{{ openTerminalHint }}" title="Terminal" style="display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;color:#C9C9CE;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:6px 10px;cursor:pointer;" style-hover="background:rgba(255,255,255,.1)">⌘K</button>
+    </div>
+  </nav>
+
+  <!-- ───────── HERO ───────── -->
+  <header id="top" data-screen-label="Hero" style="position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden;border-bottom:1px solid rgba(255,255,255,.08);">
+    <sc-if value="{{ showStrands }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute;inset:0;z-index:0;opacity:.5;pointer-events:none;">
+        <x-import component-from-global-scope="strands-bg" from="./components/strands.js" colors="#ffffff,#6a6a72" count="4" speed="0.22" amplitude="0.8" glow="1.6" intensity="0.28" saturation="0" thickness="0.5" scale="1.6" hint-size="100%,100%" style="position:absolute;inset:0;display:block;"></x-import>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showLanyard }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;top:0;bottom:0;right:0;width:44%;z-index:5;">
+        <x-import component-from-global-scope="lanyard-card" from="./components/lanyard-card.js" anchor-x="0.55" rope-length="240" hint-size="100%,100%" style="position:absolute;inset:0;display:block;"></x-import>
+      </div>
+    </sc-if>
+
+    <div style="position:relative;z-index:10;width:100%;padding:120px clamp(20px,6vw,96px) 80px;pointer-events:none;">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:28px;animation:hpFadeUp .8s ease both;">
+        <div style="width:40px;height:1px;background:#F2F2F3;"></div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.28em;color:#8A8A93;text-transform:uppercase;">Full-Stack Developer — IIIT Vadodara</div>
+      </div>
+      <h1 style="margin:0;font-size:clamp(58px,11vw,168px);font-weight:700;letter-spacing:-.045em;line-height:.92;color:#F7F7F8;animation:hpFadeUp .8s .1s ease both;">Harshil<br>Patel</h1>
+      <p style="margin:36px 0 0;max-width:560px;font-size:clamp(17px,1.6vw,21px);line-height:1.55;color:#A8A8B0;font-weight:400;animation:hpFadeUp .8s .25s ease both;">I build production software — web, mobile, and AI tools — shipped to real businesses, not just repos.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:44px;pointer-events:auto;animation:hpFadeUp .8s .4s ease both;">
+        <a href="#work" style="display:inline-flex;align-items:center;gap:10px;background:#F2F2F3;color:#0A0A0B;text-decoration:none;font-size:13px;font-weight:600;letter-spacing:.02em;padding:14px 26px;border-radius:4px;" style-hover="background:#ffffff">Selected work <span style="font-family:'JetBrains Mono',monospace;">↓</span></a>
+        <a href="#contact" style="display:inline-flex;align-items:center;gap:10px;background:transparent;color:#F2F2F3;text-decoration:none;font-size:13px;font-weight:500;letter-spacing:.02em;padding:14px 26px;border:1px solid rgba(255,255,255,.18);border-radius:4px;" style-hover="border-color:rgba(255,255,255,.5)">Get in touch</a>
+      </div>
+    </div>
+
+    <div style="position:absolute;bottom:24px;left:clamp(20px,6vw,96px);z-index:10;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.3em;color:#5A5A62;text-transform:uppercase;animation:hpPulse 2.6s ease-in-out infinite;">Scroll</div>
+  </header>
+
+  <!-- ───────── SELECTED WORK ───────── -->
+  <section id="work" data-screen-label="Selected Work" style="padding:clamp(80px,10vw,140px) clamp(20px,6vw,96px);border-bottom:1px solid rgba(255,255,255,.08);">
+    <div data-reveal="1" style="display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:clamp(40px,6vw,72px);">
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.28em;color:#8A8A93;text-transform:uppercase;margin-bottom:16px;">01 — Selected Work</div>
+        <h2 style="margin:0;font-size:clamp(34px,4.5vw,64px);font-weight:700;letter-spacing:-.035em;line-height:1;">Things I've shipped</h2>
+      </div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:#5A5A62;">{{ projectCount }} PROJECTS</div>
+    </div>
+
+    <div style="border-top:1px solid rgba(255,255,255,.08);">
+      <sc-for list="{{ projects }}" as="p" hint-placeholder-count="5">
+        <div data-reveal="1" style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 32px;padding:30px 0;border-bottom:1px solid rgba(255,255,255,.08);transition:background .25s;" style-hover="background:rgba(255,255,255,.025)">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#5A5A62;width:32px;flex:0 0 auto;">{{ p.num }}</div>
+          <div style="flex:1 1 300px;min-width:240px;">
+            <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;">
+              <div style="font-size:clamp(20px,2.2vw,28px);font-weight:600;letter-spacing:-.02em;color:#F2F2F3;">{{ p.title }}</div>
+              <sc-if value="{{ p.live }}" hint-placeholder-val="{{ false }}">
+                <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:#0A0A0B;background:#F2F2F3;border-radius:3px;padding:3px 7px;">LIVE</div>
+              </sc-if>
+            </div>
+            <p style="margin:8px 0 0;font-size:14px;line-height:1.6;color:#8A8A93;max-width:520px;">{{ p.description }}</p>
+          </div>
+          <div style="flex:1 1 220px;min-width:200px;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.8;letter-spacing:.04em;color:#5A5A62;">{{ p.stackLine }}</div>
+          <div style="flex:0 0 auto;display:flex;gap:18px;">
+            <sc-if value="{{ p.link }}" hint-placeholder-val="{{ false }}">
+              <a href="{{ p.link }}" target="_blank" rel="noreferrer" style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:#F2F2F3;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.3);padding-bottom:2px;" style-hover="border-color:#F2F2F3">LIVE ↗</a>
+            </sc-if>
+            <sc-if value="{{ p.github }}" hint-placeholder-val="{{ false }}">
+              <a href="{{ p.github }}" target="_blank" rel="noreferrer" style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:#8A8A93;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.15);padding-bottom:2px;" style-hover="color:#F2F2F3">CODE ↗</a>
+            </sc-if>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- ───────── ABOUT ───────── -->
+  <section id="about" data-screen-label="About" style="padding:clamp(80px,10vw,140px) clamp(20px,6vw,96px);border-bottom:1px solid rgba(255,255,255,.08);">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:clamp(40px,6vw,96px);">
+      <div data-reveal="1">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.28em;color:#8A8A93;text-transform:uppercase;margin-bottom:16px;">02 — About</div>
+        <h2 style="margin:0 0 32px;font-size:clamp(34px,4.5vw,64px);font-weight:700;letter-spacing:-.035em;line-height:1;">Software that leaves the repo</h2>
+        <p style="margin:0;font-size:clamp(17px,1.5vw,20px);line-height:1.65;color:#A8A8B0;max-width:620px;text-wrap:pretty;">Third-year B.Tech CSE at IIIT Vadodara. I've shipped corporate websites, a loyalty CRM a salon uses daily, a payments platform in production, and native Android tooling — across React, Svelte, Kotlin, Flutter, and AI APIs. I care about the last 10%: performance, motion, and the details recruiters can't fake.</p>
+      </div>
+      <div data-reveal="1" style="display:flex;flex-direction:column;justify-content:flex-end;gap:0;">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;padding:22px 0;border-top:1px solid rgba(255,255,255,.08);">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:#8A8A93;">PROJECTS SHIPPED</div>
+          <div data-countup="15" data-suffix="+" style="font-size:clamp(32px,3.5vw,48px);font-weight:700;letter-spacing:-.03em;">0</div>
+        </div>
+        <div style="display:flex;align-items:baseline;justify-content:space-between;padding:22px 0;border-top:1px solid rgba(255,255,255,.08);">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:#8A8A93;">CLIENT PRODUCTS IN PRODUCTION</div>
+          <div data-countup="6" style="font-size:clamp(32px,3.5vw,48px);font-weight:700;letter-spacing:-.03em;">0</div>
+        </div>
+        <div style="display:flex;align-items:baseline;justify-content:space-between;padding:22px 0;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08);">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:#8A8A93;">GRADUATING</div>
+          <div style="font-size:clamp(32px,3.5vw,48px);font-weight:700;letter-spacing:-.03em;">2028</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── CAPABILITIES ───────── -->
+  <section id="capabilities" data-screen-label="Capabilities" style="padding:clamp(80px,10vw,140px) clamp(20px,6vw,96px);border-bottom:1px solid rgba(255,255,255,.08);">
+    <div data-reveal="1" style="margin-bottom:clamp(40px,6vw,72px);">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.28em;color:#8A8A93;text-transform:uppercase;margin-bottom:16px;">03 — Capabilities</div>
+      <h2 style="margin:0;font-size:clamp(34px,4.5vw,64px);font-weight:700;letter-spacing:-.035em;line-height:1;">Stack</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.08);">
+      <sc-for list="{{ skillGroups }}" as="g" hint-placeholder-count="6">
+        <div data-reveal="1" style="background:#0A0A0B;padding:28px 26px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;color:#8A8A93;text-transform:uppercase;margin-bottom:14px;">{{ g.name }}</div>
+          <div style="font-size:15px;line-height:1.9;color:#D6D6DA;font-weight:400;">{{ g.list }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- ───────── EXPERIENCE ───────── -->
+  <section id="experience" data-screen-label="Experience" style="padding:clamp(80px,10vw,140px) clamp(20px,6vw,96px);border-bottom:1px solid rgba(255,255,255,.08);">
+    <div data-reveal="1" style="margin-bottom:clamp(40px,6vw,72px);">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.28em;color:#8A8A93;text-transform:uppercase;margin-bottom:16px;">04 — Experience</div>
+      <h2 style="margin:0;font-size:clamp(34px,4.5vw,64px);font-weight:700;letter-spacing:-.035em;line-height:1;">Real clients, real deadlines</h2>
+    </div>
+    <div style="border-top:1px solid rgba(255,255,255,.08);">
+      <sc-for list="{{ experience }}" as="e" hint-placeholder-count="3">
+        <div data-reveal="1" style="display:flex;flex-wrap:wrap;gap:8px 32px;align-items:baseline;padding:30px 0;border-bottom:1px solid rgba(255,255,255,.08);">
+          <div style="flex:0 0 130px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:#5A5A62;">{{ e.period }}</div>
+          <div style="flex:1 1 280px;min-width:240px;">
+            <div style="font-size:clamp(18px,1.8vw,24px);font-weight:600;letter-spacing:-.015em;">{{ e.role }}</div>
+            <div style="margin-top:4px;font-size:14px;color:#8A8A93;">{{ e.org }}</div>
+          </div>
+          <p style="flex:1 1 320px;min-width:260px;margin:0;font-size:14px;line-height:1.65;color:#A8A8B0;">{{ e.summary }}</p>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- ───────── CONTACT ───────── -->
+  <section id="contact" data-screen-label="Contact" style="padding:clamp(100px,12vw,180px) clamp(20px,6vw,96px);">
+    <div data-reveal="1">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.28em;color:#8A8A93;text-transform:uppercase;margin-bottom:24px;">05 — Contact</div>
+      <a href="mailto:1080patelharshil@gmail.com" style="display:block;font-size:clamp(26px,4.6vw,72px);font-weight:700;letter-spacing:-.04em;line-height:1.05;color:#F7F7F8;text-decoration:none;word-break:break-word;" style-hover="color:#ffffff;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:8px">1080patelharshil@gmail.com</a>
+      <div style="display:flex;flex-wrap:wrap;gap:28px;margin-top:48px;">
+        <a href="https://github.com/Marshmellow31" target="_blank" rel="noreferrer" style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.12em;color:#8A8A93;text-decoration:none;" style-hover="color:#F2F2F3">GITHUB ↗</a>
+        <a href="https://linkedin.com/in/harshil-patel-5a7373333" target="_blank" rel="noreferrer" style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.12em;color:#8A8A93;text-decoration:none;" style-hover="color:#F2F2F3">LINKEDIN ↗</a>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.12em;color:#5A5A62;">BHARUCH, GUJARAT — IN</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── FOOTER ───────── -->
+  <footer style="display:flex;flex-wrap:wrap;gap:12px 32px;align-items:center;justify-content:space-between;padding:28px clamp(20px,6vw,96px);border-top:1px solid rgba(255,255,255,.08);">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;color:#5A5A62;">© 2026 Harshil Patel — built with React, coffee &amp; questionable sleep</div>
+    <a href="#top" style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;color:#8A8A93;text-decoration:none;" style-hover="color:#F2F2F3">BACK TO TOP ↑</a>
+  </footer>
+
+  <!-- floating terminal -->
+  <x-import component-from-global-scope="hp-terminal" from="./components/hp-terminal.js" hint-size="0,0" style="display:contents;"></x-import>
+
+  <!-- toast -->
+  <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:500;background:#161618;border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:12px 20px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#D6D6DA;box-shadow:0 12px 40px rgba(0,0,0,.5);">{{ toast }}</div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showStrands&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Hero&quot;}, &quot;showLanyard&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Hero&quot;}}">
+class Component extends DCLogic {
+  state = { scrolled: false, toast: null, isDesktop: typeof window !== 'undefined' ? window.innerWidth >= 1024 : true };
+
+  componentDidMount() {
+    this._onScroll = () => {
+      const s = window.scrollY > 24;
+      if (s !== this.state.scrolled) this.setState({ scrolled: s });
+    };
+    window.addEventListener('scroll', this._onScroll, { passive: true });
+
+    this._onResize = () => {
+      const d = window.innerWidth >= 1024;
+      if (d !== this.state.isDesktop) this.setState({ isDesktop: d });
+    };
+    window.addEventListener('resize', this._onResize);
+
+    // ⌘K is handled by the <hp-terminal> component itself.
+
+    // Scroll reveals + count-ups (progressive enhancement — content visible without JS)
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!reduced && 'IntersectionObserver' in window) {
+      const els = document.querySelectorAll('[data-reveal]');
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((en) => {
+          if (en.isIntersecting) {
+            en.target.style.opacity = '1';
+            en.target.style.transform = 'none';
+            io.unobserve(en.target);
+          }
+        });
+      }, { threshold: 0.12 });
+      els.forEach((el) => {
+        const r = el.getBoundingClientRect();
+        if (r.top > window.innerHeight * 0.9) {
+          el.style.opacity = '0';
+          el.style.transform = 'translateY(18px)';
+          el.style.transition = 'opacity .7s ease, transform .7s ease';
+          io.observe(el);
+        }
+      });
+      this._io = io;
+    }
+
+    const cus = document.querySelectorAll('[data-countup]');
+    const cio = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (!en.isIntersecting) return;
+        cio.unobserve(en.target);
+        const el = en.target;
+        const target = parseInt(el.getAttribute('data-countup'), 10);
+        const suffix = el.getAttribute('data-suffix') || '';
+        if (reduced) { el.textContent = target + suffix; return; }
+        const t0 = performance.now();
+        const dur = 1100;
+        const tick = (t) => {
+          const p = Math.min(1, (t - t0) / dur);
+          const ease = 1 - Math.pow(1 - p, 3);
+          el.textContent = Math.round(target * ease) + suffix;
+          if (p < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      });
+    }, { threshold: 0.5 });
+    cus.forEach((el) => cio.observe(el));
+    this._cio = cio;
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this._onScroll);
+    window.removeEventListener('resize', this._onResize);
+    if (this._io) this._io.disconnect();
+    if (this._cio) this._cio.disconnect();
+    clearTimeout(this._toastTimer);
+  }
+
+  _showToast(msg) {
+    this.setState({ toast: msg });
+    clearTimeout(this._toastTimer);
+    this._toastTimer = setTimeout(() => this.setState({ toast: null }), 2600);
+  }
+
+  renderVals() {
+    const raw = [
+      { title: 'PayMatrix', description: 'Group-expense platform with AI bill scanning (Gemini Vision), greedy debt simplification, native UPI deep-linking, and real-time sync.', stack: ['React 19', 'Firebase', 'Tailwind', 'Gemini API'], link: 'https://pay-matrix.vercel.app/', github: 'https://github.com/Marshmellow31/PayMatrix', live: true },
+      { title: 'Ascend', description: 'Gamified productivity PWA — XP and levels, Pomodoro, 24-week heatmaps, command palette.', stack: ['Svelte 5', 'Vite', 'Firebase', 'PWA'], link: null, github: 'https://github.com/Marshmellow31/Ascend', live: false },
+      { title: 'PlayHub', description: 'Court booking app with Razorpay payments, Google Wallet passes, Leaflet maps, and a role-based admin dashboard.', stack: ['React 19', 'TypeScript', 'Firebase', 'Capacitor'], link: null, github: null, live: false },
+      { title: 'Mann Beauty Studio', description: 'Loyalty PWA replacing paper cards for a working salon — phone auth, visual loyalty tracking, admin CRM.', stack: ['React 19', 'Tailwind v4', 'Firebase v12'], link: null, github: 'https://github.com/Marshmellow31/Mann-beauty-parlour', live: false },
+      { title: 'Bhumi Developers', description: 'Corporate site and project portfolio for a real-estate firm — Lenis smooth scroll, 3D elements, PDF brochures.', stack: ['Next.js', 'React 19', 'Framer Motion'], link: null, github: null, live: false },
+      { title: 'BD Buildcon', description: 'Marketing site for a turnkey industrial EPC contractor — filterable project gallery, employee portal.', stack: ['Next.js', 'TypeScript', 'Lenis'], link: null, github: null, live: false },
+      { title: 'PickleRage', description: 'Marketing website for a pickleball venue with premium animation and SEO.', stack: ['React 19', 'React Router v7', 'Framer Motion'], link: null, github: 'https://github.com/Marshmellow31/PickleRage-website', live: false },
+      { title: 'Attendance Manager', description: 'Secret-key protected attendance dashboard with real-time sync and CSV exports for payroll.', stack: ['React 19', 'Zustand', 'Firebase'], link: null, github: null, live: false },
+      { title: 'Navigator+', description: 'Native Android ride-tracking dashboard — stable live GPS speed and distance under background restrictions.', stack: ['Kotlin', 'Jetpack Compose'], link: null, github: null, live: false },
+    ];
+    const projects = raw.map((p, i) => ({ ...p, num: String(i + 1).padStart(2, '0'), stackLine: p.stack.join(' · ') }));
+
+    const skills = {
+      Languages: 'TypeScript, JavaScript, Python, C++, Java, Dart, Kotlin, SQL',
+      Frontend: 'React 19, Next.js, Svelte 5, Tailwind CSS, Framer Motion, Three.js',
+      Backend: 'Node.js, Express, Firebase, MySQL, REST APIs',
+      Mobile: 'Android (Kotlin), Flutter, PWA, Capacitor',
+      'AI / ML': 'Ollama, Claude API, Gemini Vision, Whisper STT, Embeddings',
+      Tools: 'Git, GitHub Actions, Vercel, Docker, Vitest, ESLint',
+    };
+    const skillGroups = Object.entries(skills).map(([name, list]) => ({ name, list }));
+
+    const experience = [
+      { period: '2025 — NOW', role: 'Developer Intern', org: 'Bhumi Developers / BD Buildcon LLP — Bharuch', summary: 'Shipped two production corporate websites end-to-end: design, motion system, content pipeline, deployment. Both live and maintained.' },
+      { period: 'CLIENT', role: 'Product Engineer', org: 'Mann Beauty Studio', summary: 'Replaced paper loyalty cards with a PWA the salon uses daily — phone auth, loyalty tracking, and an admin CRM with attendance.' },
+      { period: 'CLIENT', role: 'Web Developer', org: 'PickleRage · Chai Sutta Bar · restaurant clients', summary: 'Marketing sites and a restaurant POS for local businesses — scoped, built, and delivered solo.' },
+    ];
+
+    const scrolled = this.state.scrolled;
+
+    return {
+      projects,
+      projectCount: String(projects.length).padStart(2, '0'),
+      skillGroups,
+      experience,
+      navBg: scrolled ? 'rgba(10,10,11,.72)' : 'rgba(10,10,11,0)',
+      navBorder: scrolled ? 'rgba(255,255,255,.08)' : 'rgba(255,255,255,0)',
+      toast: this.state.toast,
+      showStrands: this.props.showStrands ?? true,
+      showLanyard: (this.props.showLanyard ?? true) && this.state.isDesktop,
+      isDesktop: this.state.isDesktop,
+      openTerminalHint: () => window.dispatchEvent(new CustomEvent('hp-terminal-toggle')),
+    };
+  }
+}
+</script>
+</body>
+</html>

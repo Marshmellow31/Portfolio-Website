@@ -1,18 +1,24 @@
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
+/* ─────────────────────────────────────────────────────────────
+   Monochrome Swiss / dev-tool-minimal design tokens.
+   There is NO accent color — emphasis is white, size, and weight.
+   ───────────────────────────────────────────────────────────── */
 @theme {
-  --color-bg: #000000;
-  --color-surface: #0a0a0a;
-  --color-card: rgba(15, 15, 15, 0.8);
-  --color-card-border: rgba(255, 255, 255, 0.1);
-  --color-accent: #ff007f;
-  --color-accent-glow: rgba(255, 0, 127, 0.15);
-  --color-text: #ffffff;
-  --color-text-muted: #888888;
-  --font-heading: 'Bebas Neue', system-ui, sans-serif;
-  --font-body: 'Inter', system-ui, sans-serif;
-  --font-serif: 'Playfair Display', serif;
+  --color-bg: #000000;            /* pure black */
+  --color-surface: #101013;        /* cards */
+  --color-text: #F2F2F3;           /* primary text — the only "accent" */
+  --color-text-bright: #F7F7F8;    /* hero name, contact email */
+  --color-text-muted: #A8A8B0;     /* paragraphs */
+  --color-text-dim: #8A8A93;       /* labels, nav links */
+  --color-text-faint: #5A5A62;     /* metadata, footer */
+
+  --color-border: rgba(255, 255, 255, 0.08);        /* hairlines */
+  --color-border-strong: rgba(255, 255, 255, 0.14); /* interactive borders */
+
+  --font-heading: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-body: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 }
 
@@ -25,53 +31,74 @@
 
   body {
     background-color: var(--color-bg);
+    background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+    background-size: 80px 80px;
+    background-position: center top;
     color: var(--color-text);
     font-family: var(--font-body);
     line-height: 1.6;
     overflow-x: clip;
   }
-  
-  /* Hide default cursor on desktop */
-  @media (pointer: fine) {
-    body, a, button, input, select, textarea, [role="button"] {
-      cursor: none !important;
-    }
-  }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Bebas Neue', cursive;
+    font-family: var(--font-heading);
+    letter-spacing: -0.035em;
   }
 
   ::selection {
-    background: var(--color-accent);
-    color: white;
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--color-text-bright);
   }
 }
 
 @layer utilities {
-  .bg-grid {
-    background-size: 50px 50px;
-    background-image: 
-      linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-    background-position: center top;
+  /* Mono micro-label: `01 — Section` */
+  .mono-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--color-text-dim);
   }
-  
-  .text-outline {
-    -webkit-text-fill-color: transparent;
-    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.6);
+
+  /* Standard section padding rhythm from the spec */
+  .section-pad {
+    padding: clamp(80px, 10vw, 140px) clamp(20px, 6vw, 96px);
   }
+}
+
+@keyframes hpPulse {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.9; }
+}
+@keyframes hpFadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { animation: none !important; }
 }
 
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
-
 ::-webkit-scrollbar-track {
   background: var(--color-bg);
 }
-
 ::-webkit-scrollbar-thumb {
-  background: var(--color-accent);
-  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

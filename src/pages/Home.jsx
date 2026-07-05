@@ -1,229 +1,363 @@
-import { lazy, Suspense } from 'react';
-import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { FiGithub, FiLinkedin, FiMail } from 'react-icons/fi';
-import InfiniteMenu from '../components/InfiniteMenu/InfiniteMenu';
-import TextReveal from '../components/TextReveal/TextReveal';
-import Experience from '../components/Experience/Experience';
-import SkillsMarquee from '../components/SkillsMarquee/SkillsMarquee';
-import Section from '../components/Section/Section';
-import Capabilities from '../components/Capabilities/Capabilities';
-import Testimonials from '../components/Testimonials/Testimonials';
-import { items } from '../data/portfolio';
-import { fadeUp } from '../utils/animations';
+import { lazy, Suspense, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Reveal, CountUp } from '../components/Reveal/Reveal';
+import { skillGroups, workHistory } from '../data/portfolio';
 import useMediaQuery from '../utils/useMediaQuery';
-import InteractiveName from '../components/InteractiveName/InteractiveName';
+import { FaCamera, FaJava, FaDatabase } from 'react-icons/fa';
+import {
+  SiTypescript, SiJavascript, SiPython, SiCplusplus, SiKotlin,
+  SiReact, SiSvelte, SiTailwindcss, SiFramer,
+  SiNodedotjs, SiExpress, SiFirebase, SiMysql,
+  SiAndroid, SiFlutter,
+  SiGit, SiDocker, SiVercel, SiEslint
+} from 'react-icons/si';
+
+const stackIcons = [
+  { Icon: SiTypescript, color: '#3178C6', name: 'TypeScript' },
+  { Icon: SiJavascript, color: '#F7DF1E', name: 'JavaScript' },
+  { Icon: SiPython, color: '#3776AB', name: 'Python' },
+  { Icon: SiCplusplus, color: '#00599C', name: 'C++' },
+  { Icon: FaJava, color: '#5382A1', name: 'Java' },
+  { Icon: SiKotlin, color: '#7F52FF', name: 'Kotlin' },
+  { Icon: FaDatabase, color: '#4479A1', name: 'SQL' },
+  { Icon: SiReact, color: '#61DAFB', name: 'React' },
+  { Icon: SiSvelte, color: '#FF3E00', name: 'Svelte' },
+  { Icon: SiTailwindcss, color: '#06B6D4', name: 'Tailwind' },
+  { Icon: SiFramer, color: '#0055FF', name: 'Framer' },
+  { Icon: SiNodedotjs, color: '#339933', name: 'Node.js' },
+  { Icon: SiExpress, color: '#FFFFFF', name: 'Express' }, // White for dark theme
+  { Icon: SiFirebase, color: '#FFCA28', name: 'Firebase' },
+  { Icon: SiMysql, color: '#4479A1', name: 'MySQL' },
+  { Icon: SiAndroid, color: '#3DDC84', name: 'Android' },
+  { Icon: SiFlutter, color: '#02569B', name: 'Flutter' },
+  { Icon: SiGit, color: '#F05032', name: 'Git' },
+  { Icon: SiVercel, color: '#FFFFFF', name: 'Vercel' }, // White for dark theme
+  { Icon: SiDocker, color: '#2496ED', name: 'Docker' },
+  { Icon: SiEslint, color: '#4B32C3', name: 'ESLint' }
+];
 
 // Desktop-only: keeps three.js + physics (the heaviest chunk) off phones
-const Lanyard = lazy(() => import('../components/Lanyard/Lanyard'));
+const StrandsBG = lazy(() => import('../components/StrandsBG/StrandsBG'));
 
-export default function Home({ isLoaded }) {
+export default function Home() {
   const isDesktop = useMediaQuery('(min-width: 1024px)');
+  const [openAccordion, setOpenAccordion] = useState(null);
 
   return (
-    <div className="pt-20">
-      {/* ──── Hero ──── */}
-      <section className="relative w-full min-h-[calc(100vh-80px)] pb-12 flex items-start md:items-center overflow-hidden border-b border-card-border">
-        {/* Lanyard Graphic - Right Side Layer (desktop only: on mobile it
-            covers the hero text and costs a WebGL context + physics sim) */}
+    <div>
+      {/* ──────────── HERO ──────────── */}
+      <header
+        id="top"
+        className="relative min-h-screen flex items-center overflow-hidden border-b border-border"
+      >
+        {/* Strands WebGL background — only shown on larger screens (xl+) to prevent text overlap, completely removed on mobile */}
         {isDesktop && (
-          <div className="absolute inset-y-0 right-0 w-1/2 z-0 cursor-grab active:cursor-grabbing">
+          <div className="hidden xl:block absolute inset-y-0 w-full left-[10%] md:left-[17%] z-[1] pointer-events-none [mask-image:linear-gradient(to_bottom,transparent,black_20%,black_80%,transparent)] md:[mask-image:linear-gradient(to_right,transparent_10%,black_40%)]">
             <Suspense fallback={null}>
-              <Lanyard position={[0, 0, 20]} gravity={[0, -40, 0]} transparent={true} />
+              <StrandsBG />
             </Suspense>
           </div>
         )}
 
-        {/* Text Content */}
-        <div className="w-full px-6 md:px-12 lg:px-24 w-full relative z-20 pointer-events-none">
-          <div className="flex flex-col items-start justify-center pt-12 lg:pt-0">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={isLoaded ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ delay: 0.1, duration: 0.8 }}
-              className="flex items-center gap-4 mb-6"
-            >
-              <div className="h-px w-12 bg-accent" />
-              <p className="text-accent font-mono text-sm tracking-[0.3em] uppercase">
-                Creative Developer
-              </p>
-            </motion.div>
+        <div className="relative z-10 w-full px-[clamp(20px,6vw,96px)] pt-[120px] pb-20 pointer-events-none">
+          <div
+            className="flex items-center gap-[14px] mb-7"
+            style={{ animation: 'hpFadeUp .8s ease both' }}
+          >
+            <div className="w-10 h-px bg-text" />
+            <span className="mono-label">Full-Stack Developer — IIIT Vadodara</span>
+          </div>
 
-            <InteractiveName isLoaded={isLoaded} />
+          <h1
+            className="m-0 font-bold text-text-bright"
+            style={{
+              fontSize: 'clamp(58px,11vw,168px)',
+              letterSpacing: '-0.045em',
+              lineHeight: 0.92,
+              animation: 'hpFadeUp .8s .1s ease both',
+            }}
+          >
+            Harshil<br />Patel
+          </h1>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={isLoaded ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ delay: 0.4, duration: 0.8 }}
-              className="font-serif italic text-xl md:text-3xl mt-8 max-w-xl text-left text-text-muted"
-            >
-              Crafting premium digital experiences, AI tools, &amp; robust architectures.
-            </motion.p>
+          <p
+            className="mt-9 max-w-[560px] text-text-muted"
+            style={{
+              fontSize: 'clamp(17px,1.6vw,21px)',
+              lineHeight: 1.55,
+              animation: 'hpFadeUp .8s .25s ease both',
+            }}
+          >
+            I build production software — web, mobile, and AI tools — shipped to real
+            businesses, not just repos.
+          </p>
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={isLoaded ? { opacity: 1 } : { opacity: 0 }}
-              transition={{ delay: 0.6, duration: 0.8 }}
-              className="mt-12 flex flex-col md:flex-row items-stretch md:items-center gap-4 w-full md:w-auto pointer-events-auto"
+          <div className="flex flex-wrap items-center gap-4 mt-11 pointer-events-auto animate-[hpFadeUp_0.8s_ease_0.2s_both]">
+            <a
+              href="/projects"
+              className="inline-flex items-center justify-center bg-text text-bg no-underline text-[13px] font-semibold px-[26px] h-[46px] rounded-[4px] transition-colors hover:bg-white"
             >
-              <a
-                href="#interactive"
-                className="w-full md:w-auto text-center font-mono uppercase tracking-widest text-xs px-8 py-4 border border-accent text-accent hover:bg-accent hover:text-white transition-all duration-300 flex items-center justify-center"
-              >
-                Explore Work
-              </a>
-              
-              {/* Quick Navigation Buttons (Mobile Only) */}
-              <Link
-                to="/projects"
-                className="w-full md:hidden text-center font-mono uppercase tracking-widest text-xs px-8 py-4 border border-card-border text-white hover:border-white transition-all duration-300 flex items-center justify-center"
-              >
-                All Projects
-              </Link>
-              
-              <Link
-                to="/contact"
-                className="w-full md:hidden text-center font-mono uppercase tracking-widest text-xs px-8 py-4 border border-card-border text-white hover:border-white transition-all duration-300 flex items-center justify-center"
-              >
-                Contact Me
-              </Link>
-            </motion.div>
+              See projects
+            </a>
+            <a
+              href="/playground"
+              className="inline-flex items-center justify-center gap-2 text-text no-underline text-[13px] font-medium px-[26px] h-[46px] rounded-[4px] border border-border-strong transition-colors hover:border-white/50"
+            >
+              <FaCamera className="text-[15px]" /> Playground
+            </a>
+            <button
+              onClick={() => window.dispatchEvent(new CustomEvent('hp-terminal-toggle'))}
+              className="inline-flex items-center justify-between gap-4 text-text no-underline bg-[#111] border border-border-strong px-5 h-[46px] rounded-[6px] transition-colors hover:border-white/50 cursor-pointer shadow-lg"
+            >
+              <span className="font-mono text-[13px] font-medium text-text-muted">Terminal</span>
+              <div className="flex items-center gap-1.5 ml-2 opacity-80">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]"></div>
+                <div className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]"></div>
+                <div className="w-2.5 h-2.5 rounded-full bg-[#27c93f]"></div>
+              </div>
+            </button>
+            <a
+              href="/creative"
+              className="inline-flex items-center justify-center text-white no-underline text-[13px] font-bold px-[26px] h-[46px] rounded-[4px] transition-transform hover:scale-105"
+              style={{
+                background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)'
+              }}
+            >
+              Creative side
+            </a>
           </div>
         </div>
 
-        {/* Scroll indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={isLoaded ? { opacity: 1 } : { opacity: 0 }}
-          transition={{ delay: 1, duration: 1 }}
-          className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 pointer-events-none flex flex-col items-center gap-2"
+        {/* SCROLL indicator */}
+        <div
+          className="absolute bottom-6 left-[clamp(20px,6vw,96px)] z-10 font-mono text-text-faint uppercase"
+          style={{ fontSize: 10, letterSpacing: '.3em', animation: 'hpPulse 2.6s ease-in-out infinite' }}
         >
-          {/* Desktop Mouse Icon */}
-          <div className="hidden md:flex w-5 h-8 rounded-full border-2 border-white/20 justify-center pt-1.5">
-            <motion.div
-              animate={{ y: [0, 8, 0] }}
-              transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
-              className="w-1 h-1.5 rounded-full bg-accent"
-            />
-          </div>
-
-          {/* Mobile Text Indicator */}
-          <div className="md:hidden flex flex-col items-center">
-            <span className="font-mono text-[10px] tracking-widest text-text-muted uppercase">Scroll Down</span>
-            <motion.div
-              animate={{ y: [0, 5, 0] }}
-              transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
-              className="text-accent text-[10px] mt-1"
-            >
-              ▼
-            </motion.div>
-          </div>
-        </motion.div>
-      </section>
-
-      {/* ──── About ──── */}
-      <Section id="about" className="py-32 border-t border-card-border">
-        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-start">
-          {/* Biography */}
-          <div>
-            <motion.p variants={fadeUp} className="text-accent font-mono text-sm tracking-[0.2em] uppercase mb-6">01 — About</motion.p>
-            <motion.h2 variants={fadeUp} className="font-heading text-5xl md:text-6xl font-bold mb-10 uppercase">Who I Am</motion.h2>
-            <div className="space-y-6">
-              <TextReveal
-                text='"I build production web apps, mobile apps, and AI tools — from corporate websites to real client work."'
-                className="font-serif italic text-2xl md:text-3xl text-white leading-relaxed"
-                delay={0.1}
-                staggerDelay={0.03}
-              />
-              <TextReveal
-                text='B.Tech student at IIIT Vadodara (third year, expected 2028). 15+ real projects across web, mobile (Android/Flutter), desktop (Electron), and AI. Shipped websites for real companies. Built and deployed apps used by actual local businesses.'
-                className="font-mono text-sm leading-relaxed text-text-muted mt-8"
-                delay={0.3}
-                staggerDelay={0.01}
-              />
-            </div>
-
-
-          </div>
-
-          {/* Capabilities */}
-          <motion.div variants={fadeUp}>
-            <motion.p className="text-accent font-mono text-sm tracking-[0.2em] uppercase mb-6">Capabilities</motion.p>
-            <Capabilities />
-          </motion.div>
+          Scroll
         </div>
-      </Section>
+      </header>
 
-      {/* ──── Projects Sphere ──── */}
-      <section id="interactive" className="relative w-full h-[50vh] max-h-[50vh] md:max-h-none md:h-[200vh] bg-black border-y border-card-border overflow-hidden md:overflow-visible">
-        {/* Sticky container — constrained on mobile, sticky full-screen on desktop */}
-        <div className="md:sticky top-0 left-0 w-full h-[50vh] md:h-screen overflow-hidden flex flex-col">
-          {/* Title */}
-          <div className="relative z-20 px-6 md:px-12 lg:px-24 w-full pt-4 md:pt-24 pointer-events-none shrink-0">
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-accent font-mono text-xs md:text-sm tracking-[0.2em] uppercase mb-1 md:mb-2"
+      {/* ──────────── ABOUT ──────────── */}
+      <section id="about" className="section-pad border-b border-border">
+        <div className="grid gap-[clamp(40px,6vw,96px)] [grid-template-columns:repeat(auto-fit,minmax(320px,1fr))]">
+          <Reveal>
+            <div className="mono-label mb-4">01 — About</div>
+            <h2
+              className="m-0 mb-8 font-bold"
+              style={{ fontSize: 'clamp(34px,4.5vw,64px)', lineHeight: 1 }}
             >
-              02 — Interactive Projects
-            </motion.p>
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="font-heading text-2xl md:text-5xl font-semibold md:font-bold"
+              Software that leaves the repo
+            </h2>
+            <p
+              className="m-0 text-text-muted max-w-[620px]"
+              style={{ fontSize: 'clamp(17px,1.5vw,20px)', lineHeight: 1.65, textWrap: 'pretty' }}
             >
-              Explore My Work
-            </motion.h2>
-          </div>
+              Third-year B.Tech CSE at IIIT Vadodara. I've shipped corporate websites, a
+              loyalty CRM a salon uses daily, a payments platform in production, and native
+              Android tooling — across React, Svelte, Kotlin, Flutter, and AI APIs. I care
+              about the last 10%: performance, motion, and the details recruiters can't fake.
+            </p>
+          </Reveal>
 
-          {/* 3D Canvas — square on mobile, full on desktop */}
-          <div className="relative flex-1 min-h-0 w-full">
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-16 md:h-48 bg-gradient-to-b from-black to-transparent z-10" />
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 md:h-48 bg-gradient-to-t from-black to-transparent z-10" />
-            <div className="h-full w-full flex items-center justify-center">
-              <div className="aspect-square h-full md:aspect-auto md:w-full md:h-full">
-                <InfiniteMenu items={items} scale={1.5} />
+          <Reveal className="flex flex-col justify-end">
+            {[
+              { label: 'PROJECTS SHIPPED', target: 15, suffix: '+', link: '/projects' },
+              { label: 'CLIENT PRODUCTS IN PRODUCTION', target: 6, suffix: '', link: '#experience' },
+            ].map((s) => (
+              <a
+                key={s.label}
+                href={s.link}
+                className="group flex items-baseline justify-between py-[22px] border-t border-border no-underline text-current hover:bg-white/[0.02] transition-colors cursor-pointer"
+              >
+                <div className="font-mono text-[11px] tracking-[.14em] text-text-dim group-hover:text-white transition-colors">
+                  {s.label}
+                </div>
+                <div className="flex items-center gap-4">
+                  <CountUp
+                    target={s.target}
+                    suffix={s.suffix}
+                    className="font-bold group-hover:text-white transition-colors"
+                  />
+                  <span className="font-mono text-[12px] opacity-0 group-hover:opacity-100 transition-opacity text-white/50">
+                    ↗
+                  </span>
+                </div>
+              </a>
+            ))}
+            <div className="flex items-baseline justify-between py-[22px] border-t border-b border-border">
+              <div className="font-mono text-[11px] tracking-[.14em] text-text-dim">GRADUATING</div>
+              <div className="font-bold" style={{ fontSize: 'clamp(32px,3.5vw,48px)', letterSpacing: '-0.03em' }}>
+                2028
               </div>
             </div>
-          </div>
+          </Reveal>
+        </div>
+      </section>
 
-          {/* Bottom label */}
-          <div className="relative z-20 w-full flex justify-center pb-2 md:pb-12 pointer-events-none shrink-0">
-            <p className="text-white font-mono text-[10px] md:text-xs tracking-widest uppercase opacity-70 bg-black/50 px-3 py-1 md:px-4 md:py-2 rounded-full border border-card-border">
-              Drag to Rotate • Click to Visit
-            </p>
+      {/* ──────────── CAPABILITIES ──────────── */}
+      <section id="capabilities" className="section-pad border-b border-border">
+        <Reveal className="mb-[clamp(40px,6vw,72px)]">
+          <div className="mono-label mb-4">02 — Capabilities</div>
+          <h2 className="m-0 font-bold" style={{ fontSize: 'clamp(34px,4.5vw,64px)', lineHeight: 1 }}>
+            Stack
+          </h2>
+        </Reveal>
+        <div className="relative overflow-hidden flex items-center py-12 bg-transparent">
+          <style>{`
+            @keyframes marquee {
+              0% { transform: translateX(0); }
+              100% { transform: translateX(-50%); }
+            }
+            .animate-marquee {
+              animation: marquee 40s linear infinite;
+              display: flex;
+              width: max-content;
+            }
+            .animate-marquee:hover {
+              animation-play-state: paused;
+            }
+          `}</style>
+          
+          {/* Fade masks for smooth entry/exit */}
+          <div className="absolute inset-y-0 left-0 w-24 md:w-48 bg-gradient-to-r from-bg to-transparent z-10 pointer-events-none" />
+          <div className="absolute inset-y-0 right-0 w-24 md:w-48 bg-gradient-to-l from-bg to-transparent z-10 pointer-events-none" />
+          
+          <div className="animate-marquee gap-[4.5rem] px-[2.25rem]">
+            {stackIcons.map((item, i) => (
+              <div key={i} className="group relative flex justify-center">
+                <item.Icon 
+                  className="text-[60px] group-hover:scale-110 transition-transform duration-300 cursor-pointer" 
+                  style={{ color: item.color }} 
+                />
+                <span className="absolute -bottom-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[11px] font-mono tracking-widest text-text-muted whitespace-nowrap pointer-events-none">
+                  {item.name}
+                </span>
+              </div>
+            ))}
+            {stackIcons.map((item, i) => (
+              <div key={'dup'+i} className="group relative flex justify-center">
+                <item.Icon 
+                  className="text-[60px] group-hover:scale-110 transition-transform duration-300 cursor-pointer" 
+                  style={{ color: item.color }} 
+                />
+                <span className="absolute -bottom-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[11px] font-mono tracking-widest text-text-muted whitespace-nowrap pointer-events-none">
+                  {item.name}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ──── View Projects Button ──── */}
-      <Section id="featured-project" className="py-24 border-b border-card-border flex flex-col items-center justify-center text-center">
-        <motion.p variants={fadeUp} className="text-accent font-mono text-sm tracking-[0.2em] uppercase mb-6">03 — Portfolio</motion.p>
-        <motion.h2 variants={fadeUp} className="font-heading text-4xl md:text-5xl font-bold mb-12">DISCOVER MORE WORK</motion.h2>
+      {/* ──────────── EXPERIENCE ──────────── */}
+      <section id="experience" className="border-b border-border" style={{ padding: 'clamp(60px,8vw,120px) 0' }}>
+        <div className="px-[clamp(20px,6vw,96px)]">
+          <Reveal className="mb-[clamp(40px,6vw,72px)]">
+            <div className="mono-label mb-4">03 — Experience</div>
+            <h2 className="m-0 font-bold uppercase tracking-tighter" style={{ fontSize: 'clamp(34px,4.5vw,64px)', lineHeight: 1 }}>
+              Work History
+            </h2>
+          </Reveal>
+        </div>
+        
+        <div className="border-t border-border flex flex-col">
+          {workHistory.map((job, idx) => {
+            const isOpen = openAccordion === idx;
+            return (
+              <div key={job.company} className="border-b border-border group flex flex-col">
+                <button
+                  onClick={() => setOpenAccordion(isOpen ? null : idx)}
+                  className="w-full text-left px-[clamp(20px,6vw,96px)] py-6 md:py-8 flex flex-col md:flex-row md:items-center justify-between hover:bg-white/[0.02] transition-colors cursor-pointer"
+                >
+                  <h3 
+                    className={`m-0 font-bold uppercase tracking-tighter transition-colors duration-500 ${isOpen ? 'text-white' : 'text-white/70 group-hover:text-white'}`} 
+                    style={{ fontSize: 'clamp(32px,5vw,72px)', lineHeight: 0.9 }}
+                  >
+                    {job.company}
+                  </h3>
+                  <div className="flex flex-col items-start md:items-end mt-4 md:mt-0 opacity-60">
+                    <span className="font-mono text-[10px] md:text-[11px] tracking-[.15em] uppercase">{job.role}</span>
+                    <span className="font-serif italic text-text-muted mt-1 text-[13px]">{job.location}</span>
+                  </div>
+                </button>
+                <AnimatePresence>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-[clamp(20px,6vw,96px)] pb-8 pt-2 flex flex-col md:flex-row gap-12 md:gap-24">
+                        {job.projects.map((proj, pIdx) => (
+                          <div key={pIdx} className="flex-1">
+                            <h4 className="m-0 font-bold uppercase tracking-tighter text-[18px] md:text-[20px] mb-3 text-white">
+                              {proj.name}
+                            </h4>
+                            <p className="text-[14px] md:text-[15px] leading-relaxed text-text-muted max-w-lg mb-6 text-pretty">
+                              {proj.description}
+                            </p>
+                            <div className="flex flex-wrap gap-2">
+                              {proj.stack.map(tech => (
+                                <span key={tech} className="font-mono text-[10px] tracking-[.1em] uppercase text-text-dim border border-white/10 rounded-full px-3 py-1">
+                                  {tech}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })}
+        </div>
+      </section>
 
-        <motion.div variants={fadeUp}>
-          <Link
-            to="/projects"
-            className="inline-flex items-center gap-4 font-mono uppercase tracking-widest text-sm px-10 py-5 bg-white text-black hover:bg-accent hover:text-white transition-all duration-300 font-bold group"
+      {/* ──────────── CONTACT ──────────── */}
+      <section id="contact" style={{ padding: 'clamp(100px,12vw,180px) clamp(20px,6vw,96px)' }}>
+        <Reveal>
+          <div className="mono-label mb-6">04 — Contact</div>
+          <a
+            href="mailto:1080patelharshil@gmail.com"
+            className="block text-text-bright no-underline break-words hover:underline"
+            style={{
+              fontSize: 'clamp(26px,4.6vw,72px)',
+              fontWeight: 700,
+              letterSpacing: '-0.04em',
+              lineHeight: 1.05,
+              textDecorationThickness: '2px',
+              textUnderlineOffset: '8px',
+            }}
           >
-            View All Projects
-            <span className="group-hover:translate-x-2 transition-transform duration-300">→</span>
-          </Link>
-        </motion.div>
-      </Section>
-
-      {/* ──── Skills ──── */}
-      <SkillsMarquee />
-
-      {/* ──── Experience ──── */}
-      <Experience />
-
-      {/* ──── Testimonials ──── */}
-      <Testimonials />
+            1080patelharshil@gmail.com
+          </a>
+          <div className="flex flex-wrap gap-7 mt-12">
+            <a
+              href="https://github.com/Marshmellow31"
+              target="_blank"
+              rel="noreferrer"
+              className="font-mono text-[12px] tracking-[.12em] text-text-dim no-underline hover:text-text transition-colors"
+            >
+              GITHUB ↗
+            </a>
+            <a
+              href="https://linkedin.com/in/harshil-patel-5a7373333"
+              target="_blank"
+              rel="noreferrer"
+              className="font-mono text-[12px] tracking-[.12em] text-text-dim no-underline hover:text-text transition-colors"
+            >
+              LINKEDIN ↗
+            </a>
+            <div className="font-mono text-[12px] tracking-[.12em] text-text-faint">
+              BHARUCH, GUJARAT — IN
+            </div>
+          </div>
+        </Reveal>
+      </section>
     </div>
   );
 }
-
-

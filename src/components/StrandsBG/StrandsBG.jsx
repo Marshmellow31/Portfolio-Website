@@ -20,18 +20,18 @@ export default function StrandsBG({ className = '' }) {
     <strands-bg
       ref={ref}
       className={className}
-      colors="#ffffff,#6a6a72"
+      colors="#ffffff,#ffffff"
       count="4"
       speed="0.4"
       amplitude="1"
       waviness="1"
-      thickness="0.7"
-      glow="2.6"
+      thickness="0.5"
+      glow="1.5"
       taper="3"
       spread="1"
-      intensity="0.28"
+      intensity="0.4"
       saturation="0"
-      opacity="0.5"
+      opacity="1"
       scale="1.15"
       style={{
         position: 'absolute',

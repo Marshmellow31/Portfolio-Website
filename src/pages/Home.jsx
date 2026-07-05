@@ -1,6 +1,7 @@
 import { lazy, Suspense, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Reveal, CountUp } from '../components/Reveal/Reveal';
+import CopyButton from '../components/CopyButton';
 import { skillGroups, workHistory } from '../data/portfolio';
 import useMediaQuery from '../utils/useMediaQuery';
 import { FaCamera, FaJava, FaDatabase } from 'react-icons/fa';
@@ -321,20 +322,23 @@ export default function Home() {
       <section id="contact" style={{ padding: 'clamp(100px,12vw,180px) clamp(20px,6vw,96px)' }}>
         <Reveal>
           <div className="mono-label mb-6">04 — Contact</div>
-          <a
-            href="mailto:1080patelharshil@gmail.com"
-            className="block text-text-bright no-underline break-words hover:underline"
-            style={{
-              fontSize: 'clamp(26px,4.6vw,72px)',
-              fontWeight: 700,
-              letterSpacing: '-0.04em',
-              lineHeight: 1.05,
-              textDecorationThickness: '2px',
-              textUnderlineOffset: '8px',
-            }}
-          >
-            1080patelharshil@gmail.com
-          </a>
+          <div className="flex items-center gap-4 sm:gap-6 flex-wrap">
+            <a
+              href="mailto:1080patelharshil@gmail.com"
+              className="block text-text-bright no-underline break-words hover:underline"
+              style={{
+                fontSize: 'clamp(26px,4.6vw,72px)',
+                fontWeight: 700,
+                letterSpacing: '-0.04em',
+                lineHeight: 1.05,
+                textDecorationThickness: '2px',
+                textUnderlineOffset: '8px',
+              }}
+            >
+              1080patelharshil@gmail.com
+            </a>
+            <CopyButton text="1080patelharshil@gmail.com" />
+          </div>
           <div className="flex flex-wrap gap-7 mt-12">
             <a
               href="https://github.com/Marshmellow31"

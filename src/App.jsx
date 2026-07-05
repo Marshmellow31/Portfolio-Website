@@ -1,11 +1,10 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { FiMenu, FiX } from 'react-icons/fi';
 import { FaCamera } from 'react-icons/fa';
 import { useLenis } from 'lenis/react';
 import Skeleton from './components/Skeleton/Skeleton';
 import FloatingTerminal from './components/FloatingTerminal/FloatingTerminal';
+import StaggeredMenu from './components/StaggeredMenu/StaggeredMenu';
 
 // Lazy-loaded Pages
 const Home = lazy(() => import('./pages/Home'));
@@ -24,6 +23,7 @@ const navLinks = [
   { name: 'Blog', to: '/blog' },
   { name: 'Creative', to: '/creative' },
   { name: 'Contact', to: '/contact' },
+  { name: 'Download CV', href: '/resume.pdf', external: true, download: true },
 ];
 
 function openTerminal() {
@@ -82,131 +82,100 @@ export default function App() {
 
   return (
     <div className="min-h-screen text-text font-sans antialiased relative">
-      {/* ──────────── NAVIGATION ──────────── */}
+      {/* ──────────── NAVIGATION (desktop) ──────────── */}
       {!isPlayground && (
-      <nav
-        className="fixed top-0 left-0 right-0 z-[200] h-16 flex items-center justify-between px-[clamp(20px,4vw,48px)] transition-[background,border-color] duration-300"
-        style={{
-          background: isScrolled ? 'rgba(10,10,11,.72)' : 'rgba(10,10,11,0)',
-          backdropFilter: 'blur(14px)',
-          WebkitBackdropFilter: 'blur(14px)',
-          borderBottom: `1px solid ${isScrolled ? 'rgba(255,255,255,.08)' : 'rgba(255,255,255,0)'}`,
-        }}
-      >
-        <Link to="/" className="text-[14px] font-semibold tracking-[-0.01em] text-text no-underline">
-          Harshil Patel
-        </Link>
-
-        {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-[clamp(16px,3vw,32px)]">
-          {navLinks.map((item) =>
-            item.to ? (
-              <Link
-                key={item.name}
-                to={item.to}
-                className="font-mono text-[11px] tracking-[.12em] uppercase text-text-dim no-underline hover:text-text transition-colors"
-              >
-                {item.name}
-              </Link>
-            ) : (
-              <a
-                key={item.name}
-                href={sectionHref(item.hash)}
-                className="font-mono text-[11px] tracking-[.12em] uppercase text-text-dim no-underline hover:text-text transition-colors"
-              >
-                {item.name}
-              </a>
-            )
-          )}
-          <div className="flex items-center gap-3">
-            <Link
-              to="/playground"
-              className="group flex items-center gap-2 font-mono text-[11px] tracking-[.1em] uppercase text-white/70 hover:text-white no-underline bg-white/5 hover:bg-white/10 border border-white/10 rounded-full px-4 py-1.5 transition-all duration-300 backdrop-blur-md"
-            >
-              <FaCamera className="text-[13px] opacity-80 group-hover:opacity-100 transition-opacity" />
-              Playground
-            </Link>
-            
-            <button
-              onClick={openTerminal}
-              title="Terminal (⌘K)"
-              className="group flex items-center gap-2 font-mono text-[11px] tracking-widest text-white/60 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-full px-4 py-1.5 cursor-pointer transition-all duration-300 backdrop-blur-md shadow-sm"
-            >
-              <span className="uppercase tracking-[.1em]">Terminal</span>
-              <span className="opacity-60 bg-black/20 rounded px-1.5 py-0.5 group-hover:opacity-100 transition-opacity">⌘K</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile: hamburger */}
-        <button
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="md:hidden relative z-[60] text-text p-2"
-          aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+        <nav
+          className="hidden md:flex fixed top-0 left-0 right-0 z-[200] h-16 items-center justify-between px-[clamp(20px,4vw,48px)] transition-[background,border-color] duration-300"
+          style={{
+            background: isScrolled ? 'rgba(10,10,11,.72)' : 'rgba(10,10,11,0)',
+            backdropFilter: 'blur(14px)',
+            WebkitBackdropFilter: 'blur(14px)',
+            borderBottom: `1px solid ${isScrolled ? 'rgba(255,255,255,.08)' : 'rgba(255,255,255,0)'}`,
+          }}
         >
-          {isMenuOpen ? <FiX size={22} /> : <FiMenu size={22} />}
-        </button>
-      </nav>
-      )}
+          <Link to="/" className="text-[14px] font-semibold tracking-[-0.01em] text-text no-underline">
+            Harshil Patel
+          </Link>
 
-      {/* ──────────── Mobile Menu ──────────── */}
-      <AnimatePresence>
-        {isMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-[55] flex flex-col items-center justify-center gap-8"
-            style={{ background: 'rgba(10,10,11,.97)', backdropFilter: 'blur(14px)' }}
-          >
-            {navLinks.map((item, i) =>
-              item.to ? (
-                <motion.div
+          <div className="flex items-center gap-[clamp(16px,3vw,32px)]">
+            {navLinks.map((item) =>
+              item.href ? (
+                <a
                   key={item.name}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.05 + i * 0.05, duration: 0.35 }}
-                >
-                  <Link
-                    to={item.to}
-                    onClick={() => setIsMenuOpen(false)}
-                    className="font-heading text-4xl font-bold tracking-[-0.03em] text-text no-underline"
-                  >
-                    {item.name}
-                  </Link>
-                </motion.div>
-              ) : (
-                <motion.a
-                  key={item.name}
-                  href={sectionHref(item.hash)}
-                  onClick={() => setIsMenuOpen(false)}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.05 + i * 0.05, duration: 0.35 }}
-                  className="font-heading text-4xl font-bold tracking-[-0.03em] text-text no-underline"
+                  href={item.href}
+                  target={item.external ? "_blank" : undefined}
+                  rel={item.external ? "noopener noreferrer" : undefined}
+                  download={item.download ? true : undefined}
+                  className="font-mono text-[11px] tracking-[.12em] uppercase text-text-dim no-underline hover:text-text transition-colors"
                 >
                   {item.name}
-                </motion.a>
+                </a>
+              ) : item.to ? (
+                <Link
+                  key={item.name}
+                  to={item.to}
+                  className="font-mono text-[11px] tracking-[.12em] uppercase text-text-dim no-underline hover:text-text transition-colors"
+                >
+                  {item.name}
+                </Link>
+              ) : (
+                <a
+                  key={item.name}
+                  href={sectionHref(item.hash)}
+                  className="font-mono text-[11px] tracking-[.12em] uppercase text-text-dim no-underline hover:text-text transition-colors"
+                >
+                  {item.name}
+                </a>
               )
             )}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.35 }}
-            >
+            <div className="flex items-center gap-3">
               <Link
                 to="/playground"
-                onClick={() => setIsMenuOpen(false)}
-                className="flex items-center gap-2 font-mono text-sm tracking-[.12em] uppercase text-text no-underline border border-border-strong rounded-[6px] px-5 py-3 mt-4"
+                className="group flex items-center gap-2 font-mono text-[11px] tracking-[.1em] uppercase text-white/70 hover:text-white no-underline bg-white/5 hover:bg-white/10 border border-white/10 rounded-full px-4 py-1.5 transition-all duration-300 backdrop-blur-md"
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-text" />
+                <FaCamera className="text-[13px] opacity-80 group-hover:opacity-100 transition-opacity" />
                 Playground
               </Link>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+
+              <button
+                onClick={openTerminal}
+                title="Terminal (⌘K)"
+                className="group flex items-center gap-2 font-mono text-[11px] tracking-widest text-white/60 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-full px-4 py-1.5 cursor-pointer transition-all duration-300 backdrop-blur-md shadow-sm"
+              >
+                <span className="uppercase tracking-[.1em]">Terminal</span>
+                <span className="opacity-60 bg-black/20 rounded px-1.5 py-0.5 group-hover:opacity-100 transition-opacity">⌘K</span>
+              </button>
+            </div>
+          </div>
+        </nav>
+      )}
+
+      {/* ──────────── NAVIGATION (mobile — StaggeredMenu) ──────────── */}
+      {!isPlayground && (
+        <div className="md:hidden">
+          <StaggeredMenu
+            isFixed
+            position="right"
+            items={[
+              ...navLinks.map(item => ({ label: item.name, link: item.href || item.to || sectionHref(item.hash), download: item.download })),
+              { label: 'Playground', link: '/playground' },
+            ]}
+            colors={['#111114', '#1a1a1e']}
+            displaySocials={false}
+            displayItemNumbering={true}
+            accentColor="rgba(255,255,255,0.5)"
+            menuButtonColor="#e9e9ef"
+            openMenuButtonColor="#e9e9ef"
+            logoContent={
+              <Link to="/" className="text-[14px] font-semibold tracking-[-0.01em] text-text no-underline">
+                Harshil Patel
+              </Link>
+            }
+            onMenuOpen={() => setIsMenuOpen(true)}
+            onMenuClose={() => setIsMenuOpen(false)}
+          />
+        </div>
+      )}
 
       {/* ──────────── Page Content ──────────── */}
       <Suspense fallback={<SkeletonPage />}>

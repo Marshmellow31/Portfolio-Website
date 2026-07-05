@@ -1,11 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { selectedWork } from '../data/portfolio';
 import { Reveal } from '../components/Reveal/Reveal';
 
 export default function Projects() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [imgIndex, setImgIndex] = useState(0);
   const activeProject = selectedWork[activeIndex];
+  const images = activeProject.images?.length ? activeProject.images : [activeProject.image];
+
+  // Reset image carousel when switching projects
+  useEffect(() => { setImgIndex(0); }, [activeIndex]);
 
   return (
     <div className="min-h-screen">
@@ -54,7 +59,7 @@ export default function Projects() {
             <div className="relative w-full flex-1 rounded-2xl overflow-hidden bg-surface border border-border shadow-2xl">
               <AnimatePresence mode="wait">
                 <motion.div
-                  key={activeIndex}
+                  key={`${activeIndex}-${imgIndex}`}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
@@ -63,19 +68,69 @@ export default function Projects() {
                 >
                   {/* Image Background */}
                   <div
-                    className="absolute inset-0 w-full h-full bg-cover bg-center"
-                    style={{ backgroundImage: `url(${activeProject.image})` }}
+                    className="absolute inset-0 w-full h-full bg-contain bg-center bg-no-repeat"
+                    style={{ backgroundImage: `url("${images[imgIndex]}")` }}
                   />
                   
-                  {/* Gradient Overlay for Text Legibility */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+                  {/* Gradient Overlay for Text Legibility - confined to bottom */}
+                  <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/90 to-transparent pointer-events-none" />
+
+                  {/* Carousel controls — only shown when multiple images */}
+                  {images.length > 1 && (
+                    <>
+                      {/* Prev arrow */}
+                      <button
+                        onClick={e => { e.stopPropagation(); setImgIndex(i => (i - 1 + images.length) % images.length); }}
+                        className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 flex items-center justify-center rounded-full bg-black/40 hover:bg-black/70 text-white transition-colors"
+                        aria-label="Previous image"
+                      >‹</button>
+                      {/* Next arrow */}
+                      <button
+                        onClick={e => { e.stopPropagation(); setImgIndex(i => (i + 1) % images.length); }}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 flex items-center justify-center rounded-full bg-black/40 hover:bg-black/70 text-white transition-colors"
+                        aria-label="Next image"
+                      >›</button>
+                      {/* Dot indicators */}
+                      <div className="absolute top-3 right-4 z-20 flex gap-1.5">
+                        {images.map((_, i) => (
+                          <button
+                            key={i}
+                            onClick={e => { e.stopPropagation(); setImgIndex(i); }}
+                            className={`rounded-full transition-all duration-200 ${i === imgIndex ? 'w-4 h-1.5 bg-white' : 'w-1.5 h-1.5 bg-white/40 hover:bg-white/70'}`}
+                            aria-label={`Image ${i + 1}`}
+                          />
+                        ))}
+                      </div>
+                    </>
+                  )}
+
+                  {/* Top-left Links */}
+                  <div className="absolute top-6 left-8 z-30 flex gap-6 drop-shadow-lg">
+                    {activeProject.link && (
+                      <a
+                        href={activeProject.link}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="font-mono text-[12px] tracking-widest text-white hover:text-white/80 no-underline border-b border-white/30 pb-0.5 hover:border-white transition-colors"
+                      >
+                        VISIT ↗
+                      </a>
+                    )}
+                    {activeProject.github && (
+                      <a
+                        href={activeProject.github}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="font-mono text-[12px] tracking-widest text-white hover:text-white/80 no-underline border-b border-white/30 pb-0.5 hover:border-white transition-colors"
+                      >
+                        CODE ↗
+                      </a>
+                    )}
+                  </div>
 
                   {/* Content */}
                   <div className="absolute inset-x-0 bottom-0 p-8 flex flex-col justify-end">
                     <div className="flex items-center gap-4 mb-4">
-                      <h3 className="m-0 font-bold text-white text-4xl tracking-tight">
-                        {activeProject.title}
-                      </h3>
                       {activeProject.live && (
                         <span className="font-mono text-[10px] tracking-[.14em] text-black bg-white rounded-[3px] px-2 py-0.5 mt-1">
                           LIVE
@@ -87,32 +142,9 @@ export default function Projects() {
                       {activeProject.description}
                     </p>
 
-                    <div className="flex items-center justify-between">
-                      <div className="font-mono text-[11px] tracking-widest text-white/60">
+                    <div className="flex items-center justify-end">
+                      <div className="font-mono text-[11px] tracking-widest text-white/60 text-right">
                         {activeProject.stackLine}
-                      </div>
-                      
-                      <div className="flex gap-6">
-                        {activeProject.link && (
-                          <a
-                            href={activeProject.link}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="font-mono text-[12px] tracking-widest text-white hover:text-white/80 no-underline border-b border-white/30 pb-0.5 hover:border-white transition-colors"
-                          >
-                            VISIT ↗
-                          </a>
-                        )}
-                        {activeProject.github && (
-                          <a
-                            href={activeProject.github}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="font-mono text-[12px] tracking-widest text-white/70 hover:text-white no-underline border-b border-white/30 pb-0.5 hover:border-white transition-colors"
-                          >
-                            CODE ↗
-                          </a>
-                        )}
                       </div>
                     </div>
                   </div>

@@ -62,7 +62,7 @@ export default function Creative() {
   return (
     <div className="pt-24">
       {/* ──── Hero ──── */}
-      <section className="relative w-full min-h-[70vh] flex items-center overflow-hidden border-b border-border">
+      <section className="relative w-full py-20 md:py-32 flex items-center overflow-hidden border-b border-border">
         <div className="w-full px-[clamp(20px,6vw,96px)] relative z-10">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-12">
             <div>
@@ -75,11 +75,10 @@ export default function Creative() {
 
               <Reveal delay={0.1}>
                 <h1
-                  className="m-0 font-bold text-text-bright"
+                  className="m-0 font-bold text-text-bright leading-none"
                   style={{
-                    fontSize: 'clamp(48px,8vw,120px)',
-                    letterSpacing: '-0.045em',
-                    lineHeight: 0.92,
+                    fontSize: 'clamp(40px,7vw,100px)',
+                    letterSpacing: '-0.04em',
                   }}
                 >
                   GUY WITH
@@ -87,11 +86,10 @@ export default function Creative() {
               </Reveal>
               <Reveal delay={0.15}>
                 <h1
-                  className="m-0 font-bold text-text-dim"
+                  className="m-0 font-bold text-text-dim leading-none"
                   style={{
-                    fontSize: 'clamp(48px,8vw,120px)',
-                    letterSpacing: '-0.045em',
-                    lineHeight: 0.92,
+                    fontSize: 'clamp(40px,7vw,100px)',
+                    letterSpacing: '-0.04em',
                   }}
                 >
                   BLACK 350
@@ -99,7 +97,7 @@ export default function Creative() {
               </Reveal>
 
               <Reveal delay={0.25}>
-                <p className="mt-8 text-text-muted max-w-lg" style={{ fontSize: 'clamp(16px,1.4vw,20px)', lineHeight: 1.6 }}>
+                <p className="mt-6 text-text-muted max-w-lg" style={{ fontSize: 'clamp(14px,1.2vw,18px)', lineHeight: 1.6 }}>
                   Content Creator • Automotive Enthusiast • Brand Collaborator
                 </p>
               </Reveal>
@@ -122,9 +120,9 @@ export default function Creative() {
 
       {/* ──── Stats ──── */}
       <section className="section-pad border-b border-border">
-        <Reveal className="mb-[clamp(32px,5vw,56px)]">
-          <div className="mono-label mb-4">The Numbers</div>
-          <h2 className="m-0 font-bold" style={{ fontSize: 'clamp(34px,4.5vw,64px)', lineHeight: 1 }}>
+        <Reveal className="mb-[clamp(24px,4vw,40px)]">
+          <div className="mono-label mb-3">The Numbers</div>
+          <h2 className="m-0 font-bold" style={{ fontSize: 'clamp(28px,4vw,56px)', lineHeight: 1 }}>
             Growth &amp; Impact
           </h2>
         </Reveal>
@@ -137,11 +135,11 @@ export default function Creative() {
 
       {/* ──── Featured Reels ──── */}
       <section className="section-pad border-b border-border">
-        <Reveal className="mb-[clamp(32px,5vw,56px)]">
-          <div className="mono-label mb-4">
+        <Reveal className="mb-[clamp(24px,4vw,40px)]">
+          <div className="mono-label mb-3">
             <FaPlay className="inline mr-2 text-[9px]" /> Top Performing
           </div>
-          <h2 className="m-0 font-bold" style={{ fontSize: 'clamp(34px,4.5vw,64px)', lineHeight: 1 }}>
+          <h2 className="m-0 font-bold" style={{ fontSize: 'clamp(28px,4vw,56px)', lineHeight: 1 }}>
             Featured Reels
           </h2>
         </Reveal>
@@ -156,15 +154,10 @@ export default function Creative() {
               >
                 {/* Thumbnail / Placeholder */}
                 {reel.thumbnail ? (
-                  <img src={reel.thumbnail} alt={reel.title} className="w-full h-auto object-cover opacity-60 group-hover:opacity-30 transition-opacity duration-500 block" />
+                  <img src={reel.thumbnail} alt={reel.title} className="w-full aspect-[4/5] object-cover opacity-60 group-hover:opacity-30 transition-opacity duration-500 block" />
                 ) : (
-                  <div className="w-full aspect-[4/5] bg-surface" />
-                )}
-                
-                {!reel.thumbnail && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 opacity-100 group-hover:opacity-0 transition-opacity duration-300 px-4 text-center">
-                    <FaInstagram className="text-4xl text-text-faint" />
-                    <span className="font-mono text-xs text-text-faint uppercase tracking-widest">{reel.title}</span>
+                  <div className="w-full aspect-[16/9] md:aspect-[3/2] bg-surface flex flex-col items-center justify-center gap-3 opacity-100 group-hover:opacity-10 transition-opacity duration-300 px-4 text-center">
+                    <FaInstagram className="text-3xl text-text-faint" />
                   </div>
                 )}
 

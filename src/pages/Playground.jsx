@@ -78,67 +78,74 @@ export default function Playground() {
   return (
     <div className="fixed inset-0 flex flex-col bg-bg text-text overflow-hidden font-sans">
       {/* ── top bar ── */}
-      <div className="flex-none flex items-center gap-[clamp(12px,2vw,24px)] h-[60px] px-[clamp(14px,3vw,32px)] border-b border-border">
-        <Link
-          to="/"
-          className="flex items-center gap-2 font-mono text-[11px] tracking-[.12em] text-text-dim no-underline whitespace-nowrap hover:text-text transition-colors"
-        >
-          ← SITE
-        </Link>
-        <div className="w-px h-5 bg-white/[0.12]" />
-        <div className="text-[14px] font-semibold tracking-[-0.01em] whitespace-nowrap">Playground</div>
-
-        {/* mode switcher */}
-        <div className="flex gap-0.5 bg-white/[0.05] border border-white/10 rounded-[7px] p-[3px] ml-auto">
-          {MODES.map(([id, label]) => (
-            <button
-              key={id}
-              onClick={() => selectMode(id)}
-              className="font-mono text-[10px] tracking-[.1em] uppercase border-none rounded-[5px] px-3 py-[7px] cursor-pointer transition-colors"
-              style={
-                mode === id
-                  ? { background: '#F2F2F3', color: '#0A0A0B' }
-                  : { background: 'transparent', color: '#8A8A93' }
-              }
-            >
-              {label}
-            </button>
-          ))}
+      <div className="flex-none flex flex-wrap md:flex-nowrap items-center justify-between gap-3 md:gap-[clamp(12px,2vw,24px)] min-h-[60px] py-3 px-[clamp(14px,3vw,32px)] border-b border-border">
+        
+        {/* Left: Branding */}
+        <div className="flex items-center gap-3 md:gap-[clamp(12px,2vw,24px)]">
+          <Link
+            to="/"
+            className="flex items-center gap-2 font-mono text-[11px] tracking-[.12em] text-text-dim no-underline whitespace-nowrap hover:text-text transition-colors"
+          >
+            ← SITE
+          </Link>
+          <div className="w-px h-5 bg-white/[0.12]" />
+          <div className="text-[14px] font-semibold tracking-[-0.01em] whitespace-nowrap">Playground</div>
         </div>
 
-        {/* stats */}
-        {running && (
-          <div className="font-mono text-[10px] tracking-[.1em] text-text-faint whitespace-nowrap">
-            {statsLine}
+        {/* Right: Controls */}
+        <div className="flex flex-wrap items-center justify-end gap-3 md:gap-4">
+          {/* mode switcher */}
+          <div className="flex gap-0.5 bg-white/[0.05] border border-white/10 rounded-[7px] p-[3px]">
+            {MODES.map(([id, label]) => (
+              <button
+                key={id}
+                onClick={() => selectMode(id)}
+                className="font-mono text-[10px] tracking-[.1em] uppercase border-none rounded-[5px] px-3 py-[7px] cursor-pointer transition-colors"
+                style={
+                  mode === id
+                    ? { background: '#F2F2F3', color: '#0A0A0B' }
+                    : { background: 'transparent', color: '#8A8A93' }
+                }
+              >
+                {label}
+              </button>
+            ))}
           </div>
-        )}
 
-        {/* start / stop / loading */}
-        {running && (
-          <button
-            onClick={stopCam}
-            className="flex items-center gap-2 font-mono text-[11px] tracking-[.1em] bg-transparent text-text border border-border-strong rounded-[6px] px-3.5 py-2 cursor-pointer whitespace-nowrap hover:border-white transition-colors"
-          >
-            <span className="w-[7px] h-[7px] rounded-full bg-text" style={{ animation: 'hpPulse 1.4s ease-in-out infinite' }} />
-            STOP
-          </button>
-        )}
-        {idle && (
-          <button
-            onClick={startCam}
-            className="font-mono text-[11px] tracking-[.1em] bg-text text-bg border-none rounded-[6px] px-4 py-[9px] cursor-pointer font-medium whitespace-nowrap hover:bg-white transition-colors"
-          >
-            ENABLE CAMERA
-          </button>
-        )}
-        {loading && (
-          <div
-            className="font-mono text-[11px] tracking-[.1em] text-text-dim whitespace-nowrap"
-            style={{ animation: 'hpPulse 1.2s ease-in-out infinite' }}
-          >
-            {msg}
-          </div>
-        )}
+          {/* stats - hidden on mobile */}
+          {running && (
+            <div className="hidden lg:block font-mono text-[10px] tracking-[.1em] text-text-faint whitespace-nowrap">
+              {statsLine}
+            </div>
+          )}
+
+          {/* start / stop / loading */}
+          {running && (
+            <button
+              onClick={stopCam}
+              className="flex items-center gap-2 font-mono text-[11px] tracking-[.1em] bg-transparent text-text border border-border-strong rounded-[6px] px-3.5 py-2 cursor-pointer whitespace-nowrap hover:border-white transition-colors"
+            >
+              <span className="w-[7px] h-[7px] rounded-full bg-text" style={{ animation: 'hpPulse 1.4s ease-in-out infinite' }} />
+              STOP
+            </button>
+          )}
+          {idle && (
+            <button
+              onClick={startCam}
+              className="font-mono text-[11px] tracking-[.1em] bg-text text-bg border-none rounded-[6px] px-4 py-[9px] cursor-pointer font-medium whitespace-nowrap hover:bg-white transition-colors"
+            >
+              ENABLE CAMERA
+            </button>
+          )}
+          {loading && (
+            <div
+              className="font-mono text-[11px] tracking-[.1em] text-text-dim whitespace-nowrap"
+              style={{ animation: 'hpPulse 1.2s ease-in-out infinite' }}
+            >
+              {msg}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* ── stage ── */}
@@ -160,7 +167,7 @@ export default function Playground() {
 
         {/* running gesture hint */}
         {running && (
-          <div className="absolute left-4 bottom-4 font-mono text-[10px] tracking-[.1em] text-text-faint leading-[1.9] pointer-events-none">
+          <div className="absolute left-4 bottom-4 font-mono text-[9px] md:text-[10px] tracking-[.1em] text-text-faint leading-[1.9] pointer-events-none bg-black/40 backdrop-blur-sm px-2 py-1 rounded">
             {HINTS[mode]}
           </div>
         )}

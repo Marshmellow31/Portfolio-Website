@@ -11,6 +11,7 @@ import Testimonials from '../components/Testimonials/Testimonials';
 import { items } from '../data/portfolio';
 import { fadeUp } from '../utils/animations';
 import useMediaQuery from '../utils/useMediaQuery';
+import InteractiveName from '../components/InteractiveName/InteractiveName';
 
 // Desktop-only: keeps three.js + physics (the heaviest chunk) off phones
 const Lanyard = lazy(() => import('../components/Lanyard/Lanyard'));
@@ -47,22 +48,7 @@ export default function Home({ isLoaded }) {
               </p>
             </motion.div>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 30 }}
-              animate={isLoaded ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-              transition={{ delay: 0.2, duration: 0.8 }}
-              className="font-heading text-7xl md:text-8xl lg:text-[10rem] leading-none text-white m-0 p-0"
-            >
-              HARSHIL
-            </motion.h1>
-            <motion.h1
-              initial={{ opacity: 0, y: 30 }}
-              animate={isLoaded ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-              transition={{ delay: 0.3, duration: 0.8 }}
-              className="font-heading text-7xl md:text-8xl lg:text-[10rem] leading-none text-outline m-0 p-0"
-            >
-              PATEL
-            </motion.h1>
+            <InteractiveName isLoaded={isLoaded} />
 
             <motion.p
               initial={{ opacity: 0, y: 20 }}

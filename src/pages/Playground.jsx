@@ -76,101 +76,106 @@ export default function Playground() {
     : '';
 
   return (
-    <div className="fixed inset-0 flex flex-col bg-bg text-text overflow-hidden font-sans">
-      {/* ── top bar ── */}
-      <div className="flex-none flex flex-wrap md:flex-nowrap items-center justify-between gap-3 md:gap-[clamp(12px,2vw,24px)] min-h-[60px] py-3 px-[clamp(14px,3vw,32px)] border-b border-border">
+    <div className="fixed inset-0 bg-bg text-text overflow-hidden font-sans">
+      
+      {/* ── stage (fills entirely) ── */}
+      <div ref={stageRef} className="absolute inset-0">
         
-        {/* Left: Branding */}
-        <div className="flex items-center gap-3 md:gap-[clamp(12px,2vw,24px)]">
-          <Link
-            to="/"
-            className="flex items-center gap-2 font-mono text-[11px] tracking-[.12em] text-text-dim no-underline whitespace-nowrap hover:text-text transition-colors"
-          >
-            ← SITE
-          </Link>
-          <div className="w-px h-5 bg-white/[0.12]" />
-          <div className="text-[14px] font-semibold tracking-[-0.01em] whitespace-nowrap">Playground</div>
-        </div>
-
-        {/* Right: Controls */}
-        <div className="flex flex-wrap items-center justify-end gap-3 md:gap-4">
-          {/* mode switcher */}
-          <div className="flex gap-0.5 bg-white/[0.05] border border-white/10 rounded-[7px] p-[3px]">
-            {MODES.map(([id, label]) => (
-              <button
-                key={id}
-                onClick={() => selectMode(id)}
-                className="font-mono text-[10px] tracking-[.1em] uppercase border-none rounded-[5px] px-3 py-[7px] cursor-pointer transition-colors"
-                style={
-                  mode === id
-                    ? { background: '#F2F2F3', color: '#0A0A0B' }
-                    : { background: 'transparent', color: '#8A8A93' }
-                }
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-
-          {/* stats - hidden on mobile */}
-          {running && (
-            <div className="hidden lg:block font-mono text-[10px] tracking-[.1em] text-text-faint whitespace-nowrap">
-              {statsLine}
-            </div>
-          )}
-
-          {/* start / stop / loading */}
-          {running && (
-            <button
-              onClick={stopCam}
-              className="flex items-center gap-2 font-mono text-[11px] tracking-[.1em] bg-transparent text-text border border-border-strong rounded-[6px] px-3.5 py-2 cursor-pointer whitespace-nowrap hover:border-white transition-colors"
-            >
-              <span className="w-[7px] h-[7px] rounded-full bg-text" style={{ animation: 'hpPulse 1.4s ease-in-out infinite' }} />
-              STOP
-            </button>
-          )}
-          {idle && (
-            <button
-              onClick={startCam}
-              className="font-mono text-[11px] tracking-[.1em] bg-text text-bg border-none rounded-[6px] px-4 py-[9px] cursor-pointer font-medium whitespace-nowrap hover:bg-white transition-colors"
-            >
-              ENABLE CAMERA
-            </button>
-          )}
-          {loading && (
-            <div
-              className="font-mono text-[11px] tracking-[.1em] text-text-dim whitespace-nowrap"
-              style={{ animation: 'hpPulse 1.2s ease-in-out infinite' }}
-            >
-              {msg}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* ── stage ── */}
-      <div ref={stageRef} className="relative flex-1 min-h-0">
-        {/* idle intro overlay removed per user request */}
-
         {/* error toast */}
         {error && (
           <div
-            className="absolute bottom-6 left-1/2 -translate-x-1/2 rounded-[8px] px-5 py-3 font-mono text-[12px] text-text border border-white/20"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-[12px] px-6 py-4 font-mono text-[12px] text-text border border-white/20 shadow-2xl z-50 flex flex-col items-center gap-3 text-center"
             style={{ background: '#161618' }}
           >
-            {msg} —{' '}
-            <button onClick={startCam} className="bg-none border-none text-text underline cursor-pointer p-0 font-[inherit]">
-              retry
+            <span>{msg}</span>
+            <button onClick={startCam} className="bg-white/10 border border-white/20 rounded-full px-4 py-2 text-text hover:bg-white/20 cursor-pointer font-sans text-[13px] transition-colors">
+              Retry Camera
             </button>
           </div>
         )}
 
         {/* running gesture hint */}
         {running && (
-          <div className="absolute left-4 bottom-4 font-mono text-[9px] md:text-[10px] tracking-[.1em] text-text-faint leading-[1.9] pointer-events-none bg-black/40 backdrop-blur-sm px-2 py-1 rounded">
+          <div className="absolute left-[clamp(16px,4vw,32px)] bottom-[clamp(90px,12vh,120px)] font-mono text-[9px] md:text-[10px] tracking-[.1em] text-text-dim leading-[1.9] pointer-events-none bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/5 max-w-[200px] md:max-w-none">
             {HINTS[mode]}
           </div>
         )}
+      </div>
+
+      {/* ── UI Overlay (Floating Glassmorphism) ── */}
+      <div className="absolute inset-0 pointer-events-none p-[clamp(16px,4vw,32px)] flex flex-col justify-between z-10">
+        
+        {/* Top Row: Navigation & Camera Power */}
+        <div className="flex justify-between items-start w-full gap-4">
+          
+          {/* Top Left: Site Back Button */}
+          <Link
+            to="/"
+            className="pointer-events-auto flex items-center gap-2 font-mono text-[10px] tracking-[.12em] uppercase text-text-dim hover:text-white transition-colors bg-white/5 backdrop-blur-xl border border-white/10 px-4 py-2.5 rounded-full shadow-lg"
+          >
+            ← SITE
+          </Link>
+
+          {/* Top Right: Camera Controls & Stats */}
+          <div className="flex flex-col items-end gap-2">
+            
+            <div className="pointer-events-auto">
+              {running && (
+                <button
+                  onClick={stopCam}
+                  className="flex items-center gap-2 font-mono text-[10px] tracking-[.1em] uppercase bg-white/5 text-text border border-white/10 rounded-full px-4 py-2.5 cursor-pointer whitespace-nowrap hover:bg-white/10 hover:border-white/30 backdrop-blur-xl shadow-lg transition-all"
+                >
+                  <span className="w-[6px] h-[6px] rounded-full bg-red-500" style={{ animation: 'hpPulse 1.4s ease-in-out infinite' }} />
+                  STOP
+                </button>
+              )}
+              {idle && (
+                <button
+                  onClick={startCam}
+                  className="font-mono text-[10px] tracking-[.1em] uppercase bg-white text-black border-none rounded-full px-5 py-2.5 cursor-pointer font-bold whitespace-nowrap hover:bg-white/80 shadow-[0_0_20px_rgba(255,255,255,0.2)] transition-all"
+                >
+                  ENABLE CAMERA
+                </button>
+              )}
+              {loading && (
+                <div
+                  className="font-mono text-[10px] tracking-[.1em] text-text-dim whitespace-nowrap bg-black/50 backdrop-blur-md px-4 py-2.5 rounded-full border border-white/10"
+                  style={{ animation: 'hpPulse 1.2s ease-in-out infinite' }}
+                >
+                  {msg}
+                </div>
+              )}
+            </div>
+
+            {/* Floating Stats */}
+            {running && (
+              <div className="hidden sm:block font-mono text-[9px] tracking-[.1em] text-text-faint whitespace-nowrap bg-black/40 backdrop-blur-md px-3 py-1 rounded-full border border-white/5">
+                {statsLine}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Bottom Row: iOS Camera Style Mode Switcher */}
+        <div className="flex justify-center items-end w-full pb-2 md:pb-6">
+          <div className="pointer-events-auto flex gap-1 bg-black/40 backdrop-blur-2xl border border-white/10 rounded-full p-1.5 shadow-2xl overflow-x-auto max-w-full hide-scrollbar">
+            {MODES.map(([id, label]) => (
+              <button
+                key={id}
+                onClick={() => selectMode(id)}
+                className="font-mono text-[9px] md:text-[10px] tracking-[.12em] uppercase border-none rounded-full px-4 md:px-6 py-2.5 cursor-pointer transition-all whitespace-nowrap"
+                style={
+                  mode === id
+                    ? { background: 'white', color: 'black', fontWeight: 600 }
+                    : { background: 'transparent', color: 'rgba(255,255,255,0.5)' }
+                }
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+        
       </div>
     </div>
   );

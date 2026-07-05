@@ -6,7 +6,7 @@ const workHistory = [
     company: "PickleRage",
     role: "Freelance / Contract Developer",
     location: "Remote",
-    image: "https://placehold.co/600x400/1a1a1a/ff007f?text=PICKLERAGE\\nPROJECT",
+    image: "/projects/picklerage.png",
     projects: [
       {
         title: "Court Booking App",
@@ -24,7 +24,7 @@ const workHistory = [
     company: "Bhumi Developers",
     role: "Web Development Intern",
     location: "Bharuch, Gujarat",
-    image: "https://placehold.co/600x400/1a1a1a/ff007f?text=BHUMI\\nDEVELOPERS",
+    image: "/projects/bhumi.png",
     projects: [
       {
         title: "Corporate Website",
@@ -35,6 +35,24 @@ const workHistory = [
         title: "BD Buildcon LLP",
         description: "Production-ready marketing site for a turnkey industrial EPC contractor. Filterable project gallery, employee portal, custom motion components.",
         stack: ["Next.js", "TypeScript", "Tailwind CSS", "Framer Motion", "Lenis"]
+      }
+    ]
+  },
+  {
+    company: "Mann Beauty Studio",
+    role: "Full-Stack Developer",
+    location: "Freelance",
+    image: "/projects/mannbeauty.png",
+    projects: [
+      {
+        title: "Customer Loyalty PWA",
+        description: "Developed a luxury-tier Progressive Web Application replacing paper-based loyalty cards. Implemented phone-based authentication, visual loyalty tracking, and offline caching.",
+        stack: ["React 19", "Firebase v12", "Framer Motion", "Tailwind CSS v4"]
+      },
+      {
+        title: "Admin CRM Dashboard",
+        description: "Built a secure control center for salon staff to manage clients, track loyalty milestones, and dynamically create special offers without coding.",
+        stack: ["React 19", "Firebase Auth/Firestore", "React Router v7"]
       }
     ]
   }

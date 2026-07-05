@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 150" width="320" height="150" role="img" aria-label="BD Buildcon LLP">
+  <!-- Three brand pillars -->
+  <rect x="15" y="15" width="12" height="64" rx="6" fill="#009FDF"/>
+  <rect x="33" y="15" width="12" height="64" rx="6" fill="#FDB913"/>
+  <rect x="51" y="15" width="12" height="64" rx="6" fill="#E32322"/>
+  <!-- BD -->
+  <text x="72" y="78" fill="#005579" font-family="Arial, Helvetica, sans-serif" font-size="88" font-weight="700" letter-spacing="-2">BD</text>
+  <!-- BUILDCON LLP -->
+  <text x="15" y="122" fill="#005579" font-family="Arial, Helvetica, sans-serif">
+    <tspan font-size="46" font-weight="700">BUILDCON</tspan>
+    <tspan font-size="22" font-weight="400" dx="8" dy="-2">LLP</tspan>
+  </text>
+  <!-- Subtext -->
+  <text x="15" y="142" fill="#005579" font-family="Arial, Helvetica, sans-serif" font-size="14.5" font-weight="600">(Formerly known as Bhumi Developers)</text>
+</svg>

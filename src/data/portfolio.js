@@ -1,41 +1,61 @@
 /* ─── Project items for the sphere (Interactive) ─── */
 export const items = [
   {
-    image: 'https://picsum.photos/seed/paymatrix/500/500',
+    image: '/projects/paymatrix.png',
     link: 'https://pay-matrix.vercel.app/',
     title: 'PayMatrix',
     description: 'AI-powered expense sharing'
   },
+
   {
-    image: 'https://picsum.photos/seed/jarvis/500/500',
-    link: '#projects',
-    title: 'J.A.R.V.I.S',
-    description: 'Offline voice AI assistant'
-  },
-  {
-    image: 'https://picsum.photos/seed/ascend/500/500',
+    image: '/projects/ascend.png',
     link: 'https://github.com/Marshmellow31/Ascend',
     title: 'Ascend',
     description: 'Gamified productivity PWA'
   },
   {
-    image: 'https://picsum.photos/seed/playhub/500/500',
+    image: '/projects/playhub.png',
     link: '#projects',
     title: 'PlayHub',
     description: 'Court & venue booking'
   },
+
   {
-    image: 'https://picsum.photos/seed/titanic/500/500',
-    link: '#projects',
-    title: 'Titanic ML',
-    description: 'ML prediction in the browser'
-  },
-  {
-    image: 'https://picsum.photos/seed/picklerage/500/500',
+    image: '/projects/picklerage.png',
     link: 'https://github.com/Marshmellow31/PickleRage-website',
     title: 'PickleRage',
     description: 'Sports venue website'
   },
+  {
+    image: '/projects/bhumi.png',
+    link: '#projects',
+    title: 'Bhumi Developers',
+    description: 'Corporate real estate site'
+  },
+  {
+    image: '/projects/mannbeauty.png',
+    link: 'https://github.com/Marshmellow31/Mann-beauty-parlour',
+    title: 'Mann Beauty Studio',
+    description: 'Luxury salon loyalty PWA'
+  },
+  {
+    image: '/projects/bdbuildcon.png',
+    link: '#projects',
+    title: 'BD Buildcon',
+    description: 'Industrial EPC contractor site'
+  },
+  {
+    image: '/projects/attendance.png',
+    link: '#projects',
+    title: 'Attendance Manager',
+    description: 'Secret-key protected dashboard'
+  },
+  {
+    image: '/projects/navigator.png',
+    link: '#projects',
+    title: 'Navigator+',
+    description: 'Native Android GPS dashboard'
+  }
 ];
 
 /* ─── Skill categories ─── */
@@ -56,7 +76,7 @@ export const projects = [
     stack: ['React 19', 'Vite', 'Firebase', 'Tailwind CSS', 'Gemini API'],
     link: 'https://pay-matrix.vercel.app/',
     github: 'https://github.com/Marshmellow31/PayMatrix',
-    image: 'https://picsum.photos/seed/paymatrix/800/600',
+    image: '/projects/paymatrix.png',
   },
   {
     title: 'Ascend',
@@ -64,7 +84,7 @@ export const projects = [
     stack: ['Svelte 5', 'Vite', 'Firebase', 'PWA'],
     link: null,
     github: 'https://github.com/Marshmellow31/Ascend',
-    image: 'https://picsum.photos/seed/ascend/800/600',
+    image: '/projects/ascend.png',
   },
   {
     title: 'PlayHub',
@@ -72,7 +92,7 @@ export const projects = [
     stack: ['React 19', 'TypeScript', 'Firebase', 'Capacitor', 'Razorpay'],
     link: null,
     github: null,
-    image: 'https://picsum.photos/seed/playhub/800/600',
+    image: '/projects/playhub.png',
   },
   {
     title: 'PickleRage',
@@ -80,7 +100,7 @@ export const projects = [
     stack: ['React 19', 'React Router v7', 'Framer Motion', 'Vite'],
     link: null,
     github: 'https://github.com/Marshmellow31/PickleRage-website',
-    image: 'https://picsum.photos/seed/picklerage/800/600',
+    image: '/projects/picklerage.png',
   },
   {
     title: 'Bhumi Developers',
@@ -88,7 +108,15 @@ export const projects = [
     stack: ['Next.js', 'React 19', 'Tailwind CSS', 'Framer Motion'],
     link: null,
     github: null,
-    image: 'https://picsum.photos/seed/bhumidev/800/600',
+    image: '/projects/bhumi.png',
+  },
+  {
+    title: 'Mann Beauty Studio',
+    description: 'Luxury-tier PWA replacing paper loyalty cards. Features phone auth, visual loyalty tracking, and a comprehensive admin CRM dashboard.',
+    stack: ['React 19', 'Tailwind v4', 'Framer Motion', 'Firebase v12'],
+    link: null,
+    github: 'https://github.com/Marshmellow31/Mann-beauty-parlour',
+    image: '/projects/mannbeauty.png',
   },
   {
     title: 'BD Buildcon',
@@ -96,6 +124,22 @@ export const projects = [
     stack: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Framer Motion', 'Lenis'],
     link: null,
     github: null,
-    image: 'https://picsum.photos/seed/bdbuildcon/800/600',
+    image: '/projects/bdbuildcon.png',
+  },
+  {
+    title: 'Attendance Manager',
+    description: 'Premium custom-built attendance manager with real-time sync, interactive grid, and CSV exports for payroll processing.',
+    stack: ['React 19', 'Vite', 'Tailwind v4', 'Zustand', 'Firebase'],
+    link: null,
+    github: null,
+    image: '/projects/attendance.png',
+  },
+  {
+    title: 'Navigator+',
+    description: 'Native Android ride-tracking dashboard. Features stable GPS live speed, average speed, and distance tracking running continuously under background restrictions.',
+    stack: ['Kotlin', 'Android SDK', 'Jetpack Compose'],
+    link: null,
+    github: null,
+    image: '/projects/navigator.png',
   },
 ];

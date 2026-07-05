@@ -19,42 +19,42 @@ export default function InteractiveName({ isLoaded }) {
   const fgY = useTransform(smoothY, [-1, 1], [-25, 25]);
 
   useEffect(() => {
-    // 1. Desktop Mouse Movement Parallax
-    const handleMouseMove = (e) => {
-      // Normalize position to [-1, 1] from center of screen
-      const x = (e.clientX / window.innerWidth) * 2 - 1;
-      const y = (e.clientY / window.innerHeight) * 2 - 1;
-      mouseX.set(x);
-      mouseY.set(y);
+    // 1. Mobile Touch Drag Parallax (Guaranteed to work everywhere without permissions)
+    const handleTouchMove = (e) => {
+      if (e.touches.length > 0) {
+        const touch = e.touches[0];
+        // Normalize touch position to [-1, 1] relative to the screen
+        const x = (touch.clientX / window.innerWidth) * 2 - 1;
+        const y = (touch.clientY / window.innerHeight) * 2 - 1;
+        mouseX.set(x);
+        mouseY.set(y);
+      }
     };
 
-    // 2. Mobile Device Gyroscope Parallax
+    // 2. Mobile Device Gyroscope Parallax (Enhancement, may be blocked on iOS)
     const handleDeviceOrientation = (e) => {
-      // gamma is left/right tilt (usually -90 to 90)
-      // beta is front/back tilt (usually -180 to 180)
+      if (!e.gamma && !e.beta) return; // Ignore if no data (e.g. permission blocked)
       
-      // Normalize values. We cap them at 45 degrees for maximum effect so users
-      // don't have to break their wrists to see the parallax.
       let x = e.gamma ? e.gamma / 45 : 0;
-      let y = e.beta ? (e.beta - 45) / 45 : 0; // Assume 45deg tilt is the default holding position
+      let y = e.beta ? (e.beta - 45) / 45 : 0;
 
-      // Clamp values strictly to [-1, 1]
       x = Math.max(-1, Math.min(1, x));
       y = Math.max(-1, Math.min(1, y));
 
+      // Only apply gyroscope if they aren't actively touching the screen
       mouseX.set(x);
       mouseY.set(y);
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
     
-    // Check if device orientation is available (mobile)
+    // Check if device orientation is available
     if (typeof window.DeviceOrientationEvent !== 'undefined') {
       window.addEventListener('deviceorientation', handleDeviceOrientation);
     }
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('touchmove', handleTouchMove);
       if (typeof window.DeviceOrientationEvent !== 'undefined') {
         window.removeEventListener('deviceorientation', handleDeviceOrientation);
       }

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 420">
+  <!-- Dark background -->
+  <rect width="420" height="420" rx="30" fill="#262626"/>
+  <!-- Inner white border -->
+  <rect x="16" y="16" width="388" height="388" rx="20" fill="none" stroke="white" stroke-width="4"/>
+  <!-- CENTRAL -->
+  <text
+    x="210" y="188"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    font-family="'Arial Black', Arial, sans-serif"
+    font-weight="900"
+    font-size="82"
+    fill="white"
+    textLength="358"
+    lengthAdjust="spacingAndGlyphs"
+  >CENTRAL</text>
+  <!-- SQUARE -->
+  <text
+    x="210" y="292"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    font-family="'Arial Black', Arial, sans-serif"
+    font-weight="900"
+    font-size="82"
+    fill="white"
+    textLength="358"
+    lengthAdjust="spacingAndGlyphs"
+  >SQUARE</text>
+  <!-- Bottom pin connector (matches original logo mark) -->
+  <rect x="207" y="360" width="6" height="26" fill="white"/>
+  <rect x="178" y="380" width="64" height="5" fill="white"/>
+</svg>

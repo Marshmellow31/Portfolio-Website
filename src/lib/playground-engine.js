@@ -211,21 +211,29 @@
     /* ─────────── scenes ─────────── */
     _seedObjects() {
       this._objects = [];
-      const n = 6;
-      for (let i = 0; i < n; i++) this._spawnObject();
+      this._gameState = { score: 0, lives: 3, level: 1, lastSpawn: performance.now(), gameOver: false };
+      for (let i = 0; i < 3; i++) this._spawnObject();
     }
     _spawnObject(x, y) {
-      if (this._objects.length >= 12) return;
-      const make = SHAPES[Math.floor(Math.random() * SHAPES.length)]();
+      if (this._objects.length >= 15 || (this._gameState && this._gameState.gameOver)) return;
+      const types = [
+        { make: tetra, health: 1, speed: 1.8, type: 'tetra' }, // fast
+        { make: cube, health: 1, speed: 1.2, type: 'cube' },
+        { make: octa, health: 2, speed: 0.9, type: 'octa' },
+        { make: icosa, health: 3, speed: 0.5, type: 'icosa' }  // tank
+      ];
+      const t = types[Math.floor(Math.random() * types.length)];
+      
+      const spd = t.speed * (1 + (this._gameState ? this._gameState.level * 0.1 : 0));
       this._objects.push({
-        shape: make,
+        shape: t.make(), type: t.type, maxHealth: t.health, health: t.health, bounces: 6,
         x: x != null ? x : 120 + Math.random() * Math.max(200, (this._W || 800) - 240),
         y: y != null ? y : 120 + Math.random() * Math.max(160, (this._H || 600) - 240),
         z: (Math.random() - 0.5) * 240,
-        vx: (Math.random() - 0.5) * 1.2, vy: (Math.random() - 0.5) * 1.2, vz: (Math.random() - 0.5) * 0.8,
+        vx: (Math.random() - 0.5) * 2 * spd, vy: (Math.random() - 0.5) * 2 * spd, vz: (Math.random() - 0.5) * spd,
         rx: Math.random() * 6.28, ry: Math.random() * 6.28, rz: 0,
-        wx: (Math.random() - 0.5) * 0.02, wy: (Math.random() - 0.5) * 0.02, wz: (Math.random() - 0.5) * 0.01,
-        r: 42 + Math.random() * 34, scale: 0.01, dying: 0, held: null,
+        wx: (Math.random() - 0.5) * 0.04, wy: (Math.random() - 0.5) * 0.04, wz: (Math.random() - 0.5) * 0.02,
+        r: 32 + Math.random() * 24 + (t.health * 8), scale: 0.01, dying: 0, held: null,
       });
     }
     _seedParticles() {
@@ -262,6 +270,16 @@
     _updateObjects() {
       const W = this._W, H = this._H;
       const hands = this._hands;
+      const state = this._gameState || { score: 0, lives: 3, level: 1, lastSpawn: performance.now(), gameOver: false };
+      this._gameState = state;
+      
+      const now = performance.now();
+      
+      // Auto-spawner based on level
+      if (!state.gameOver && now - state.lastSpawn > Math.max(800, 3000 - state.level * 200)) {
+        this._spawnObject();
+        state.lastSpawn = now;
+      }
 
       // grabbing
       for (let hi = 0; hi < hands.length; hi++) {
@@ -274,17 +292,18 @@
             if (d < Math.max(110, o.r * 1.6) && d < bd) { bd = d; best = o; }
           }
           if (best) best.held = hi;
-          else this._spawnObject(h.pinchPt.x, h.pinchPt.y);   // pinch empty space → spawn
         }
       }
 
+      let activeObjects = [];
       for (const o of this._objects) {
         if (o.scale < 1 && !o.dying) o.scale = Math.min(1, o.scale + 0.06);
         if (o.dying) {
           o.dying++;
           o.scale *= 0.82;
           o.rx += 0.3; o.ry += 0.35;
-          if (o.dying > 18) { Object.assign(o, { dying: 0, scale: 0.01, x: 80 + Math.random() * (W - 160), y: 80 + Math.random() * (H - 160), z: (Math.random() - .5) * 240, vx: 0, vy: 0, held: null }); }
+          if (o.dying > 18) continue; // remove object
+          activeObjects.push(o);
           continue;
         }
 
@@ -301,55 +320,127 @@
             o.held = null;
           }
           // fist: attract, and crush when close
+          let crushing = false;
           for (const h of hands) {
-            if (!h.fist) continue;
+            if (!h.fist || state.gameOver) continue;
             const dx = h.pinchPt.x - o.x, dy = h.pinchPt.y - o.y;
             const d = Math.hypot(dx, dy) || 1;
-            if (d < Math.max(90, o.r * 1.3)) { o.dying = 1; this._crushBurst(o.x, o.y); }
-            else if (d < 420) { o.vx += (dx / d) * 0.5; o.vy += (dy / d) * 0.5; }
+            if (d < Math.max(90, o.r * 1.3)) { 
+              crushing = true;
+              // Add debounce so it doesn't instantly die in one frame if it has health
+              if (!o.lastCrush || now - o.lastCrush > 300) {
+                o.health--;
+                o.lastCrush = now;
+                o.scale *= 0.7; // Visual flinch
+                this._crushBurst(o.x, o.y, 'rgba(255,255,255,0.8)');
+                
+                if (o.health <= 0) {
+                  o.dying = 1; 
+                  state.score += 100 * o.maxHealth;
+                  if (state.score > state.level * 1000) state.level++;
+                }
+              }
+            }
+            else if (d < 420) { o.vx += (dx / d) * 0.6; o.vy += (dy / d) * 0.6; }
           }
+          
           o.x += o.vx; o.y += o.vy; o.z += o.vz;
           o.vx *= 0.985; o.vy *= 0.985; o.vz *= 0.99;
-          // walls
-          if (o.x < o.r) { o.x = o.r; o.vx = Math.abs(o.vx) * 0.85; }
-          if (o.x > W - o.r) { o.x = W - o.r; o.vx = -Math.abs(o.vx) * 0.85; }
-          if (o.y < o.r) { o.y = o.r; o.vy = Math.abs(o.vy) * 0.85; }
-          if (o.y > H - o.r) { o.y = H - o.r; o.vy = -Math.abs(o.vy) * 0.85; }
-          if (o.z < -260 || o.z > 260) o.vz *= -1;
+          
+          // walls / bouncing logic
+          let bounced = false;
+          if (o.x < o.r) { o.x = o.r; o.vx = Math.abs(o.vx) * 0.85; bounced = true; }
+          if (o.x > W - o.r) { o.x = W - o.r; o.vx = -Math.abs(o.vx) * 0.85; bounced = true; }
+          if (o.y < o.r) { o.y = o.r; o.vy = Math.abs(o.vy) * 0.85; bounced = true; }
+          if (o.y > H - o.r) { o.y = H - o.r; o.vy = -Math.abs(o.vy) * 0.85; bounced = true; }
+          if (o.z < -260 || o.z > 260) { o.vz *= -1; bounced = true; }
+          
+          if (bounced && !state.gameOver) {
+            o.bounces--;
+            if (o.bounces <= 0) {
+              // Failed to catch!
+              o.dying = 1;
+              this._crushBurst(o.x, o.y, 'rgba(255,50,50,0.9)'); // Red burst
+              state.lives--;
+              if (state.lives <= 0) state.gameOver = true;
+            }
+          }
         }
         o.rx += o.wx + 0.003; o.ry += o.wy + 0.004; o.rz += o.wz;
         o.wx *= 0.97; o.wy *= 0.97;
+        activeObjects.push(o);
       }
+      this._objects = activeObjects; // remove fully dead
 
       // bursts
       this._burst = this._burst.filter(p => (p.life -= 1) > 0);
       for (const p of this._burst) { p.x += p.vx; p.y += p.vy; p.vx *= 0.94; p.vy *= 0.94; }
     }
-    _crushBurst(x, y) {
+    _crushBurst(x, y, colorStr = 'rgba(255,255,255,0.9)') {
       for (let i = 0; i < 26; i++) {
         const a = Math.random() * 6.28, sp = 2 + Math.random() * 7;
-        this._burst.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 22 + Math.random() * 16 });
+        this._burst.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 22 + Math.random() * 16, colorStr });
       }
     }
 
     _drawObjects(ctx) {
       this._updateObjects();
+      const state = this._gameState;
+      
+      // Draw Game UI
+      if (state) {
+        ctx.fillStyle = 'white';
+        ctx.font = 'bold 24px JetBrains Mono, monospace';
+        ctx.textAlign = 'center';
+        if (state.gameOver) {
+          ctx.fillText('GAME OVER', this._W / 2, 80);
+          ctx.font = '16px JetBrains Mono, monospace';
+          ctx.fillText(`SCORE: ${state.score}  —  PINCH to Restart`, this._W / 2, 110);
+          
+          // Restart logic
+          for (const h of this._hands) {
+            if (h.pinchStart) {
+              this._seedObjects();
+              return;
+            }
+          }
+        } else {
+          ctx.textAlign = 'left';
+          ctx.font = 'bold 16px JetBrains Mono, monospace';
+          ctx.fillText(`SCORE: ${state.score.toString().padStart(6, '0')}`, 32, 80);
+          ctx.fillText(`LIVES: ${'♥'.repeat(state.lives)}`, 32, 104);
+          ctx.fillText(`LEVEL: ${state.level}`, 32, 128);
+        }
+      }
+
       for (const o of this._objects) {
         if (o.scale <= 0.02 && o.dying) continue;
         const pts = o.shape.v.map(v => this._project(o, v[0], v[1], v[2]));
         const heldNow = o.held != null && this._hands[o.held] && this._hands[o.held].pinch;
-        ctx.strokeStyle = heldNow ? 'rgba(255,255,255,.95)' : 'rgba(255,255,255,.55)';
-        ctx.lineWidth = heldNow ? 1.6 : 1;
+        
+        // Color based on health & bounce warnings
+        let r = 255, g = 255, b = 255;
+        if (o.bounces <= 2 && !heldNow) {
+           r = 255; g = 100; b = 100; // Danger red
+        } else if (o.health < o.maxHealth) {
+           g = Math.max(100, 255 - (o.maxHealth - o.health) * 80); // Gets orange/red as damaged
+           b = g;
+        }
+
+        ctx.strokeStyle = heldNow ? `rgba(${r},${g},${b},0.95)` : `rgba(${r},${g},${b},0.55)`;
+        ctx.lineWidth = heldNow ? 2.5 : 1.5;
         ctx.beginPath();
         for (const [a, b] of o.shape.e) { ctx.moveTo(pts[a].x, pts[a].y); ctx.lineTo(pts[b].x, pts[b].y); }
         ctx.stroke();
+        
         // depth dot
-        ctx.fillStyle = 'rgba(255,255,255,.25)';
+        ctx.fillStyle = `rgba(${r},${g},${b},0.35)`;
         for (const p of pts) { ctx.fillRect(p.x - 1, p.y - 1, 2, 2); }
       }
-      ctx.fillStyle = 'rgba(255,255,255,.9)';
+      
       for (const p of this._burst) {
         ctx.globalAlpha = Math.min(1, p.life / 20);
+        ctx.fillStyle = p.colorStr || 'rgba(255,255,255,0.9)';
         ctx.fillRect(p.x - 1.2, p.y - 1.2, 2.4, 2.4);
       }
       ctx.globalAlpha = 1;

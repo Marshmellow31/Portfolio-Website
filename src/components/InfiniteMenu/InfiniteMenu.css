@@ -96,7 +96,7 @@
 }
 
 .action-button.active {
-  bottom: 3.8em;
+  bottom: 1.5em;
   transform: translateX(-50%) scale(1);
   opacity: 1;
   pointer-events: auto;

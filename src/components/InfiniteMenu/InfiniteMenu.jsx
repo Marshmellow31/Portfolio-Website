@@ -377,7 +377,8 @@ class ArcballControl {
       }
     });
 
-    canvas.style.touchAction = 'none';
+    // Allow vertical page scrolling on touch devices so users don't get trapped
+    canvas.style.touchAction = 'pan-y';
   }
 
   update(deltaTime, targetFrameDuration = 16) {

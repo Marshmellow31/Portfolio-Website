@@ -2,6 +2,7 @@ import { useState, useEffect, lazy, Suspense } from 'react';
 import { Routes, Route, NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiMenu, FiX, FiDownload, FiVideo } from 'react-icons/fi';
+import { useLenis } from 'lenis/react';
 import CustomCursor from './components/CustomCursor/CustomCursor';
 import Preloader from './components/Preloader/Preloader';
 import Skeleton from './components/Skeleton/Skeleton';
@@ -89,11 +90,16 @@ export default function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Scroll to top on route change
+  // Scroll to top on route change (must use Lenis API, not window.scrollTo)
+  const lenis = useLenis();
   useEffect(() => {
-    window.scrollTo(0, 0);
+    if (lenis) {
+      lenis.scrollTo(0, { immediate: true });
+    } else {
+      window.scrollTo(0, 0);
+    }
     setIsMenuOpen(false);
-  }, [location.pathname]);
+  }, [location.pathname, lenis]);
 
   // Lock body scroll when menu is open
   useEffect(() => {
@@ -113,9 +119,9 @@ export default function App() {
       {/* ──── Navigation ──── */}
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'backdrop-blur-xl bg-bg/80' : ''}`}>
         <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 h-20 flex items-center justify-between">
-          <NavLink to="/" className="font-heading text-xl md:text-2xl font-bold tracking-widest text-white transition-colors duration-300 flex items-center gap-1 group">
-            <span>PORT</span>
-            <span className="text-outline group-hover:text-white transition-colors duration-300">FOLIO</span>
+          <NavLink to="/" className="font-heading text-xl md:text-2xl font-bold tracking-widest text-white transition-colors duration-300 flex items-center gap-0 group">
+            <span>HARSH</span>
+            <span className="text-outline group-hover:text-white transition-colors duration-300">IL</span>
             <span className="text-accent group-hover:translate-x-1 transition-transform duration-300 inline-block">.</span>
           </NavLink>
 
@@ -158,14 +164,6 @@ export default function App() {
             >
               <FiVideo className="text-sm" />
             </button>
-            {/* Availability Indicator */}
-            <div className="flex items-center gap-2 border border-card-border px-4 py-1.5 rounded-full bg-card/50">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
-              </span>
-              <span className="text-xs font-mono tracking-widest uppercase">Available for Work</span>
-            </div>
           </div>
 
           {/* Mobile: Handsfree Toggle + Hamburger */}
@@ -236,20 +234,6 @@ export default function App() {
               <FiDownload />
               Download Resume
             </motion.a>
-
-            {/* Mobile Availability Badge */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5, duration: 0.4 }}
-              className="flex items-center gap-2 border border-card-border px-4 py-1.5 rounded-full bg-card/50 mt-2"
-            >
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
-              </span>
-              <span className="text-xs font-mono tracking-widest uppercase">Available for Work</span>
-            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

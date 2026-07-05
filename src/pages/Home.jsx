@@ -21,7 +21,7 @@ export default function Home({ isLoaded }) {
   return (
     <div className="pt-20">
       {/* ──── Hero ──── */}
-      <section className="relative w-full min-h-[calc(100vh-80px)] pb-12 flex items-center overflow-hidden border-b border-card-border">
+      <section className="relative w-full min-h-[calc(100vh-80px)] pb-12 flex items-start md:items-center overflow-hidden border-b border-card-border">
         {/* Lanyard Graphic - Right Side Layer (desktop only: on mobile it
             covers the hero text and costs a WebGL context + physics sim) */}
         {isDesktop && (
@@ -94,14 +94,27 @@ export default function Home({ isLoaded }) {
           initial={{ opacity: 0 }}
           animate={isLoaded ? { opacity: 1 } : { opacity: 0 }}
           transition={{ delay: 1, duration: 1 }}
-          className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 pointer-events-none"
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 pointer-events-none flex flex-col items-center gap-2"
         >
-          <div className="w-5 h-8 rounded-full border-2 border-white/20 flex justify-center pt-1.5">
+          {/* Desktop Mouse Icon */}
+          <div className="hidden md:flex w-5 h-8 rounded-full border-2 border-white/20 justify-center pt-1.5">
             <motion.div
               animate={{ y: [0, 8, 0] }}
               transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
               className="w-1 h-1.5 rounded-full bg-accent"
             />
+          </div>
+
+          {/* Mobile Text Indicator */}
+          <div className="md:hidden flex flex-col items-center">
+            <span className="font-mono text-[10px] tracking-widest text-text-muted uppercase">Scroll Down</span>
+            <motion.div
+              animate={{ y: [0, 5, 0] }}
+              transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
+              className="text-accent text-[10px] mt-1"
+            >
+              ▼
+            </motion.div>
           </div>
         </motion.div>
       </section>
@@ -140,24 +153,16 @@ export default function Home({ isLoaded }) {
       </Section>
 
       {/* ──── Projects Sphere ──── */}
-      <section id="interactive" className="relative w-full h-[200vh] bg-black border-y border-card-border">
-        {/* Sticky container that locks to the screen */}
-        <div className="sticky top-0 left-0 w-full h-screen overflow-hidden flex flex-col justify-between">
-          {/* Infinite Menu 3D Background */}
-          <div className="absolute inset-0 z-0 h-full w-full">
-            <InfiniteMenu items={items} scale={1.5} />
-          </div>
-
-          {/* Gradients to blend it into the page seamlessly without obscuring the center */}
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-bg to-transparent z-10" />
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-bg to-transparent z-10" />
-
-          <div className="relative z-20 px-6 md:px-12 lg:px-24 max-w-7xl mx-auto w-full pt-24 pointer-events-none">
+      <section id="interactive" className="relative w-full h-[50vh] max-h-[50vh] md:max-h-none md:h-[200vh] bg-black border-y border-card-border overflow-hidden md:overflow-visible">
+        {/* Sticky container — constrained on mobile, sticky full-screen on desktop */}
+        <div className="md:sticky top-0 left-0 w-full h-[50vh] md:h-screen overflow-hidden flex flex-col">
+          {/* Title */}
+          <div className="relative z-20 px-6 md:px-12 lg:px-24 max-w-7xl mx-auto w-full pt-4 md:pt-24 pointer-events-none shrink-0">
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-accent font-mono text-sm tracking-[0.2em] uppercase mb-2"
+              className="text-accent font-mono text-xs md:text-sm tracking-[0.2em] uppercase mb-1 md:mb-2"
             >
               02 — Interactive Projects
             </motion.p>
@@ -165,14 +170,26 @@ export default function Home({ isLoaded }) {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="font-heading text-4xl md:text-5xl font-bold mb-8"
+              className="font-heading text-2xl md:text-5xl font-semibold md:font-bold"
             >
               Explore My Work
             </motion.h2>
           </div>
 
-          <div className="relative z-20 w-full flex items-end justify-center pb-12 pointer-events-none mt-auto">
-            <p className="text-white font-mono text-xs tracking-widest uppercase opacity-70 bg-black/50 px-4 py-2 rounded-full border border-card-border">
+          {/* 3D Canvas — square on mobile, full on desktop */}
+          <div className="relative flex-1 min-h-0 w-full">
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-16 md:h-48 bg-gradient-to-b from-black to-transparent z-10" />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 md:h-48 bg-gradient-to-t from-black to-transparent z-10" />
+            <div className="h-full w-full flex items-center justify-center">
+              <div className="aspect-square h-full md:aspect-auto md:w-full md:h-full">
+                <InfiniteMenu items={items} scale={1.5} />
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom label */}
+          <div className="relative z-20 w-full flex justify-center pb-2 md:pb-12 pointer-events-none shrink-0">
+            <p className="text-white font-mono text-[10px] md:text-xs tracking-widest uppercase opacity-70 bg-black/50 px-3 py-1 md:px-4 md:py-2 rounded-full border border-card-border">
               Drag to Rotate • Click to Visit
             </p>
           </div>

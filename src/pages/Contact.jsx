@@ -63,8 +63,8 @@ export default function Contact() {
 
           </div>
 
-          <motion.div variants={fadeUp} className="lg:col-span-4 lg:col-start-9 relative w-full flex flex-col items-center justify-center overflow-visible mt-10 lg:mt-0 lg:translate-x-16">
-            <div className="flex items-center justify-center mb-10">
+          <motion.div variants={fadeUp} className="lg:col-span-4 lg:col-start-9 relative w-full flex flex-col items-center justify-center overflow-visible mt-16 lg:mt-0 lg:translate-x-16">
+            <div className="flex items-center justify-center mb-4 md:mb-10 scale-[0.65] md:scale-100 origin-center">
               <Folder 
                 color="#ff007f"
                 size={2} 
@@ -72,7 +72,7 @@ export default function Contact() {
                 items={folderItems}
               />
             </div>
-            <p className="font-mono text-xs text-text-muted uppercase tracking-[0.2em] text-center mt-8">Click to interact.</p>
+            <p className="font-mono text-xs text-text-muted uppercase tracking-[0.2em] text-center mt-4 md:mt-8">Click to interact.</p>
           </motion.div>
         </div>
       </Section>

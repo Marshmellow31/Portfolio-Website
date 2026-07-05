@@ -230,10 +230,12 @@
     }
     _seedParticles() {
       this._particles = [];
-      for (let i = 0; i < 420; i++) {
+      for (let i = 0; i < 700; i++) {
         this._particles.push({
           x: Math.random() * (this._W || 800), y: Math.random() * (this._H || 600),
           vx: (Math.random() - 0.5) * .4, vy: (Math.random() - 0.5) * .4,
+          hue: Math.random() * 360,
+          size: 0.8 + Math.random() * 2
         });
       }
     }
@@ -356,6 +358,7 @@
     _drawParticles(ctx) {
       const W = this._W, H = this._H;
       const tips = [];
+      const time = performance.now() * 0.001;
       for (const h of this._hands) {
         for (const t of [4, 8, 12, 16, 20]) tips.push({ p: h.lm[t], pinch: h.pinch, fist: h.fist, c: h.pinchPt });
       }
@@ -365,25 +368,36 @@
           const dx = cx - pt.x, dy = cy - pt.y;
           const d2 = dx * dx + dy * dy;
           const d = Math.sqrt(d2) || 1;
-          if (t.pinch) {           // pinch = repulse burst
-            if (d < 260) { pt.vx -= (dx / d) * 900 / d2 * 60; pt.vy -= (dy / d) * 900 / d2 * 60; }
-          } else if (t.fist) {     // fist = vortex
-            if (d < 340) {
-              pt.vx += (-dy / d) * 0.9 + (dx / d) * 0.12;
-              pt.vy += (dx / d) * 0.9 + (dy / d) * 0.12;
+          if (t.pinch) {           // pinch = supernova shockwave
+            if (d < 400) { pt.vx -= (dx / d) * 1800 / d2 * 150; pt.vy -= (dy / d) * 1800 / d2 * 150; }
+          } else if (t.fist) {     // fist = black hole vortex
+            if (d < 500) {
+              const pull = 2.2;
+              const spin = 4.0;
+              pt.vx += (dx / d) * pull + (-dy / d) * spin;
+              pt.vy += (dy / d) * pull + (dx / d) * spin;
             }
-          } else if (d < 220) {    // open hand = gentle attract
-            pt.vx += (dx / d) * 0.22; pt.vy += (dy / d) * 0.22;
+          } else if (d < 350) {    // open hand = swarm flocking
+            const noise = Math.sin(pt.x * 0.05 + time * 3) * 1.5;
+            pt.vx += (dx / d) * 0.4 + noise; 
+            pt.vy += (dy / d) * 0.4 + Math.cos(pt.y * 0.05 + time * 3) * 1.5;
           }
         }
-        pt.vx *= 0.955; pt.vy *= 0.955;
+        pt.vx *= 0.94; pt.vy *= 0.94; // friction
         pt.x += pt.vx; pt.y += pt.vy;
+        
+        // wrap edges
         if (pt.x < 0) pt.x += W; if (pt.x > W) pt.x -= W;
         if (pt.y < 0) pt.y += H; if (pt.y > H) pt.y -= H;
-        const sp = Math.min(1, Math.hypot(pt.vx, pt.vy) / 6);
-        ctx.fillStyle = `rgba(255,255,255,${0.18 + sp * 0.72})`;
-        const s = 1 + sp * 1.6;
-        ctx.fillRect(pt.x - s / 2 - this._parallax.x * .3, pt.y - s / 2 - this._parallax.y * .3, s, s);
+        
+        const sp = Math.hypot(pt.vx, pt.vy);
+        const curHue = (pt.hue + sp * 12) % 360;
+        ctx.fillStyle = `hsla(${curHue}, 100%, ${60 + Math.min(sp * 2, 40)}%, ${0.2 + Math.min(sp / 8, 0.8)})`;
+        
+        const s = pt.size + sp * 0.25;
+        ctx.beginPath();
+        ctx.arc(pt.x - this._parallax.x * .3, pt.y - this._parallax.y * .3, s, 0, 6.28);
+        ctx.fill();
       }
     }
 
@@ -517,8 +531,14 @@
         this._raf = requestAnimationFrame(loop);
         if (this._running) this._track(now);
         const ctx = this._ctx;
-        ctx.clearRect(0, 0, this._W, this._H);
-        this._drawGrid(ctx);
+        if (this._mode === 'particles') {
+          // Trail effect: fade background instead of clear
+          ctx.fillStyle = 'rgba(10, 10, 11, 0.25)';
+          ctx.fillRect(0, 0, this._W, this._H);
+        } else {
+          ctx.clearRect(0, 0, this._W, this._H);
+          this._drawGrid(ctx);
+        }
         if (this._mode === 'objects') this._drawObjects(ctx);
         else if (this._mode === 'particles') this._drawParticles(ctx);
         else this._drawAvatar(ctx);

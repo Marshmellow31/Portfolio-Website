@@ -21,12 +21,12 @@ const ProjectCard = ({ project, i, fadeUp }) => {
       {/* Image Side */}
       <div className="w-full lg:w-1/2 relative group">
         <div className="absolute inset-0 bg-accent/20 translate-x-4 translate-y-4 group-hover:translate-x-2 group-hover:translate-y-2 transition-transform duration-500" />
-        <div className="relative aspect-[4/3] w-full bg-surface border border-card-border overflow-hidden">
+        <div className="relative w-full bg-surface border border-card-border overflow-hidden flex items-center justify-center p-8 md:p-12 lg:p-16">
           <motion.img 
             src={project.image} 
             alt={project.title}
-            style={{ y, scale: 1.4, willChange: "transform" }}
-            className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500 mix-blend-luminosity group-hover:mix-blend-normal origin-center"
+            style={{ y, willChange: "transform" }}
+            className="max-w-full h-auto max-h-[500px] object-contain opacity-80 group-hover:opacity-100 transition-opacity duration-500 mix-blend-luminosity group-hover:mix-blend-normal origin-center"
           />
         </div>
       </div>

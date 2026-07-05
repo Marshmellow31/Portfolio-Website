@@ -10,9 +10,10 @@ export default function Section({ children, className = '', id }) {
       id={id}
       initial="hidden"
       animate={isInView ? 'visible' : 'hidden'}
-      className={`relative px-6 md:px-12 lg:px-24 py-24 max-w-7xl mx-auto ${className}`}
+      className={`relative px-6 md:px-12 lg:px-24 py-24 w-full ${className}`}
     >
       {children}
     </motion.section>
   );
 }
+

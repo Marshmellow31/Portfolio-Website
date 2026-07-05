@@ -36,7 +36,7 @@ const marqueeData = [
 export default function SkillsMarquee() {
   return (
     <section id="skills" className="w-full relative overflow-hidden pt-12 pb-4">
-      <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 mb-6 relative z-20 pointer-events-none">
+      <div className="w-full px-6 md:px-12 lg:px-24 mb-6 relative z-20 pointer-events-none">
         <motion.p 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -59,3 +59,4 @@ export default function SkillsMarquee() {
     </section>
   );
 }
+

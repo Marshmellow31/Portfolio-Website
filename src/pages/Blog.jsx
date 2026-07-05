@@ -10,7 +10,7 @@ export default function Blog() {
     <div className="pt-20">
       {/* Hero */}
       <section className="relative w-full py-24 border-b border-card-border">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24">
+        <div className="w-full px-6 md:px-12 lg:px-24">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -83,3 +83,4 @@ export default function Blog() {
     </div>
   );
 }
+

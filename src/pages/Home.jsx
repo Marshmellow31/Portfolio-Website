@@ -34,7 +34,7 @@ export default function Home({ isLoaded }) {
         )}
 
         {/* Text Content */}
-        <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 w-full relative z-20 pointer-events-none">
+        <div className="w-full px-6 md:px-12 lg:px-24 w-full relative z-20 pointer-events-none">
           <div className="flex flex-col items-start justify-center pt-12 lg:pt-0">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -143,7 +143,7 @@ export default function Home({ isLoaded }) {
         {/* Sticky container — constrained on mobile, sticky full-screen on desktop */}
         <div className="md:sticky top-0 left-0 w-full h-[50vh] md:h-screen overflow-hidden flex flex-col">
           {/* Title */}
-          <div className="relative z-20 px-6 md:px-12 lg:px-24 max-w-7xl mx-auto w-full pt-4 md:pt-24 pointer-events-none shrink-0">
+          <div className="relative z-20 px-6 md:px-12 lg:px-24 w-full pt-4 md:pt-24 pointer-events-none shrink-0">
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -209,3 +209,5 @@ export default function Home({ isLoaded }) {
     </div>
   );
 }
+
+

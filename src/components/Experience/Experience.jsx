@@ -85,7 +85,7 @@ export default function Experience() {
       className="relative w-full py-32 border-t border-card-border bg-bg overflow-hidden"
       onMouseMove={handleMouseMove}
     >
-      <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 mb-16">
+      <div className="w-full px-6 md:px-12 lg:px-24 mb-16">
         <motion.p 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -118,7 +118,7 @@ export default function Experience() {
               onClick={() => toggleExpand(index)}
             >
               {/* Massive Row */}
-              <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 py-8 md:py-12 flex flex-col md:flex-row md:items-center justify-between gap-6 transition-colors duration-500 hover:bg-surface/50">
+              <div className="w-full px-6 md:px-12 lg:px-24 py-8 md:py-12 flex flex-col md:flex-row md:items-center justify-between gap-6 transition-colors duration-500 hover:bg-surface/50">
                 <div className="flex flex-col relative z-10">
                   <h3 className={`font-heading text-5xl md:text-7xl lg:text-[8rem] transition-all duration-500 uppercase m-0 leading-none ${isHovered ? 'text-accent' : 'text-text'} ${hoveredIndex !== null && !isHovered ? 'opacity-30' : 'opacity-100'}`}>
                     {job.company}
@@ -145,7 +145,7 @@ export default function Experience() {
                     transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                     className="overflow-hidden bg-black/20"
                   >
-                    <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 py-12 grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <div className="w-full px-6 md:px-12 lg:px-24 py-12 grid grid-cols-1 md:grid-cols-2 gap-12">
                       {job.projects.map((proj, i) => (
                         <div key={i} className="flex flex-col">
                           <h4 className="font-heading text-3xl mb-4 uppercase">{proj.title}</h4>
@@ -173,3 +173,4 @@ export default function Experience() {
     </section>
   );
 }
+

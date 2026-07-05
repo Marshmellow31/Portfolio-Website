@@ -67,7 +67,7 @@ export default function Creative() {
         <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-bg to-accent/10 z-0" />
         <div className="absolute inset-0 bg-grid z-0" />
 
-        <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 w-full relative z-10">
+        <div className="w-full px-6 md:px-12 lg:px-24 w-full relative z-10">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-12">
             <div>
               <motion.div
@@ -243,3 +243,4 @@ export default function Creative() {
     </div>
   );
 }
+

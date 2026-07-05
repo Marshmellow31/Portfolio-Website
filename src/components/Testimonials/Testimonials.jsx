@@ -23,7 +23,7 @@ export default function Testimonials() {
       ref={ref}
       initial="hidden"
       animate={isInView ? 'visible' : 'hidden'}
-      className="relative px-6 md:px-12 lg:px-24 py-24 max-w-7xl mx-auto border-t border-card-border"
+      className="relative px-6 md:px-12 lg:px-24 py-24 w-full border-t border-card-border"
     >
       <motion.p variants={fadeUp} className="text-accent font-mono text-sm tracking-[0.2em] uppercase mb-6">
         What Clients Say
@@ -86,3 +86,4 @@ export default function Testimonials() {
     </motion.section>
   );
 }
+

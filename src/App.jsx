@@ -44,7 +44,7 @@ function PageTransition({ children }) {
 /* ── Skeleton fallback page ── */
 function SkeletonPage() {
   return (
-    <div className="pt-28 px-6 md:px-12 lg:px-24 max-w-7xl mx-auto">
+    <div className="pt-28 px-6 md:px-12 lg:px-24 w-full">
       <Skeleton className="h-8 w-48 mb-6" />
       <Skeleton className="h-16 w-full max-w-2xl mb-4" />
       <Skeleton className="h-16 w-full max-w-xl mb-12" />
@@ -118,7 +118,7 @@ export default function App() {
       
       {/* ──── Navigation ──── */}
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'backdrop-blur-xl bg-bg/80' : ''}`}>
-        <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 h-20 flex items-center justify-between">
+        <div className="w-full px-6 md:px-12 lg:px-24 h-20 flex items-center justify-between">
           <NavLink to="/" className="font-heading text-xl md:text-2xl font-bold tracking-widest text-white transition-colors duration-300 flex items-center gap-0 group">
             <span>HARSH</span>
             <span className="text-outline group-hover:text-white transition-colors duration-300">IL</span>
@@ -324,3 +324,4 @@ export default function App() {
     </div>
   );
 }
+

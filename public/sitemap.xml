@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://design-lab-portfolio.vercel.app/</loc><priority>1.0</priority></url>
+  <url><loc>https://design-lab-portfolio.vercel.app/projects</loc><priority>0.9</priority></url>
+  <url><loc>https://design-lab-portfolio.vercel.app/projects/paymatrix</loc><priority>0.8</priority></url>
+  <url><loc>https://design-lab-portfolio.vercel.app/projects/picklerage</loc><priority>0.8</priority></url>
+  <url><loc>https://design-lab-portfolio.vercel.app/projects/bhumi-developers</loc><priority>0.8</priority></url>
+  <url><loc>https://design-lab-portfolio.vercel.app/projects/bd-buildcon</loc><priority>0.8</priority></url>
+  <url><loc>https://design-lab-portfolio.vercel.app/projects/playhub</loc><priority>0.8</priority></url>
+  <url><loc>https://design-lab-portfolio.vercel.app/projects/mann-beauty</loc><priority>0.8</priority></url>
+  <url><loc>https://design-lab-portfolio.vercel.app/projects/ascend</loc><priority>0.8</priority></url>
+  <url><loc>https://design-lab-portfolio.vercel.app/projects/navigator-plus</loc><priority>0.8</priority></url>
+  <url><loc>https://design-lab-portfolio.vercel.app/projects/attendance-manager</loc><priority>0.8</priority></url>
+  <url><loc>https://design-lab-portfolio.vercel.app/blog</loc><priority>0.7</priority></url>
+  <url><loc>https://design-lab-portfolio.vercel.app/blog/building-production-react-apps</loc><priority>0.6</priority></url>
+  <url><loc>https://design-lab-portfolio.vercel.app/blog/ai-tools-developer-workflow</loc><priority>0.6</priority></url>
+  <url><loc>https://design-lab-portfolio.vercel.app/blog/content-creation-meets-coding</loc><priority>0.6</priority></url>
+  <url><loc>https://design-lab-portfolio.vercel.app/creative</loc><priority>0.7</priority></url>
+  <url><loc>https://design-lab-portfolio.vercel.app/contact</loc><priority>0.8</priority></url>
+  <url><loc>https://design-lab-portfolio.vercel.app/playground</loc><priority>0.6</priority></url>
+  <url><loc>https://design-lab-portfolio.vercel.app/drive</loc><priority>0.6</priority></url>
+</urlset>

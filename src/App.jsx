@@ -1,20 +1,27 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import { motion, useScroll, useSpring } from 'framer-motion';
 import { FaCamera } from 'react-icons/fa';
 import { useLenis } from 'lenis/react';
+import { Analytics } from '@vercel/analytics/react';
 import Skeleton from './components/Skeleton/Skeleton';
 import FloatingTerminal from './components/FloatingTerminal/FloatingTerminal';
 import StaggeredMenu from './components/StaggeredMenu/StaggeredMenu';
+import Cursor from './components/Cursor/Cursor';
+import ErrorBoundary from './components/ErrorBoundary';
 
 // Lazy-loaded Pages
 const Home = lazy(() => import('./pages/Home'));
 const Projects = lazy(() => import('./pages/Projects'));
+const ProjectDetail = lazy(() => import('./pages/ProjectDetail'));
 const Contact = lazy(() => import('./pages/Contact'));
 const Creative = lazy(() => import('./pages/Creative'));
 const Blog = lazy(() => import('./pages/Blog'));
 const BlogPost = lazy(() => import('./pages/BlogPost'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const Playground = lazy(() => import('./pages/Playground'));
+const Drive = lazy(() => import('./pages/Drive'));
+const Drift = lazy(() => import('./pages/Drift'));
 
 // Nav items — route links to pages + in-page anchors (Home sections)
 const navLinks = [
@@ -51,8 +58,8 @@ export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const onHome = location.pathname === '/';
-  // Playground is its own full-viewport app — hide the site nav + footer there.
-  const isPlayground = location.pathname === '/playground';
+  // Playground + Drive are their own full-viewport apps — hide the site nav + footer there.
+  const isPlayground = ['/playground', '/drive', '/drift'].includes(location.pathname);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 24);
@@ -79,6 +86,10 @@ export default function App() {
   const sectionHref = (hash) => (onHome ? hash : `/${hash}`);
   // For nav items that are routes vs hash anchors
   const navHref = (item) => item.to || sectionHref(item.hash);
+
+  // Reading-progress hairline under the nav
+  const { scrollYProgress } = useScroll();
+  const progress = useSpring(scrollYProgress, { stiffness: 140, damping: 28, mass: 0.4 });
 
   return (
     <div className="min-h-screen text-text font-sans antialiased relative">
@@ -177,19 +188,43 @@ export default function App() {
         </div>
       )}
 
-      {/* ──────────── Page Content ──────────── */}
+      {/* scroll progress hairline */}
+      {!isPlayground && (
+        <motion.div
+          className="fixed top-0 left-0 right-0 h-[2px] bg-white/60 z-[210] origin-left"
+          style={{ scaleX: progress }}
+        />
+      )}
+
+      {/* ──────────── Page Content (fade-rise on route change) ──────────── */}
+      <ErrorBoundary>
       <Suspense fallback={<SkeletonPage />}>
-        <Routes location={location}>
-          <Route path="/" element={<Home />} />
-          <Route path="/projects" element={<Projects />} />
-          <Route path="/creative" element={<Creative />} />
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/blog/:slug" element={<BlogPost />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/playground" element={<Playground />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <motion.div
+          key={location.pathname}
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <Routes location={location}>
+            <Route path="/" element={<Home />} />
+            <Route path="/projects" element={<Projects />} />
+            <Route path="/projects/:slug" element={<ProjectDetail />} />
+            <Route path="/creative" element={<Creative />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:slug" element={<BlogPost />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/playground" element={<Playground />} />
+            <Route path="/drive" element={<Drive />} />
+          <Route path="/drift" element={<Drift />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </motion.div>
       </Suspense>
+      </ErrorBoundary>
+
+      {/* ──────────── Custom cursor (desktop only) ──────────── */}
+      <Cursor />
+      <Analytics />
 
       {/* ──────────── Floating ⌘K terminal (global) ──────────── */}
       <FloatingTerminal />
@@ -200,6 +235,13 @@ export default function App() {
           <div className="font-mono text-[11px] tracking-[.08em] text-text-faint">
             © 2026 Harshil Patel — built with React, coffee &amp; questionable sleep
           </div>
+          <a
+            href="mailto:1080patelharshil@gmail.com"
+            className="inline-flex items-center gap-2 font-mono text-[11px] tracking-[.12em] text-text-dim no-underline hover:text-text transition-colors"
+          >
+            <span className="w-[6px] h-[6px] rounded-full bg-text" style={{ animation: 'hpPulse 2s ease-in-out infinite' }} />
+            OPEN FOR FREELANCE
+          </a>
           <a
             href="#top"
             className="font-mono text-[11px] tracking-[.12em] text-text-dim no-underline hover:text-text transition-colors"

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import useSEO from '../utils/useSEO';
 
 const MODES = [
   ['objects', 'Objects'],
@@ -21,6 +22,7 @@ const LEGEND = [
 ];
 
 export default function Playground() {
+  useSEO({ title: 'Playground', description: 'Webcam hand-tracking physics playground — pinch, grab, and throw objects with your hands.', path: '/playground' });
   const stageRef = useRef(null);
   const elRef = useRef(null);
   const [mode, setMode] = useState('objects');
@@ -173,6 +175,13 @@ export default function Playground() {
                 {label}
               </button>
             ))}
+            <Link
+              to="/drift"
+              className="font-mono text-[9px] md:text-[10px] tracking-[.12em] uppercase rounded-full px-4 md:px-6 py-2.5 whitespace-nowrap no-underline font-semibold text-black"
+              style={{ background: 'linear-gradient(90deg,#FF2E63,#FFD93D,#08D9D6)' }}
+            >
+              Drift 🏎
+            </Link>
           </div>
         </div>
         

@@ -2,8 +2,10 @@ import { Link } from 'react-router-dom';
 import { FiClock } from 'react-icons/fi';
 import { Reveal } from '../components/Reveal/Reveal';
 import { blogPosts } from '../data/blog';
+import useSEO from '../utils/useSEO';
 
 export default function Blog() {
+  useSEO({ title: 'Blog', description: 'Writing on React, AI tooling, and shipping software that leaves the repo.', path: '/blog' });
   return (
     <div className="pt-24">
       {/* Hero */}

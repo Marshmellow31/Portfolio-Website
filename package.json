@@ -10,10 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@capacitor/android": "^8.4.1",
+    "@capacitor/core": "^8.4.1",
     "@mediapipe/tasks-vision": "^0.10.35",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.6.1",
     "@react-three/rapier": "^2.2.0",
+    "@vercel/analytics": "^2.0.1",
     "framer-motion": "^12.42.2",
     "gl-matrix": "^3.4.4",
     "gsap": "^3.15.0",
@@ -27,6 +30,7 @@
     "three": "^0.185.1"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.4.1",
     "@tailwindcss/vite": "^4.3.2",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",

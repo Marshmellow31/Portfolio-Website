@@ -2,10 +2,12 @@ import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FiArrowLeft, FiClock } from 'react-icons/fi';
 import { blogPosts } from '../data/blog';
+import useSEO from '../utils/useSEO';
 
 export default function BlogPost() {
   const { slug } = useParams();
   const post = blogPosts.find(p => p.slug === slug);
+  useSEO({ title: post?.title, description: post?.excerpt, path: `/blog/${slug}` });
 
   if (!post) {
     return (

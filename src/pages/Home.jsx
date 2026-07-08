@@ -1,9 +1,11 @@
-import { lazy, Suspense, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { lazy, Suspense, useState, useRef } from 'react';
+import { motion, AnimatePresence, useInView, useReducedMotion } from 'framer-motion';
 import { Reveal, CountUp } from '../components/Reveal/Reveal';
 import CopyButton from '../components/CopyButton';
 import { skillGroups, workHistory } from '../data/portfolio';
+import { testimonials } from '../data/testimonials';
 import useMediaQuery from '../utils/useMediaQuery';
+import useSEO from '../utils/useSEO';
 import { FaCamera, FaJava, FaDatabase } from 'react-icons/fa';
 import {
   SiTypescript, SiJavascript, SiPython, SiCplusplus, SiKotlin,
@@ -39,10 +41,37 @@ const stackIcons = [
 
 // Desktop-only: keeps three.js + physics (the heaviest chunk) off phones
 const StrandsBG = lazy(() => import('../components/StrandsBG/StrandsBG'));
+// 3D car teaser for /drive — lazy so three.js loads only when scrolled near
+const DriveTeaser = lazy(() => import('../components/DriveTeaser/DriveTeaser'));
+
+/* Per-letter stagger reveal for the hero name */
+function SplitLine({ text, delay = 0, reduced }) {
+  if (reduced) return <span className="block">{text}</span>;
+  return (
+    <span className="block overflow-hidden pb-[0.08em] -mb-[0.08em]">
+      {text.split('').map((ch, i) => (
+        <motion.span
+          key={i}
+          className="inline-block"
+          initial={{ y: '105%', rotate: 4 }}
+          animate={{ y: 0, rotate: 0 }}
+          transition={{ duration: 0.7, delay: delay + i * 0.035, ease: [0.22, 1, 0.36, 1] }}
+        >
+          {ch === ' ' ? ' ' : ch}
+        </motion.span>
+      ))}
+    </span>
+  );
+}
 
 export default function Home() {
   const isDesktop = useMediaQuery('(min-width: 1024px)');
   const [openAccordion, setOpenAccordion] = useState(null);
+  const reducedMotion = useReducedMotion();
+  useSEO({ description: 'Full-stack developer at IIIT Vadodara shipping production web, mobile, and AI products for real businesses.', path: '/' });
+  // Defer the three.js chunk until the teaser is near the viewport
+  const teaserRef = useRef(null);
+  const teaserNear = useInView(teaserRef, { margin: '600px 0px', once: true });
 
   return (
     <div>
@@ -62,11 +91,15 @@ export default function Home() {
 
         <div className="relative z-10 w-full px-[clamp(20px,6vw,96px)] pt-[120px] pb-20 pointer-events-none">
           <div
-            className="flex items-center gap-[14px] mb-7"
+            className="flex items-center gap-[14px] mb-7 flex-wrap"
             style={{ animation: 'hpFadeUp .8s ease both' }}
           >
             <div className="w-10 h-px bg-text" />
             <span className="mono-label">Full-Stack Developer — IIIT Vadodara</span>
+            <span className="inline-flex items-center gap-2 font-mono text-[10px] tracking-[.14em] uppercase text-text border border-border-strong rounded-full px-3 py-1">
+              <span className="w-[6px] h-[6px] rounded-full bg-text" style={{ animation: 'hpPulse 2s ease-in-out infinite' }} />
+              Available for freelance
+            </span>
           </div>
 
           <h1
@@ -75,10 +108,10 @@ export default function Home() {
               fontSize: 'clamp(58px,11vw,168px)',
               letterSpacing: '-0.045em',
               lineHeight: 0.92,
-              animation: 'hpFadeUp .8s .1s ease both',
             }}
           >
-            Harshil<br />Patel
+            <SplitLine text="Harshil" delay={0.15} reduced={reducedMotion} />
+            <SplitLine text="Patel" delay={0.38} reduced={reducedMotion} />
           </h1>
 
           <p
@@ -119,10 +152,7 @@ export default function Home() {
             </button>
             <a
               href="/creative"
-              className="inline-flex items-center justify-center text-white no-underline text-[13px] font-bold px-[26px] h-[46px] rounded-[4px] transition-transform hover:scale-105"
-              style={{
-                background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)'
-              }}
+              className="inline-flex items-center justify-center text-text no-underline text-[13px] font-medium px-[26px] h-[46px] rounded-[4px] border border-border-strong transition-colors hover:border-white/50"
             >
               Creative side
             </a>
@@ -318,10 +348,69 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ──────────── TESTIMONIALS + CLIENTS ──────────── */}
+      <section id="trust" className="section-pad border-b border-border">
+        <Reveal className="mb-[clamp(40px,6vw,72px)]">
+          <div className="mono-label mb-4">04 — Word of mouth</div>
+          <h2 className="m-0 font-bold" style={{ fontSize: 'clamp(34px,4.5vw,64px)', lineHeight: 1 }}>
+            Clients say
+          </h2>
+        </Reveal>
+
+        <div className="grid gap-px [grid-template-columns:repeat(auto-fit,minmax(280px,1fr))]" style={{ background: 'var(--color-border)' }}>
+          {testimonials.map((t) => (
+            <Reveal key={t.name}>
+              <figure className="m-0 h-full p-7 md:p-9 bg-bg flex flex-col justify-between gap-8 hover:bg-white/[0.02] transition-colors">
+                <blockquote className="m-0 text-text-muted" style={{ fontSize: 15, lineHeight: 1.7, textWrap: 'pretty' }}>
+                  “{t.quote}”
+                </blockquote>
+                <figcaption>
+                  <div className="font-semibold text-text text-[14px]">{t.name}</div>
+                  <div className="font-mono text-[10px] tracking-[.14em] uppercase text-text-faint mt-1.5">{t.role}</div>
+                </figcaption>
+              </figure>
+            </Reveal>
+          ))}
+        </div>
+
+        {/* client wall */}
+        <Reveal className="mt-[clamp(32px,4vw,56px)] pt-8 border-t border-border">
+          <div className="flex flex-wrap items-baseline gap-x-[clamp(28px,5vw,64px)] gap-y-4">
+            <span className="font-mono text-[10px] tracking-[.2em] text-text-faint uppercase">Shipped for</span>
+            {['PickleRage', 'Bhumi Developers', 'BD Buildcon', 'Mann Beauty Studio'].map((c) => (
+              <span key={c} className="font-bold text-text-dim hover:text-text transition-colors" style={{ fontSize: 'clamp(17px,2vw,24px)', letterSpacing: '-0.02em' }}>
+                {c}
+              </span>
+            ))}
+          </div>
+        </Reveal>
+      </section>
+
+      {/* ──────────── DRIVE TEASER ──────────── */}
+      <section id="drive" className="section-pad border-b border-border">
+        <Reveal className="mb-[clamp(32px,4vw,56px)]">
+          <div className="mono-label mb-4">05 — Off the clock</div>
+          <h2 className="m-0 font-bold" style={{ fontSize: 'clamp(34px,4.5vw,64px)', lineHeight: 1 }}>
+            Work is monochrome.<br />Play isn't.
+          </h2>
+        </Reveal>
+        <Reveal>
+          <div ref={teaserRef}>
+            {teaserNear ? (
+              <Suspense fallback={<div className="h-[320px] md:h-[380px] rounded-2xl border border-border bg-surface" />}>
+                <DriveTeaser />
+              </Suspense>
+            ) : (
+              <div className="h-[320px] md:h-[380px] rounded-2xl border border-border bg-surface" />
+            )}
+          </div>
+        </Reveal>
+      </section>
+
       {/* ──────────── CONTACT ──────────── */}
       <section id="contact" style={{ padding: 'clamp(100px,12vw,180px) clamp(20px,6vw,96px)' }}>
         <Reveal>
-          <div className="mono-label mb-6">04 — Contact</div>
+          <div className="mono-label mb-6">06 — Contact</div>
           <div className="flex items-center gap-4 sm:gap-6 flex-wrap">
             <a
               href="mailto:1080patelharshil@gmail.com"

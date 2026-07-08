@@ -48,10 +48,12 @@
     ['email', 'send me an email'],
     ['whoami', 'who are you?'],
     ['sudo hire-me', 'the fast track'],
+    ['cv', 'download my resume'],
+    ['drift', 'endless drift through mountains & beaches'],
     ['clear', 'clear the terminal'],
     ['exit', 'close the window'],
   ];
-  const COMPLETIONS = ['help', 'about', 'skills', 'projects', 'open ', 'github', 'linkedin', 'email', 'whoami', 'sudo hire-me', 'clear', 'exit'];
+  const COMPLETIONS = ['help', 'about', 'skills', 'projects', 'open ', 'github', 'linkedin', 'email', 'whoami', 'sudo hire-me', 'cv', 'drift', 'clear', 'exit'];
   const BOOT = ["Welcome to Harshil's portfolio terminal.", "Type 'help' to get started."];
 
   function commonPrefix(arr) {
@@ -337,6 +339,20 @@
               this.minimize();
             }, 700);
           } else err("sudo: only 'sudo hire-me' is permitted here.");
+          break;
+        case 'cv':
+          out('Downloading resume.pdf ...');
+          { const a = document.createElement('a'); a.href = '/resume.pdf'; a.download = ''; a.click(); }
+          break;
+        case 'drive': case 'drift':
+          out('Igniting engine ...');
+          out('Mountains, beaches, rivers. No finish line.');
+          setTimeout(() => {
+            this.close();
+            // SPA navigation — react-router listens to popstate
+            window.history.pushState({}, '', '/drift');
+            window.dispatchEvent(new PopStateEvent('popstate'));
+          }, 900);
           break;
         case 'clear':
           this._out.querySelectorAll('.line:not(.live)').forEach(n => n.remove());

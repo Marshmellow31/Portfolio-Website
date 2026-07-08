@@ -1,8 +1,9 @@
-import { motion } from 'framer-motion';
+import { useState } from 'react';
 import { Reveal } from '../components/Reveal/Reveal';
 import Folder from '../components/Folder/Folder';
 import CopyButton from '../components/CopyButton';
 import { FaGithub, FaLinkedin, FaInstagram } from 'react-icons/fa';
+import useSEO from '../utils/useSEO';
 
 const socialLinks = [
   { icon: <FaGithub size={22} color="#111" />, href: 'https://github.com/Marshmellow31', label: 'GitHub' },
@@ -23,7 +24,74 @@ const paperItems = socialLinks.map(s => (
   </a>
 ));
 
+const inputCls =
+  'w-full bg-surface border border-border rounded-[6px] px-4 py-3 text-[14px] text-text placeholder:text-text-faint outline-none focus:border-white/40 transition-colors font-sans';
+
+function ContactForm() {
+  const [status, setStatus] = useState('idle'); // idle | sending | sent | error
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    if (form._honey.value) return; // bot
+    setStatus('sending');
+    try {
+      const res = await fetch('https://formsubmit.co/ajax/1080patelharshil@gmail.com', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          name: form.name.value,
+          email: form.email.value,
+          message: form.message.value,
+          _subject: `Portfolio inquiry from ${form.name.value}`,
+          _captcha: 'false',
+        }),
+      });
+      if (!res.ok) throw new Error(String(res.status));
+      setStatus('sent');
+      form.reset();
+    } catch {
+      setStatus('error');
+    }
+  };
+
+  if (status === 'sent') {
+    return (
+      <div className="border border-border rounded-xl p-8 bg-surface text-center">
+        <div className="mono-label mb-3">Message sent</div>
+        <p className="m-0 text-text-muted text-[15px]">Thanks — I usually reply within a day.</p>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={onSubmit} className="flex flex-col gap-4">
+      <input type="text" name="_honey" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
+      <div className="grid sm:grid-cols-2 gap-4">
+        <input className={inputCls} name="name" type="text" placeholder="Your name" required maxLength={120} />
+        <input className={inputCls} name="email" type="email" placeholder="Your email" required maxLength={200} />
+      </div>
+      <textarea className={inputCls} name="message" rows={5} placeholder="What are we building?" required maxLength={4000} style={{ resize: 'vertical' }} />
+      <div className="flex items-center gap-4 flex-wrap">
+        <button
+          type="submit"
+          disabled={status === 'sending'}
+          className="inline-flex items-center justify-center bg-text text-bg border-none text-[13px] font-semibold px-[26px] h-[46px] rounded-[4px] cursor-pointer transition-colors hover:bg-white disabled:opacity-50 disabled:cursor-wait"
+        >
+          {status === 'sending' ? 'Sending…' : 'Send message'}
+        </button>
+        {status === 'error' && (
+          <span className="font-mono text-[11px] text-text-dim">
+            Couldn't send — email me directly instead.
+          </span>
+        )}
+      </div>
+    </form>
+  );
+}
+
 export default function Contact() {
+  useSEO({ title: 'Contact', description: 'Open to select freelance opportunities, full-time roles, and interesting conversations.', path: '/contact' });
   return (
     <div className="min-h-screen flex flex-col justify-center pt-20">
       <section
@@ -88,13 +156,19 @@ export default function Contact() {
             </div>
           </Reveal>
 
-          {/* ── Right: folder, shown only at lg+ to avoid clipping ── */}
-          <div className="hidden lg:flex items-end justify-center" style={{ paddingBottom: '40px', minHeight: '340px', overflow: 'visible' }}>
-            <Folder
-              color="#d0d0d0"
-              size={2.4}
-              items={paperItems}
-            />
+          {/* ── Right: contact form + folder easter egg ── */}
+          <div className="flex flex-col gap-14">
+            <Reveal>
+              <div className="mono-label mb-5">Or write it here</div>
+              <ContactForm />
+            </Reveal>
+            <div className="hidden lg:flex items-end justify-center" style={{ minHeight: '260px', overflow: 'visible' }}>
+              <Folder
+                color="#d0d0d0"
+                size={2}
+                items={paperItems}
+              />
+            </div>
           </div>
 
         </div>

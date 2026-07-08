@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { selectedWork } from '../data/portfolio';
 import { Reveal } from '../components/Reveal/Reveal';
+import useSEO from '../utils/useSEO';
 
 export default function Projects() {
+  useSEO({ title: 'Projects', description: 'Nine shipped projects — payments, bookings, PWAs, native Android, and AI tools — each with a full case study.', path: '/projects' });
   const [activeIndex, setActiveIndex] = useState(0);
   const [imgIndex, setImgIndex] = useState(0);
   const activeProject = selectedWork[activeIndex];
@@ -38,19 +41,20 @@ export default function Projects() {
           {/* Left Column: Project List */}
           <div className="flex-[0_0_300px] flex flex-col justify-between h-full py-2">
             {selectedWork.map((p, i) => (
-              <div
+              <Link
                 key={p.title}
+                to={`/projects/${p.slug}`}
                 onMouseEnter={() => setActiveIndex(i)}
-                className={`cursor-pointer transition-all duration-300 ${
-                  activeIndex === i 
-                    ? 'text-white opacity-100 translate-x-2' 
+                className={`no-underline cursor-pointer transition-all duration-300 ${
+                  activeIndex === i
+                    ? 'text-white opacity-100 translate-x-2'
                     : 'text-text-muted opacity-40 hover:opacity-70'
                 }`}
               >
                 <h2 className="m-0 font-bold text-3xl tracking-tight leading-none">
                   {p.title}
                 </h2>
-              </div>
+              </Link>
             ))}
           </div>
 
@@ -106,6 +110,12 @@ export default function Projects() {
 
                   {/* Top-left Links */}
                   <div className="absolute top-6 left-8 z-30 flex gap-6 drop-shadow-lg">
+                    <Link
+                      to={`/projects/${activeProject.slug}`}
+                      className="font-mono text-[12px] tracking-widest text-black bg-white hover:bg-white/85 no-underline rounded-[3px] px-2.5 py-1 transition-colors"
+                    >
+                      CASE STUDY →
+                    </Link>
                     {activeProject.link && (
                       <a
                         href={activeProject.link}
@@ -166,12 +176,13 @@ export default function Projects() {
 
                 <div className="flex-[1_1_300px] min-w-[240px]">
                   <div className="flex items-baseline gap-3.5 flex-wrap">
-                    <div
-                      className="font-semibold text-text"
+                    <Link
+                      to={`/projects/${p.slug}`}
+                      className="font-semibold text-text no-underline"
                       style={{ fontSize: 'clamp(20px,2.2vw,28px)', letterSpacing: '-0.02em' }}
                     >
                       {p.title}
-                    </div>
+                    </Link>
                     {p.live && (
                       <div className="font-mono text-[9px] tracking-[.14em] text-bg bg-text rounded-[3px] px-[7px] py-[3px]">
                         LIVE
@@ -188,6 +199,12 @@ export default function Projects() {
                 </div>
 
                 <div className="flex-none flex gap-[18px]">
+                  <Link
+                    to={`/projects/${p.slug}`}
+                    className="font-mono text-[11px] tracking-[.1em] text-text no-underline border-b border-white/30 pb-0.5 hover:border-white transition-colors"
+                  >
+                    CASE STUDY →
+                  </Link>
                   {p.link && (
                     <a
                       href={p.link}

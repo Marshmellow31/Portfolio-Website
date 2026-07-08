@@ -10,6 +10,7 @@ import {
   brandCollabs,
   insights,
 } from '../data/instagram';
+import useSEO from '../utils/useSEO';
 
 /* ── Animated counter hook ── */
 function useCountUp(target, duration = 2000, startCounting = false) {
@@ -59,6 +60,7 @@ function StatCard({ label, value, suffix }) {
 }
 
 export default function Creative() {
+  useSEO({ title: 'Creative', description: 'The automotive content side — reels, brand collaborations, and 22M+ views as @guywithblack350.', path: '/creative' });
   return (
     <div className="pt-24">
       {/* ──── Hero ──── */}

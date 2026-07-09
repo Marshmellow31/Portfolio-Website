@@ -1,25 +1,37 @@
 /* ────────────────────────────────────────────────────────────────
-   Drift physics engine — arcade-sim hybrid.
-   Manual throttle/brake, weight transfer, handbrake drift initiation,
-   rear-wheel grip model with snap transitions, counter-steer assist.
+   F1 physics — arcade single-seater model.
+   Huge acceleration, carbon brakes, downforce that adds grip with
+   speed, gentle speed-sensitive steering (stable on straights),
+   and an optional handbrake slide for showing off.
    ──────────────────────────────────────────────────────────────── */
 
-export const MAX_SPEED = 52;
-const ACCEL = 28;
-const BRAKE_DECEL = 2.8;
-const BASE_STEER = 2.6;
-const GRIP_FRONT = 1.05;
-const GRIP_REAR = 0.82;
-const GRIP_HB = 0.04;          // handbrake → near-zero rear grip
-const WEIGHT_SHIFT = 4.0;
-const DRAG = 0.32;
-const COUNTER_ASSIST = 0.18;   // subtle auto-counter-steer
+export const MAX_SPEED = 92;      // ≈ 331 km/h
+const ACCEL = 32;                 // peak engine acceleration (u/s²)
+const BRAKE_DECEL = 52;           // carbon brakes (u/s²)
+const ENGINE_BRAKE = 4.5;         // lift-off deceleration
+const STEER_LOW = 2.4;            // max yaw rate at low speed (rad/s)
+const STEER_HIGH = 0.95;          // max yaw rate at top speed (rad/s)
+const GRIP_BASE = 6.5;            // velocity→heading alignment rate
+const GRIP_DOWNFORCE = 1.1;       // extra grip fraction at max speed
+const GRIP_SLIDE = 1.3;           // grip while handbrake sliding
+const OFFROAD_GRIP = 0.35;        // grass multiplier
+const OFFROAD_CAP = 0.4;          // grass top-speed fraction
 
 const PI2 = Math.PI * 2;
 const wrap = (a) => {
   a %= PI2;
   return a > Math.PI ? a - PI2 : a < -Math.PI ? a + PI2 : a;
 };
+
+/* Sequential-gearbox readout for the HUD. */
+const GEARS = [0, 9, 18, 28, 40, 54, 68, 80];
+export function gearFor(speed) {
+  let g = 1;
+  for (let i = GEARS.length - 1; i >= 0; i--) {
+    if (speed >= GEARS[i]) { g = i + 1; break; }
+  }
+  return g;
+}
 
 /* Create a fresh car state at the given position + heading. */
 export function createCarState(x, z, heading) {
@@ -30,104 +42,95 @@ export function createCarState(x, z, heading) {
     slip: 0,                    // unsigned radians
     slipSign: 0,                // +1 or -1
     slipDeg: 0,                 // integer degrees (HUD)
-    weightFront: 0.5,
-    weightRear: 0.5,
     lateralG: 0,                // for body roll
     longG: 0,                   // for pitch
     drifting: false,
     driftJustEntered: false,    // true for exactly 1 physics step
-    driftJustExited: false,
     onRoad: true,
     wheelSpin: 0,               // cumulative angle for wheel animation
+    rpm: 0,                     // 0..1 within current gear, for exhaust FX
   };
 }
 
-/* Advance the car one physics step.  Mutates `s` in place. */
+/* Advance the car one physics step. Mutates `s` in place. */
 export function stepCar(s, input, dt, onRoad) {
   dt = Math.min(dt, 0.04);
   const wasDrift = s.drifting;
   s.driftJustEntered = false;
-  s.driftJustExited = false;
   s.onRoad = onRoad;
 
-  /* ── Weight transfer ── */
-  const twf = input.brake ? 0.66 : input.throttle ? 0.36 : 0.5;
-  s.weightFront += (twf - s.weightFront) * Math.min(1, WEIGHT_SHIFT * dt);
-  s.weightRear = 1 - s.weightFront;
+  const spdN = Math.min(1, s.speed / MAX_SPEED);
 
-  /* ── Steering ── */
+  /* ── Steering — direct yaw-rate control, softer at speed ── */
   const raw = (input.left ? 1 : 0) - (input.right ? 1 : 0);
-  s.steer += (raw - s.steer) * Math.min(1, dt * 10);
-  const spd = Math.min(1, s.speed / MAX_SPEED);
-  const lock = BASE_STEER * (1 - spd * 0.55);  // less lock at speed
-  const dm = s.drifting ? 1.45 : 1.0;           // sharper in drift
-  s.heading += lock * dm * s.steer * Math.min(1, s.speed / 6) * dt;
+  s.steer += (raw - s.steer) * Math.min(1, dt * 9);
+  const yawRate = STEER_LOW + (STEER_HIGH - STEER_LOW) * spdN;
+  s.heading += yawRate * s.steer * Math.min(1, s.speed / 5) * dt;
 
-  /* ── Forward vector ── */
   const fx = Math.sin(s.heading), fz = Math.cos(s.heading);
 
-  /* ── Throttle / Brake ── */
-  const rk = onRoad ? 1 : 0.28;
-  const cap = onRoad ? MAX_SPEED : MAX_SPEED * 0.30;
+  /* ── Throttle / brakes ── */
+  const cap = onRoad ? MAX_SPEED : MAX_SPEED * OFFROAD_CAP;
   if (input.throttle && !input.brake) {
-    s.vx += fx * ACCEL * rk * dt;
-    s.vz += fz * ACCEL * rk * dt;
+    // power tapers near top speed
+    const power = ACCEL * (1 - spdN * spdN * 0.75) * (onRoad ? 1 : 0.3);
+    s.vx += fx * power * dt;
+    s.vz += fz * power * dt;
+  } else if (!input.brake && s.speed > 0.5) {
+    const eb = Math.min(s.speed, ENGINE_BRAKE * dt);
+    s.vx -= (s.vx / s.speed) * eb;
+    s.vz -= (s.vz / s.speed) * eb;
   }
-  if (input.brake) {
-    const bk = Math.max(0, 1 - BRAKE_DECEL * dt);
-    s.vx *= bk;
-    s.vz *= bk;
+  if (input.brake && s.speed > 0.5) {
+    const bd = Math.min(s.speed, BRAKE_DECEL * dt);
+    s.vx -= (s.vx / s.speed) * bd;
+    s.vz -= (s.vz / s.speed) * bd;
   }
 
   /* ── Speed cap ── */
   s.speed = Math.hypot(s.vx, s.vz);
   if (s.speed > cap) {
-    const sc = cap / s.speed;
-    s.vx *= sc; s.vz *= sc; s.speed = cap;
+    const sc = 1 - Math.min(1, dt * 3) * (1 - cap / s.speed);
+    s.vx *= sc; s.vz *= sc; s.speed = Math.hypot(s.vx, s.vz);
   }
 
   /* ── Slip angle ── */
   const va = Math.atan2(s.vx, s.vz);
-  s.slip = s.speed > 2 ? Math.abs(wrap(va - s.heading)) : 0;
-  s.slipSign = s.speed > 2 ? Math.sign(wrap(va - s.heading)) : 0;
+  const slipSigned = s.speed > 2 ? wrap(va - s.heading) : 0;
+  s.slip = Math.abs(slipSigned);
+  s.slipSign = Math.sign(slipSigned);
   s.slipDeg = Math.round(s.slip * 57.2958);
 
-  /* ── Lateral grip (the heart of the drift mechanic) ──
-     Pull velocity toward heading.  Lower rear grip → velocity can't
-     align → the car slides.  Handbrake kills rear grip instantly. */
-  let rg = GRIP_REAR * s.weightRear * 2;
-  const fg = GRIP_FRONT * s.weightFront * 2;
-  if (input.handbrake) rg = GRIP_HB;
-  if (!onRoad) rg *= 0.22;
-  const gripRate = (fg * 0.35 + rg * 0.65) * (s.drifting ? 2.8 : 6.0);
+  /* ── Grip — pull velocity toward heading. Downforce adds grip
+     with speed, so the car is planted flat-out. ── */
+  let gripRate = GRIP_BASE * (1 + GRIP_DOWNFORCE * spdN);
+  if (input.handbrake) gripRate = GRIP_SLIDE;
+  if (!onRoad) gripRate *= OFFROAD_GRIP;
   const ax = fx * s.speed, az = fz * s.speed;
   const k = Math.min(1, gripRate * dt);
   s.vx += (ax - s.vx) * k;
   s.vz += (az - s.vz) * k;
 
-  /* ── Counter-steer assist ── */
-  if (s.drifting && s.speed > 6) {
-    s.heading += wrap(va - s.heading) * COUNTER_ASSIST * dt;
-  }
-
-  /* ── Drag + integrate ── */
-  s.vx *= (1 - DRAG * dt);
-  s.vz *= (1 - DRAG * dt);
+  /* ── Integrate ── */
   s.x += s.vx * dt;
   s.z += s.vz * dt;
 
   /* ── Derived values ── */
   s.speed = Math.hypot(s.vx, s.vz);
-  s.wheelSpin += s.speed * dt * 2.5;
-  const rx = -fz, rz = fx;                       // right vector
-  s.lateralG = s.speed > 1 ? (s.vx * rx + s.vz * rz) * 0.04 : 0;
-  s.longG = input.brake ? -1 : input.throttle ? 0.5 : 0;
+  s.wheelSpin += s.speed * dt * 2.9;
+  const rx = -fz, rz = fx;
+  s.lateralG = s.speed > 1 ? (s.vx * rx + s.vz * rz) * 0.05 : 0;
+  s.longG = input.brake ? -1.4 : input.throttle ? 0.6 : -0.1;
 
-  /* ── Drift state machine ── */
-  const now = s.slip > 0.20 && s.speed > 10 && onRoad;
+  // rpm 0..1 within the current gear band (for exhaust/shift FX)
+  const g = gearFor(s.speed) - 1;
+  const lo = GEARS[g], hi = GEARS[g + 1] ?? MAX_SPEED;
+  s.rpm = Math.min(1, Math.max(0, (s.speed - lo) / Math.max(1, hi - lo)));
+
+  /* ── Slide state (smoke + skids) ── */
+  const now = (s.slip > 0.12 && s.speed > 8) || (input.brake && s.speed > 30);
   s.drifting = now;
   if (now && !wasDrift) s.driftJustEntered = true;
-  if (!now && wasDrift) s.driftJustExited = true;
 
   return s;
 }

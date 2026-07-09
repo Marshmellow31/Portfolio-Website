@@ -70,7 +70,7 @@ export default function DriveTeaser() {
       className="group relative block rounded-2xl border border-border overflow-hidden bg-surface no-underline"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      aria-label="Open Drift — the endless car game"
+      aria-label="Open Race — the F1 oval racing game"
     >
       {/* the car — grayscale until hover leaks the color through */}
       <div

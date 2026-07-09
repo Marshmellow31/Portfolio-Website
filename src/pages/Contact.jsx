@@ -156,21 +156,23 @@ export default function Contact() {
             </div>
           </Reveal>
 
-          {/* ── Right: contact form + folder easter egg ── */}
-          <div className="flex flex-col gap-14">
-            <Reveal>
-              <div className="mono-label mb-5">Or write it here</div>
-              <ContactForm />
-            </Reveal>
-            <div className="hidden lg:flex items-end justify-center" style={{ minHeight: '260px', overflow: 'visible' }}>
-              <Folder
-                color="#d0d0d0"
-                size={2}
-                items={paperItems}
-              />
-            </div>
+          {/* ── Right: folder easter egg ── */}
+          <div className="hidden lg:flex items-end justify-center" style={{ minHeight: '260px', overflow: 'visible' }}>
+            <Folder
+              color="#d0d0d0"
+              size={2}
+              items={paperItems}
+            />
           </div>
 
+        </div>
+
+        {/* ── Form: below text and folder ── */}
+        <div className="mt-16 max-w-2xl">
+          <Reveal>
+            <div className="mono-label mb-5">Or write it here</div>
+            <ContactForm />
+          </Reveal>
         </div>
       </section>
     </div>

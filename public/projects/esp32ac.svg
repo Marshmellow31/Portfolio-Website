@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200" width="320" height="200" role="img" aria-label="ESP32 Smart AC Controller">
+  <g fill="none" stroke="#EDEDED" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    <!-- ESP32 board -->
+    <rect x="26" y="72" width="86" height="56" rx="5"/>
+    <!-- shield/chip on board -->
+    <rect x="40" y="84" width="42" height="26" rx="3"/>
+    <!-- header pins left -->
+    <line x1="26" y1="82" x2="18" y2="82"/>
+    <line x1="26" y1="92" x2="18" y2="92"/>
+    <line x1="26" y1="102" x2="18" y2="102"/>
+    <line x1="26" y1="112" x2="18" y2="112"/>
+    <!-- header pins right -->
+    <line x1="112" y1="82" x2="120" y2="82"/>
+    <line x1="112" y1="92" x2="120" y2="92"/>
+    <line x1="112" y1="102" x2="120" y2="102"/>
+    <line x1="112" y1="112" x2="120" y2="112"/>
+    <!-- IR LED emitter -->
+    <circle cx="132" cy="100" r="6"/>
+  </g>
+  <!-- IR beam (38 kHz) -->
+  <g fill="none" stroke="#EDEDED" stroke-width="2.2" stroke-linecap="round" opacity="0.85">
+    <path d="M146 100 q9 -9 18 0 q9 9 18 0"/>
+    <path d="M146 88 q11 -11 22 0 q11 11 22 0" opacity="0.55"/>
+    <path d="M146 112 q11 11 22 0 q11 -11 22 0" opacity="0.55"/>
+  </g>
+  <!-- AC unit -->
+  <g fill="none" stroke="#EDEDED" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="212" y="66" width="82" height="34" rx="7"/>
+    <line x1="220" y1="92" x2="286" y2="92"/>
+    <circle cx="279" cy="76" r="2.2" fill="#EDEDED"/>
+  </g>
+  <!-- text -->
+  <text x="26" y="164" fill="#EDEDED" font-family="'Courier New', monospace" font-size="17" font-weight="700" letter-spacing="1">ESP32 · SMART AC</text>
+  <text x="26" y="184" fill="#8A8A8A" font-family="'Courier New', monospace" font-size="11" letter-spacing="2">IR · PWA · SINRIC · ~₹600</text>
+</svg>

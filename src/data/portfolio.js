@@ -8,6 +8,12 @@ export const items = [
   },
 
   {
+    image: '/projects/esp32ac.svg',
+    link: 'https://github.com/Marshmellow31/Smart-AC-Dashboard',
+    title: 'ESP32 Smart AC',
+    description: 'IR-controlled smart AC on a chip'
+  },
+  {
     image: '/projects/ascend.png',
     link: 'https://github.com/Marshmellow31/Ascend',
     title: 'Ascend',
@@ -93,6 +99,30 @@ const selectedWorkRaw = [
     github: 'https://github.com/Marshmellow31/PayMatrix',
     instagram: 'https://www.instagram.com/paymatrixapp/',
     live: true,
+  },
+  {
+    slug: 'esp32-smart-ac',
+    title: 'ESP32 Smart AC',
+    year: '2026',
+    role: 'Hardware · Firmware · Full-Stack',
+    type: 'Personal Product',
+    image: '/projects/esp32ac.svg',
+    description: 'A ~₹600 build that turns a basic Samsung split AC into a flagship-grade smart AC — Wi-Fi control, scheduling, sleep curves, energy tracking, and Alexa/Google voice, all served from a single ESP32.',
+    problem: 'Smart ACs cost a fortune, and a perfectly good "dumb" AC isn\'t worth replacing just to control it from a phone. The intelligence lives in a plastic remote that gets lost behind the couch — there\'s no way to start cooling before you get home, schedule it, or see what it costs to run.',
+    approach: 'The AC already has a wireless interface: its IR remote. I used an ESP32 with a single IR LED to impersonate the Samsung remote over 38 kHz IR, then built a dependency-free web app that runs on the device itself and serves flagship-level automation over local Wi-Fi — no hub, no cloud, no subscription. The firmware is a clean single-owner architecture where one module is the sole source of truth and the only thing that touches the IR pin.',
+    features: [
+      ['On-device web app', 'A vanilla-JS PWA served gzipped from the ESP32\'s own flash — installable, offline-capable, reachable at http://ac-controller/ on the LAN.'],
+      ['Full climate control', 'Power, temperature, mode, and fan, plus one-tap presets — everything the physical remote does, from any phone.'],
+      ['Schedules & sleep curves', 'Countdown timers, weekly schedules, and multi-step programs like "60 min @24° → 25° → 26° → off" that resume after a reboot.'],
+      ['Energy & cost model', 'Tracks commanded on-time to project a live 24-hour cost timeline and 30-day kWh/₹ stats — honest about IR being write-only.'],
+      ['"Manual wins" precedence', 'Manual and voice commands pause schedules for a hold window, while timers and safety auto-off deliberately bypass it — product logic, not just code.'],
+      ['Voice control', 'Optional Alexa and Google Home integration via Sinric Pro, bridged bidirectionally so the app and cloud stay in sync.'],
+    ],
+    outcome: 'A basic Samsung AC now schedules itself, tracks its own running cost, and answers to my phone and voice — built for the price of two pizzas, and fully open-source so anyone can clone it.',
+    stack: ['ESP32', 'C++ / Arduino', 'PlatformIO', 'Vanilla JS PWA'],
+    link: null,
+    github: 'https://github.com/Marshmellow31/Smart-AC-Dashboard',
+    live: false,
   },
   {
     slug: 'picklerage',

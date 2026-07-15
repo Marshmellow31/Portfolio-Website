@@ -377,7 +377,7 @@ export default function Home() {
         <Reveal className="mt-[clamp(32px,4vw,56px)] pt-8 border-t border-border">
           <div className="flex flex-wrap items-baseline gap-x-[clamp(28px,5vw,64px)] gap-y-4">
             <span className="font-mono text-[10px] tracking-[.2em] text-text-faint uppercase">Shipped for</span>
-            {['PickleRage', 'Bhumi Developers', 'BD Buildcon', 'Mann Beauty Studio'].map((c) => (
+            {['PickleRage', 'Bhumi Developers', 'BD Buildcon', 'Mann Beauty Studio', 'Hare Krishna', 'Taste of Punjab'].map((c) => (
               <span key={c} className="font-bold text-text-dim hover:text-text transition-colors" style={{ fontSize: 'clamp(17px,2vw,24px)', letterSpacing: '-0.02em' }}>
                 {c}
               </span>

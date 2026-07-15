@@ -61,6 +61,18 @@ export const items = [
     link: '#projects',
     title: 'Navigator+',
     description: 'Native Android GPS dashboard'
+  },
+  {
+    image: '/projects/harekrishna.png',
+    link: '#projects',
+    title: 'Hare Krishna',
+    description: 'Restaurant website'
+  },
+  {
+    image: '/projects/tasteofpunjab.png',
+    link: '#projects',
+    title: 'Taste of Punjab',
+    description: 'Digital QR Menu'
   }
 ];
 
@@ -319,6 +331,48 @@ const selectedWorkRaw = [
     github: null,
     live: false,
   },
+  {
+    slug: 'hare-krishna',
+    title: 'Hare Krishna',
+    year: '2026',
+    role: 'Freelance — Design & Build',
+    type: 'Client Work',
+    image: '/projects/harekrishna.png',
+    description: 'Modern, performant restaurant website with animated sections and multi-page layout.',
+    problem: 'The restaurant needed a digital presence to showcase their diverse menu and premium dining experience to customers.',
+    approach: 'Built a responsive multi-page website focusing on high-quality visuals, smooth scroll animations, and clear calls-to-action for the menu and contact information.',
+    features: [
+      ['Animated UI', 'Scroll-driven reveals and modern hover states enhance the premium feel.'],
+      ['Multi-page Structure', 'Dedicated sections for Home, Menu, About, and Contact for easy navigation.'],
+      ['Responsive Design', 'Optimized for mobile devices to allow customers to easily view the menu on the go.']
+    ],
+    outcome: 'Delivered a complete digital storefront for the restaurant.',
+    stack: ['HTML5', 'CSS3', 'JavaScript'],
+    link: null,
+    github: null,
+    live: false,
+  },
+  {
+    slug: 'taste-of-punjab',
+    title: 'Taste of Punjab',
+    year: '2026',
+    role: 'Freelance — Design & Build',
+    type: 'Client Work',
+    image: '/projects/tasteofpunjab.png',
+    description: 'Interactive Digital QR Menu with category tabs and fast vanilla JS rendering.',
+    problem: 'The restaurant required a fast, easy-to-use digital menu accessible via QR code without requiring app downloads.',
+    approach: 'Developed a lightweight single-page application using vanilla JavaScript for instant load times. Features a dual-tab navigation system for easy browsing of a large menu.',
+    features: [
+      ['Zero-dependency SPA', 'Built entirely with vanilla HTML/CSS/JS for maximum performance and minimal load time.'],
+      ['Dual-tab Navigation', 'Super tabs (Starters, Mains, etc.) and sub-category pills make browsing extensive menus effortless.'],
+      ['Dynamic Rendering', 'Menu data is loaded dynamically, making it easy to update prices and items without touching HTML.']
+    ],
+    outcome: 'Provided a seamless digital menu experience for dine-in customers.',
+    stack: ['HTML5', 'CSS3', 'JavaScript'],
+    link: null,
+    github: null,
+    live: false,
+  },
 ];
 
 export const selectedWork = selectedWorkRaw.map((p, i) => ({
@@ -384,6 +438,30 @@ export const workHistory = [
         name: 'SALON PWA & CRM',
         description: 'Luxury-tier PWA replacing paper loyalty cards. Features phone auth, visual loyalty tracking, and a comprehensive admin CRM dashboard.',
         stack: ['React 19', 'Tailwind v4', 'Framer Motion', 'Firebase v12'],
+      }
+    ]
+  },
+  {
+    company: 'HARE KRISHNA RESTAURANT',
+    role: 'FREELANCE / CONTRACT DEVELOPER',
+    location: 'Remote',
+    projects: [
+      {
+        name: 'RESTAURANT WEBSITE',
+        description: 'Designed and built a modern, responsive website with scroll-driven animations and a digital menu showcase.',
+        stack: ['HTML5', 'CSS3', 'JavaScript'],
+      }
+    ]
+  },
+  {
+    company: 'TASTE OF PUNJAB',
+    role: 'FREELANCE / CONTRACT DEVELOPER',
+    location: 'Remote',
+    projects: [
+      {
+        name: 'DIGITAL QR MENU',
+        description: 'Developed a high-performance, zero-dependency digital menu application with interactive categorization and fast rendering.',
+        stack: ['HTML5', 'CSS3', 'JavaScript'],
       }
     ]
   }

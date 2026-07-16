@@ -116,7 +116,7 @@ export default function ProjectDetail() {
             <img
               src={heroImage}
               alt={`${project.title} — main view`}
-              className="w-full h-auto block"
+              className="w-full max-h-[60vh] md:max-h-[75vh] object-cover block"
               loading="eager"
             />
           ) : (

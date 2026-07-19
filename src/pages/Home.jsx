@@ -7,7 +7,8 @@ import { skillGroups, workHistory } from '../data/portfolio';
 import { testimonials } from '../data/testimonials';
 import useMediaQuery from '../utils/useMediaQuery';
 import useSEO from '../utils/useSEO';
-import { FaCamera, FaJava, FaDatabase } from 'react-icons/fa';
+import { FaCamera, FaJava, FaDatabase, FaGithub, FaLinkedin } from 'react-icons/fa';
+import { FaInstagram } from 'react-icons/fa6';
 import {
   SiTypescript, SiJavascript, SiPython, SiCplusplus, SiKotlin,
   SiReact, SiSvelte, SiTailwindcss, SiFramer,
@@ -15,6 +16,12 @@ import {
   SiAndroid, SiFlutter,
   SiGit, SiDocker, SiVercel, SiEslint
 } from 'react-icons/si';
+
+const socialDock = [
+  { Icon: FaGithub, color: '#ffffff', label: 'GitHub', href: 'https://github.com/Marshmellow31' },
+  { Icon: FaLinkedin, color: '#0A66C2', label: 'LinkedIn', href: 'https://linkedin.com/in/harshil-patel-5a7373333' },
+  { Icon: FaInstagram, gradient: true, label: 'Instagram', href: 'https://www.instagram.com/harshil_3105_/' },
+];
 
 const stackIcons = [
   { Icon: SiTypescript, color: '#3178C6', name: 'TypeScript' },
@@ -157,6 +164,30 @@ export default function Home() {
             >
               Creative side
             </a>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3 mt-4 pointer-events-auto animate-[hpFadeUp_0.8s_ease_0.3s_both]">
+            {socialDock.map(({ Icon, color, gradient, label, href }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center justify-center gap-2 text-text no-underline text-[13px] font-medium px-[26px] h-[46px] rounded-[4px] border border-border-strong transition-colors hover:border-white/50"
+              >
+                {gradient ? (
+                  <span
+                    className="inline-flex items-center justify-center w-[18px] h-[18px] rounded-[5px]"
+                    style={{ background: 'radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%)' }}
+                  >
+                    <Icon size={11} color="#fff" />
+                  </span>
+                ) : (
+                  <Icon size={15} style={{ color }} />
+                )}
+                {label}
+              </a>
+            ))}
           </div>
         </div>
 

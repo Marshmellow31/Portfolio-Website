@@ -3,11 +3,27 @@ import { motion } from 'framer-motion';
 import { FiArrowLeft, FiClock } from 'react-icons/fi';
 import { blogPosts } from '../data/blog';
 import useSEO from '../utils/useSEO';
+import { SITE_URL, OG_IMAGE } from '../../site.config.mjs';
 
 export default function BlogPost() {
   const { slug } = useParams();
   const post = blogPosts.find(p => p.slug === slug);
-  useSEO({ title: post?.title, description: post?.excerpt, path: `/blog/${slug}` });
+  useSEO({
+    title: post?.title,
+    description: post?.excerpt,
+    path: `/blog/${slug}`,
+    jsonLd: post && {
+      '@context': 'https://schema.org',
+      '@type': 'BlogPosting',
+      headline: post.title,
+      description: post.excerpt,
+      datePublished: post.date,
+      url: `${SITE_URL}/blog/${slug}`,
+      image: SITE_URL + OG_IMAGE,
+      author: { '@type': 'Person', name: 'Harshil Patel', url: SITE_URL },
+      mainEntityOfPage: `${SITE_URL}/blog/${slug}`,
+    },
+  });
 
   if (!post) {
     return (

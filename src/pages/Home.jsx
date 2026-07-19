@@ -2,6 +2,7 @@ import { lazy, Suspense, useState, useRef } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'framer-motion';
 import { Reveal, CountUp } from '../components/Reveal/Reveal';
 import CopyButton from '../components/CopyButton';
+import GithubActivity from '../components/GithubActivity/GithubActivity';
 import { skillGroups, workHistory } from '../data/portfolio';
 import { testimonials } from '../data/testimonials';
 import useMediaQuery from '../utils/useMediaQuery';
@@ -407,10 +408,13 @@ export default function Home() {
         </Reveal>
       </section>
 
+      {/* ──────────── GITHUB ACTIVITY ──────────── */}
+      <GithubActivity />
+
       {/* ──────────── CONTACT ──────────── */}
       <section id="contact" style={{ padding: 'clamp(100px,12vw,180px) clamp(20px,6vw,96px)' }}>
         <Reveal>
-          <div className="mono-label mb-6">06 — Contact</div>
+          <div className="mono-label mb-6">07 — Contact</div>
           <div className="flex items-center gap-4 sm:gap-6 flex-wrap">
             <a
               href="mailto:1080patelharshil@gmail.com"

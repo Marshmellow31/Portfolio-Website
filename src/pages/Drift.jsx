@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import useSEO from '../utils/useSEO';
-import { createCarState, stepCar, gearFor, MAX_SPEED } from '../lib/drift-physics';
+import { createCarState, stepCar, stepDriftCar, gearFor, MAX_SPEED } from '../lib/drift-physics';
+import { createRaceAudio } from '../lib/drift-audio';
 import {
   createTrack, surfaceY, hash1,
   TRACK_HALF, WALL_OFF, STRAIGHT, RADIUS, SEG,
@@ -17,6 +18,9 @@ import {
 
 const PAPAYA = '#FF7C00';
 const CARBON = '#15161a';
+
+/* Infield drift arena: flat asphalt pad in the middle of the oval. */
+const PAD = { x: -RADIUS, z: STRAIGHT / 2, r: 55, fence: 78 };
 
 const wrapAngle = (a) => {
   while (a > Math.PI) a -= 2 * Math.PI;
@@ -46,13 +50,23 @@ function createGame(track) {
     car: spawnCar(track),
     started: false,
     progress: track.startIndex - 12,
-    visY: 0, visRoll: 0,
+    visY: 0, visRoll: 0, visPitch: 0,
     lapTime: 0, lastLap: 0, laps: 0,
     bestLap: Number(localStorage.getItem('hp-race-best')) || 0,
     topSpeed: 0,
     shake: 0,
+    impactId: 0, impactStr: 0,     // audio: bumped on every hit
     popup: null, popupId: 0,
     input: { left: false, right: false, throttle: false, brake: false, handbrake: false },
+    mode: 'race',                      // 'race' (F1, oval) | 'drift' (coupe, infield pad)
+    driftCar: createCarState(PAD.x, PAD.z - 20, 0),
+    driftScore: 0,
+    driftBest: Number(localStorage.getItem('hp-drift-best')) || 0,
+    traffic: TRAFFIC.map((c, i) => ({
+      ...c,
+      s: ((i + 0.5) / TRAFFIC.length) * track.lapLength,
+      x: 0, y: 0, z: 0, ang: 0, roll: 0, cs: c.speed,
+    })),
   };
 }
 
@@ -60,7 +74,7 @@ function resetToLine(g) {
   g.car = spawnCar(g.track);
   g.progress = g.track.startIndex - 12;
   g.lapTime = 0;
-  g.visY = 0; g.visRoll = 0;
+  g.visY = 0; g.visRoll = 0; g.visPitch = 0;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -89,12 +103,17 @@ function F1CarModel({ game }) {
     group.current.position.set(car.x, g.visY, car.z);
     group.current.rotation.y = car.heading;
     group.current.rotation.z = g.visRoll;
+    group.current.rotation.x = g.visPitch || 0;
 
     // Body lean from G forces + slight yaw toward velocity
     if (body.current) {
       const velAng = Math.atan2(car.vx, car.vz);
-      const bodyYaw = car.speed > 4 ? wrapAngle(velAng - car.heading) * -0.25 : 0;
-      body.current.rotation.z += (-car.lateralG * 0.35 - body.current.rotation.z) * 0.15;
+      // measure slip relative to travel direction, else reversing twists the body 45°
+      const bodyYaw = car.speed > 4
+        ? Math.max(-0.3, Math.min(0.3, wrapAngle(velAng - car.heading + (car.reverse ? Math.PI : 0)) * -0.25)) : 0;
+      // clamp — lateralG is unbounded in a big slide and would roll the body 90°
+      const lean = Math.max(-0.14, Math.min(0.14, -car.lateralG * 0.35));
+      body.current.rotation.z += (lean - body.current.rotation.z) * 0.15;
       body.current.rotation.x += (car.longG * 0.02 - body.current.rotation.x) * 0.12;
       body.current.rotation.y += (bodyYaw - body.current.rotation.y) * 0.1;
     }
@@ -106,7 +125,7 @@ function F1CarModel({ game }) {
     for (let i = 0; i < 4; i++) {
       const wr = wheelRefs[i];
       if (wr.current) {
-        const lat = car.lateralG * 0.03 * (WHEELS[i].x > 0 ? -1 : 1);
+        const lat = Math.max(-0.07, Math.min(0.07, car.lateralG * 0.03)) * (WHEELS[i].x > 0 ? -1 : 1);
         wr.current.position.y = WHEELS[i].r + (i < 2 ? pitchOff : -pitchOff) + lat;
       }
       if (spinRefs[i].current) spinRefs[i].current.rotation.x = -car.wheelSpin;
@@ -126,7 +145,7 @@ function F1CarModel({ game }) {
       const s = on ? 0.6 + car.rpm * 0.6 + Math.random() * 0.5 : 0;
       flame.current.scale.set(s * 0.7, s * 0.7, s);
     }
-  });
+  }, -2);
 
   const tire = (w) => (
     <mesh rotation={[0, 0, Math.PI / 2]} castShadow>
@@ -300,17 +319,310 @@ function F1CarModel({ game }) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   DriftCarModel — boxy rear-drive coupe for the infield pad.
+   ═══════════════════════════════════════════════════════════════ */
+const DRIFT_WHEELS = [
+  { x: -0.72, z: 1.18, front: true }, { x: 0.72, z: 1.18, front: true },
+  { x: -0.72, z: -1.18 }, { x: 0.72, z: -1.18 },
+];
+function DriftCarModel({ game }) {
+  const group = useRef();
+  const body = useRef();
+  const steerRefs = [useRef(), useRef()];
+  const spinRefs = [useRef(), useRef(), useRef(), useRef()];
+
+  useFrame(() => {
+    const c = game.current.driftCar;
+    if (!group.current) return;
+    group.current.position.set(c.x, 0, c.z);
+    group.current.rotation.y = c.heading;
+    if (body.current) {
+      const lean = Math.max(-0.16, Math.min(0.16, -c.lateralG * 0.4));
+      body.current.rotation.z += (lean - body.current.rotation.z) * 0.15;
+      body.current.rotation.x += (c.longG * 0.025 - body.current.rotation.x) * 0.12;
+    }
+    const sv = c.steer * 0.45;
+    steerRefs.forEach((r) => { if (r.current) r.current.rotation.y = sv; });
+    spinRefs.forEach((r) => { if (r.current) r.current.rotation.x = -c.wheelSpin; });
+  }, -2);
+
+  const wheel = (i) => (
+    <group ref={spinRefs[i]}>
+      <mesh rotation={[0, 0, Math.PI / 2]} castShadow>
+        <cylinderGeometry args={[0.32, 0.32, 0.28, 12]} />
+        <meshStandardMaterial color="#111116" roughness={0.9} />
+      </mesh>
+      <mesh rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[0.18, 0.18, 0.3, 8]} />
+        <meshStandardMaterial color="#c9a227" metalness={0.8} roughness={0.3} />
+      </mesh>
+    </group>
+  );
+
+  return (
+    <group ref={group}>
+      <group ref={body}>
+        {/* main body */}
+        <mesh castShadow position={[0, 0.52, 0]}>
+          <boxGeometry args={[1.66, 0.5, 3.9]} />
+          <meshStandardMaterial color="#08D9D6" metalness={0.4} roughness={0.3} />
+        </mesh>
+        {/* hood + trunk step */}
+        <mesh position={[0, 0.79, 1.05]}>
+          <boxGeometry args={[1.5, 0.1, 1.4]} />
+          <meshStandardMaterial color="#08D9D6" metalness={0.4} roughness={0.3} />
+        </mesh>
+        {/* cabin */}
+        <mesh castShadow position={[0, 1.0, -0.25]}>
+          <boxGeometry args={[1.42, 0.44, 1.7]} />
+          <meshStandardMaterial color="#0a0a0e" roughness={0.4} metalness={0.3} />
+        </mesh>
+        {/* front splitter + rear diffuser */}
+        <mesh position={[0, 0.24, 1.98]}>
+          <boxGeometry args={[1.7, 0.09, 0.35]} />
+          <meshStandardMaterial color={CARBON} roughness={0.6} />
+        </mesh>
+        <mesh position={[0, 0.28, -1.98]}>
+          <boxGeometry args={[1.6, 0.14, 0.25]} />
+          <meshStandardMaterial color={CARBON} roughness={0.6} />
+        </mesh>
+        {/* big rear wing */}
+        {[-0.6, 0.6].map((x) => (
+          <mesh key={x} position={[x, 0.98, -1.85]}>
+            <boxGeometry args={[0.07, 0.42, 0.3]} />
+            <meshStandardMaterial color={CARBON} roughness={0.5} />
+          </mesh>
+        ))}
+        <mesh castShadow position={[0, 1.22, -1.9]} rotation={[0.18, 0, 0]}>
+          <boxGeometry args={[1.8, 0.05, 0.45]} />
+          <meshStandardMaterial color={CARBON} roughness={0.45} />
+        </mesh>
+        {/* tail light bar */}
+        <mesh position={[0, 0.58, -1.97]}>
+          <boxGeometry args={[1.3, 0.1, 0.05]} />
+          <meshStandardMaterial color="#ff1a1a" emissive="#ff1a1a" emissiveIntensity={0.9} />
+        </mesh>
+      </group>
+      {DRIFT_WHEELS.map((w, i) => (
+        <group key={i} position={[w.x, 0.32, w.z]}>
+          {w.front
+            ? <group ref={steerRefs[i]}>{wheel(i)}</group>
+            : wheel(i)}
+        </group>
+      ))}
+    </group>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TrafficCars — AI F1 cars circulating the oval in their own lanes
+   at their own pace, riding the banking. Simulated in GameLoop
+   (g.traffic) so the player collides with them; this component
+   only renders.
+   ═══════════════════════════════════════════════════════════════ */
+const TRAFFIC = [
+  { color: '#2f6fd6', helmet: '#f5d90a', speed: 46, lat: -9, wob: 0.25, phase: 0.0 },
+  { color: '#d63b2f', helmet: '#ffffff', speed: 58, lat: -3, wob: 0.35, phase: 2.1 },
+  { color: '#3bb54a', helmet: '#111116', speed: 51, lat: 5, wob: 0.30, phase: 4.2 },
+  { color: '#e0c22f', helmet: '#d63b2f', speed: 64, lat: 9, wob: 0.20, phase: 1.3 },
+  { color: '#9b59b6', helmet: '#2f6fd6', speed: 42, lat: -12, wob: 0.40, phase: 3.4 },
+];
+
+/* Static low-poly F1 body — same silhouette as the player car. */
+function F1Body({ color, helmet = '#ddd' }) {
+  return (
+    <group>
+      <mesh position={[0, 0.1, -0.1]}>
+        <boxGeometry args={[1.5, 0.07, 4.3]} />
+        <meshStandardMaterial color={CARBON} roughness={0.85} />
+      </mesh>
+      <mesh castShadow position={[0, 0.34, 1.85]} rotation={[0.055, 0, 0]}>
+        <boxGeometry args={[0.34, 0.2, 1.5]} />
+        <meshStandardMaterial color={color} metalness={0.3} roughness={0.35} />
+      </mesh>
+      <mesh position={[0, 0.16, 2.42]}>
+        <boxGeometry args={[1.9, 0.05, 0.52]} />
+        <meshStandardMaterial color={CARBON} roughness={0.6} />
+      </mesh>
+      <mesh position={[0, 0.26, 2.3]} rotation={[-0.35, 0, 0]}>
+        <boxGeometry args={[1.7, 0.035, 0.3]} />
+        <meshStandardMaterial color={color} roughness={0.4} />
+      </mesh>
+      {[-0.95, 0.95].map((x) => (
+        <mesh key={x} position={[x, 0.28, 2.42]}>
+          <boxGeometry args={[0.05, 0.28, 0.55]} />
+          <meshStandardMaterial color={CARBON} roughness={0.5} />
+        </mesh>
+      ))}
+      <mesh castShadow position={[0, 0.42, 0.55]}>
+        <boxGeometry args={[0.76, 0.4, 1.7]} />
+        <meshStandardMaterial color={color} metalness={0.35} roughness={0.3} />
+      </mesh>
+      <mesh position={[0, 0.68, 0.25]}>
+        <sphereGeometry args={[0.15, 10, 8]} />
+        <meshStandardMaterial color={helmet} metalness={0.5} roughness={0.25} />
+      </mesh>
+      <mesh position={[0, 0.68, 0.28]}>
+        <torusGeometry args={[0.31, 0.045, 6, 14, Math.PI]} />
+        <meshStandardMaterial color={CARBON} metalness={0.6} roughness={0.35} />
+      </mesh>
+      {[-0.56, 0.56].map((x) => (
+        <mesh key={x} castShadow position={[x, 0.36, -0.35]}>
+          <boxGeometry args={[0.52, 0.34, 1.5]} />
+          <meshStandardMaterial color={color} metalness={0.3} roughness={0.35} />
+        </mesh>
+      ))}
+      <mesh castShadow position={[0, 0.6, -0.85]}>
+        <boxGeometry args={[0.4, 0.42, 1.7]} />
+        <meshStandardMaterial color={color} metalness={0.35} roughness={0.3} />
+      </mesh>
+      <mesh position={[0, 0.82, -1.45]}>
+        <boxGeometry args={[0.04, 0.3, 0.9]} />
+        <meshStandardMaterial color="#f5f5f7" roughness={0.4} />
+      </mesh>
+      <mesh position={[0, 0.72, -2.0]}>
+        <boxGeometry args={[0.08, 0.5, 0.12]} />
+        <meshStandardMaterial color={CARBON} roughness={0.5} />
+      </mesh>
+      <mesh castShadow position={[0, 0.92, -2.12]}>
+        <boxGeometry args={[1.5, 0.05, 0.42]} />
+        <meshStandardMaterial color={CARBON} roughness={0.5} />
+      </mesh>
+      <mesh position={[0, 1.04, -2.2]} rotation={[0.4, 0, 0]}>
+        <boxGeometry args={[1.5, 0.04, 0.26]} />
+        <meshStandardMaterial color={color} roughness={0.4} />
+      </mesh>
+      {[-0.76, 0.76].map((x) => (
+        <mesh key={x} position={[x, 0.9, -2.12]}>
+          <boxGeometry args={[0.05, 0.42, 0.5]} />
+          <meshStandardMaterial color={color} metalness={0.3} roughness={0.4} />
+        </mesh>
+      ))}
+      <mesh position={[0, 0.42, -2.28]}>
+        <boxGeometry args={[0.1, 0.22, 0.06]} />
+        <meshStandardMaterial color="#ff1a1a" emissive="#ff1a1a" emissiveIntensity={0.8} />
+      </mesh>
+      {WHEELS.map((w, i) => (
+        <group key={i} position={[w.x, w.r, w.z]}>
+          <mesh rotation={[0, 0, Math.PI / 2]} castShadow>
+            <cylinderGeometry args={[w.r, w.r, w.w, 12]} />
+            <meshStandardMaterial color="#111116" roughness={0.9} />
+          </mesh>
+          <mesh rotation={[0, 0, Math.PI / 2]}>
+            <cylinderGeometry args={[w.r * 0.55, w.r * 0.55, w.w + 0.02, 8]} />
+            <meshStandardMaterial color="#3a3b40" metalness={0.8} roughness={0.3} />
+          </mesh>
+        </group>
+      ))}
+    </group>
+  );
+}
+
+function TrafficCars({ game }) {
+  const refs = useRef([]);
+  useFrame(() => {
+    const list = game.current.traffic;
+    for (let i = 0; i < list.length; i++) {
+      const el = refs.current[i], tc = list[i];
+      if (!el) continue;
+      el.position.set(tc.x, tc.y, tc.z);
+      el.rotation.y = tc.ang;
+      el.rotation.z = tc.roll;
+    }
+  }, -2);
+
+  return (
+    <group>
+      {TRAFFIC.map((c, i) => (
+        <group key={i} ref={(el) => { if (el) { el.rotation.order = 'YZX'; refs.current[i] = el; } }}>
+          <F1Body color={c.color} helmet={c.helmet} />
+        </group>
+      ))}
+    </group>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
    GameLoop — physics, progress + lap timing, wall collision,
    banking visual state, particle emission. Renders nothing.
    ═══════════════════════════════════════════════════════════════ */
 function GameLoop({ game, isMobile, smokeApi, skidApi, sparkApi, dirtApi }) {
-  useFrame((_, dt) => {
+  // priority -3: physics must run BEFORE the car mesh (-2) and camera (-1)
+  // read positions, or the car jitters forward/back by one frame of travel.
+  useFrame(({ clock }, dt) => {
     const g = game.current;
     dt = Math.min(dt, 0.04);
     const track = g.track;
     const N = track.N;
 
     if (isMobile && g.started && !g.input.brake) g.input.throttle = true;
+
+    /* ── Traffic — the AI field circulates in both modes ── */
+    const tt = clock.getElapsedTime();
+    for (const tc of g.traffic) {
+      tc.cs = tc.speed + Math.sin(tt * 0.23 + tc.phase) * 6;
+      tc.s = (tc.s + tc.cs * dt + track.lapLength) % track.lapLength;
+      const fi = tc.s / SEG;
+      const ti = Math.floor(fi), fr = fi - ti;
+      const tA = track.get(ti), tB = track.get(ti + 1);
+      const tox = tA.ox + (tB.ox - tA.ox) * fr, toz = tA.oz + (tB.oz - tA.oz) * fr;
+      const slope = tA.slope + (tB.slope - tA.slope) * fr;
+      const lat = tc.lat + Math.sin(tt * tc.wob + tc.phase) * 2.5;
+      tc.ang = tA.ang + wrapAngle(tB.ang - tA.ang) * fr;
+      tc.x = tA.x + (tB.x - tA.x) * fr + tox * lat;
+      tc.z = tA.z + (tB.z - tA.z) * fr + toz * lat;
+      tc.y = surfaceY({ slope }, lat);
+      tc.roll = Math.atan(slope * (tox * Math.cos(tc.ang) - toz * Math.sin(tc.ang)));
+    }
+
+    /* ── DRIFT MODE — flat infield pad, score for sliding ── */
+    if (g.mode === 'drift') {
+      const c = g.driftCar;
+      const pdx = c.x - PAD.x, pdz = c.z - PAD.z;
+      const pr = Math.hypot(pdx, pdz) || 1;
+      stepDriftCar(c, g.input, dt, pr < PAD.r + 2);
+
+      // circular fence at the edge of the arena
+      if (pr > PAD.fence) {
+        const nx = pdx / pr, nz = pdz / pr;
+        c.x = PAD.x + nx * PAD.fence;
+        c.z = PAD.z + nz * PAD.fence;
+        const vn = c.vx * nx + c.vz * nz;
+        if (vn > 0) {
+          c.vx -= nx * vn * 1.6; c.vz -= nz * vn * 1.6;
+          c.vx *= 0.92; c.vz *= 0.92;
+          g.shake = Math.max(g.shake, Math.min(1, vn * 0.05));
+          g.impactId++; g.impactStr = Math.min(1, vn * 0.05);
+          if (sparkApi.current) sparkApi.current.emit(c.x, 0.4, c.z, c.vx, c.vz, 4);
+        }
+      }
+
+      // scoring: speed × angle while sliding forward inside the arena
+      if (g.started && c.drifting && !c.reverse && c.speed > 6 && pr < PAD.fence) {
+        g.driftScore += c.speed * c.slip * dt * 3;
+        if (g.driftScore > g.driftBest) {
+          g.driftBest = g.driftScore;
+          localStorage.setItem('hp-drift-best', String(Math.floor(g.driftBest)));
+        }
+      }
+
+      if (c.driftJustEntered) g.shake = Math.max(g.shake, 0.2);
+      g.shake *= (1 - dt * 6);
+
+      const dfx = Math.sin(c.heading), dfz = Math.cos(c.heading);
+      const drx = -dfz, drz = dfx;
+      if (c.drifting && c.speed > 5) {
+        for (const side of [-0.75, 0.75]) {
+          const ox = -dfx * 1.2 + drx * side, oz = -dfz * 1.2 + drz * side;
+          if (smokeApi.current) smokeApi.current.emit(c.x + ox, 0.2, c.z + oz, Math.max(c.slip, 0.3));
+          if (skidApi.current) skidApi.current.emit(c.x + ox, 0.03, c.z + oz, c.heading, 0);
+        }
+      }
+      if (pr > PAD.r + 2 && c.speed > 5 && dirtApi.current) {
+        dirtApi.current.emit(c.x - dfx * 0.5, c.z - dfz * 0.5);
+      }
+      return;
+    }
 
     /* ── Progress: nearest centerline point (with wrap) ── */
     const prev = g.progress;
@@ -351,8 +663,27 @@ function GameLoop({ game, isMobile, smokeApi, skidApi, sparkApi, dirtApi }) {
     g.progress = bestI;
     if (g.started) g.lapTime += dt;
 
-    /* ── Track frame: lateral offset + banking ── */
-    const p = track.get(bestI);
+    /* ── Track frame — interpolated between centerline points. Using the
+       nearest point's data made height/banking change in 4-unit steps,
+       which read as the car jolting up/down while climbing the banking. ── */
+    let pA = track.get(bestI), pB = track.get(bestI + 1);
+    let sx = pB.x - pA.x, sz = pB.z - pA.z;
+    let tSeg = ((g.car.x - pA.x) * sx + (g.car.z - pA.z) * sz) / (sx * sx + sz * sz);
+    if (tSeg < 0) {
+      pB = pA; pA = track.get(bestI - 1);
+      sx = pB.x - pA.x; sz = pB.z - pA.z;
+      tSeg = ((g.car.x - pA.x) * sx + (g.car.z - pA.z) * sz) / (sx * sx + sz * sz);
+    }
+    tSeg = Math.max(0, Math.min(1, tSeg));
+    const lp = (a, b) => a + (b - a) * tSeg;
+    let iox = lp(pA.ox, pB.ox), ioz = lp(pA.oz, pB.oz);
+    const olen = Math.hypot(iox, ioz) || 1;
+    const p = {
+      x: lp(pA.x, pB.x), z: lp(pA.z, pB.z),
+      ox: iox / olen, oz: ioz / olen,
+      slope: lp(pA.slope, pB.slope),
+      ang: pA.ang + wrapAngle(pB.ang - pA.ang) * tSeg,
+    };
     const dLat = (g.car.x - p.x) * p.ox + (g.car.z - p.z) * p.oz;
     const onRoad = dLat > -(TRACK_HALF + 6.5) && dLat < TRACK_HALF + 0.6;
 
@@ -367,6 +698,7 @@ function GameLoop({ game, isMobile, smokeApi, skidApi, sparkApi, dirtApi }) {
         g.car.vz -= p.oz * vn * 1.6;
         g.car.vx *= 0.93; g.car.vz *= 0.93;
         g.shake = Math.max(g.shake, Math.min(1.2, vn * 0.06));
+        g.impactId++; g.impactStr = Math.min(1, vn * 0.05);
         if (sparkApi.current) {
           sparkApi.current.emit(g.car.x + p.ox * 0.8, g.visY + 0.5, g.car.z + p.oz * 0.8, g.car.vx, g.car.vz, 6);
         }
@@ -377,14 +709,52 @@ function GameLoop({ game, isMobile, smokeApi, skidApi, sparkApi, dirtApi }) {
     stepCar(g.car, g.input, dt, onRoad);
     if (g.car.speed > g.topSpeed) g.topSpeed = g.car.speed;
 
-    /* ── Banking visuals: height + roll toward the infield ── */
+    /* ── Banking visuals: height + roll/pitch that follow the surface ── */
+    const fx = Math.sin(g.car.heading), fz = Math.cos(g.car.heading);
+    const rx = -fz, rz = fx;
     const targetY = surfaceY(p, dLat);
-    const leftX = Math.cos(g.car.heading), leftZ = -Math.sin(g.car.heading);
-    const rise = p.slope * (p.ox * leftX + p.oz * leftZ);
+    // banking roll/pitch only apply ON the banked surface — the infield is flat
+    const bSlope = dLat > -TRACK_HALF ? p.slope : 0;
+    const rise = bSlope * (p.ox * fz + p.oz * -fx);        // slope across the car → roll
+    const riseF = bSlope * (p.ox * fx + p.oz * fz);        // slope along the car → pitch
     const targetRoll = Math.atan(rise);
-    const kv = Math.min(1, dt * 9);
+    const targetPitch = -Math.atan(riseF);
+    const kv = Math.min(1, dt * 14);
     g.visY += (targetY - g.visY) * kv;
+    if (g.visY < targetY) g.visY = targetY;                // never sink below the road
     g.visRoll += (targetRoll - g.visRoll) * kv;
+    g.visPitch += (targetPitch - g.visPitch) * kv;
+
+    /* ── Traffic collision — each car is two circles along its length ── */
+    const cOff = 1.1, cR = 1.15, minD = cR * 2;
+    for (const tc of g.traffic) {
+      const cdx = tc.x - g.car.x, cdz = tc.z - g.car.z;
+      if (cdx * cdx + cdz * cdz > 49) continue;
+      const tfx = Math.sin(tc.ang), tfz = Math.cos(tc.ang);
+      const tvx = tfx * tc.cs, tvz = tfz * tc.cs;
+      for (const a of [-cOff, cOff]) {
+        const pcx = g.car.x + fx * a, pcz = g.car.z + fz * a;
+        for (const b of [-cOff, cOff]) {
+          let nx = pcx - (tc.x + tfx * b), nz = pcz - (tc.z + tfz * b);
+          const d = Math.hypot(nx, nz);
+          if (d >= minD || d < 1e-4) continue;
+          nx /= d; nz /= d;
+          const push = minD - d;
+          g.car.x += nx * push; g.car.z += nz * push;
+          const vn = (g.car.vx - tvx) * nx + (g.car.vz - tvz) * nz;
+          if (vn < 0) {
+            g.car.vx -= nx * vn * 1.5;
+            g.car.vz -= nz * vn * 1.5;
+            g.car.vx *= 0.94; g.car.vz *= 0.94;
+            g.shake = Math.max(g.shake, Math.min(1.1, -vn * 0.05));
+            if (-vn > 4) { g.impactId++; g.impactStr = Math.min(1, -vn * 0.04); }
+            if (sparkApi.current && -vn > 4) {
+              sparkApi.current.emit((pcx + tc.x + tfx * b) / 2, tc.y + 0.4, (pcz + tc.z + tfz * b) / 2, g.car.vx, g.car.vz, 5);
+            }
+          }
+        }
+      }
+    }
 
     /* ── Camera shake ── */
     if (g.car.driftJustEntered) g.shake = Math.max(g.shake, 0.35);
@@ -392,28 +762,25 @@ function GameLoop({ game, isMobile, smokeApi, skidApi, sparkApi, dirtApi }) {
     g.shake *= (1 - dt * 6);
 
     /* ── Particles ── */
-    const fx = Math.sin(g.car.heading), fz = Math.cos(g.car.heading);
-    const rx = -fz, rz = fx;
-    const py = g.visY + 0.2;
+    // exact surface height at a world offset from the car (skids sit ON the banking)
+    const hAt = (ox, oz) => surfaceY(p, dLat + p.ox * ox + p.oz * oz);
     if (g.car.drifting && onRoad) {
       const amt = Math.max(g.car.slip, g.input.brake ? 0.25 : 0);
-      if (smokeApi.current) {
-        smokeApi.current.emit(g.car.x - fx * 1.4 + rx * -0.8, py, g.car.z - fz * 1.4 + rz * -0.8, amt);
-        smokeApi.current.emit(g.car.x - fx * 1.4 + rx * 0.8, py, g.car.z - fz * 1.4 + rz * 0.8, amt);
-      }
-      if (skidApi.current) {
-        skidApi.current.emit(g.car.x - fx * 1.4 + rx * -0.8, g.visY + 0.03, g.car.z - fz * 1.4 + rz * -0.8, g.car.heading, g.visRoll);
-        skidApi.current.emit(g.car.x - fx * 1.4 + rx * 0.8, g.visY + 0.03, g.car.z - fz * 1.4 + rz * 0.8, g.car.heading, g.visRoll);
+      for (const side of [-0.8, 0.8]) {
+        const ox = -fx * 1.4 + rx * side, oz = -fz * 1.4 + rz * side;
+        const gy = hAt(ox, oz);
+        if (smokeApi.current) smokeApi.current.emit(g.car.x + ox, gy + 0.2, g.car.z + oz, amt);
+        if (skidApi.current) skidApi.current.emit(g.car.x + ox, gy + 0.03, g.car.z + oz, g.car.heading, g.visRoll);
       }
     }
     // F1 floor sparks at very high speed
     if (g.car.speed > MAX_SPEED * 0.8 && sparkApi.current && Math.random() > 0.75) {
-      sparkApi.current.emit(g.car.x - fx * 1.8, g.visY + 0.08, g.car.z - fz * 1.8, g.car.vx, g.car.vz, 2);
+      sparkApi.current.emit(g.car.x - fx * 1.8, hAt(-fx * 1.8, -fz * 1.8) + 0.08, g.car.z - fz * 1.8, g.car.vx, g.car.vz, 2);
     }
     if (!onRoad && g.car.speed > 5 && dirtApi.current) {
       dirtApi.current.emit(g.car.x - fx * 0.5, g.car.z - fz * 0.5);
     }
-  });
+  }, -3);
   return null;
 }
 
@@ -490,6 +857,9 @@ function Speedway({ track }) {
         varying vec3 vNormal;
         uniform float uStart;
         uniform float uN;
+        float hash(vec2 p) {
+          return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+        }
         void main() {
           float u = vUv.x;
           float v = vUv.y;
@@ -497,6 +867,13 @@ function Speedway({ track }) {
           // racing groove — rubbered-in darker band
           float groove = smoothstep(0.40, 0.55, u) * (1.0 - smoothstep(0.78, 0.92, u));
           col *= 1.0 - groove * 0.22;
+          // asphalt grain — two scales of speckle noise
+          float g1 = hash(floor(vec2(u * 220.0, v * 30.0)));
+          float g2 = hash(floor(vec2(u * 60.0, v * 8.0)) + 7.31);
+          col *= 0.90 + 0.14 * g1 + 0.08 * g2;
+          // faint transverse paving joints every few segments
+          float jd = abs(fract(v * 0.25 + 0.5) - 0.5) * 4.0;
+          col *= 1.0 - (1.0 - smoothstep(0.015, 0.06, jd)) * 0.14;
           // yellow line at the bottom (inside), white line at the wall
           float yl = smoothstep(0.018, 0.026, u) * (1.0 - smoothstep(0.046, 0.054, u));
           float wl = smoothstep(0.946, 0.954, u) * (1.0 - smoothstep(0.974, 0.982, u));
@@ -533,7 +910,7 @@ function Speedway({ track }) {
       return { x: p.x + p.ox * (WALL_OFF + 10), z: p.z + p.oz * (WALL_OFF + 10) };
     });
     const trees = Array.from({ length: 40 }, (_, i) => {
-      const r = 25 + hash1(i * 3.1) * 70;
+      const r = 62 + hash1(i * 3.1) * 34;   // ring outside the drift pad
       const th = hash1(i * 7.7) * Math.PI * 2;
       return {
         x: -RADIUS + Math.cos(th) * r,
@@ -550,6 +927,9 @@ function Speedway({ track }) {
   useEffect(() => {
     const mesh = crowdRef.current;
     if (!mesh) return;
+    // bounding sphere of an instancedMesh is just the tiny box at the origin —
+    // without this the whole crowd vanishes when the origin leaves the frustum
+    mesh.frustumCulled = false;
     const dummy = new THREE.Object3D();
     const color = new THREE.Color();
     for (let i = 0; i < CROWD; i++) {
@@ -592,6 +972,33 @@ function Speedway({ track }) {
         <circleGeometry args={[900, 32]} />
         <meshStandardMaterial color="#4a9d4e" roughness={1} />
       </mesh>
+
+      {/* Infield drift arena — asphalt pad, painted rings, fence posts */}
+      <group position={[PAD.x, 0, PAD.z]}>
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
+          <circleGeometry args={[PAD.r, 48]} />
+          <meshStandardMaterial color="#26272d" roughness={0.95} />
+        </mesh>
+        {[14, 30, 46].map((r) => (
+          <mesh key={r} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.04, 0]}>
+            <ringGeometry args={[r - 0.25, r + 0.25, 48]} />
+            <meshBasicMaterial color="#ffffff" transparent opacity={0.35} />
+          </mesh>
+        ))}
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.04, 0]}>
+          <circleGeometry args={[2.5, 24]} />
+          <meshBasicMaterial color={PAPAYA} transparent opacity={0.5} />
+        </mesh>
+        {Array.from({ length: 14 }, (_, i) => {
+          const a = (i / 14) * Math.PI * 2;
+          return (
+            <mesh key={i} position={[Math.cos(a) * PAD.fence, 0.5, Math.sin(a) * PAD.fence]}>
+              <cylinderGeometry args={[0.18, 0.18, 1, 6]} />
+              <meshStandardMaterial color={i % 2 ? '#e8e8ec' : '#ff3b30'} roughness={0.6} />
+            </mesh>
+          );
+        })}
+      </group>
 
       {/* Grandstands — front + back straight */}
       {[{ x0: WALL_OFF + 7, dir: 1 }, { x0: backX - (WALL_OFF + 7), dir: -1 }].map(({ x0, dir }, si) => (
@@ -743,7 +1150,7 @@ function TyreSmoke({ api }) {
   });
 
   return (
-    <instancedMesh ref={ref} args={[null, null, PUFF]}>
+    <instancedMesh ref={ref} args={[null, null, PUFF]} frustumCulled={false}>
       <sphereGeometry args={[0.5, 6, 6]} />
       <meshStandardMaterial color="#e8e8ee" transparent opacity={0.32} roughness={1} depthWrite={false} />
     </instancedMesh>
@@ -790,7 +1197,7 @@ function SkidMarks({ api }) {
   });
 
   return (
-    <instancedMesh ref={ref} args={[null, null, SKID]}>
+    <instancedMesh ref={ref} args={[null, null, SKID]} frustumCulled={false}>
       <boxGeometry args={[1, 0.012, 1]} />
       <meshBasicMaterial color="#141416" transparent opacity={0.55} />
     </instancedMesh>
@@ -843,7 +1250,7 @@ function Sparks({ api }) {
   });
 
   return (
-    <instancedMesh ref={ref} args={[null, null, SPARK]}>
+    <instancedMesh ref={ref} args={[null, null, SPARK]} frustumCulled={false}>
       <icosahedronGeometry args={[1, 0]} />
       <meshBasicMaterial color="#FFB347" />
     </instancedMesh>
@@ -896,7 +1303,7 @@ function DirtKick({ api }) {
   });
 
   return (
-    <instancedMesh ref={ref} args={[null, null, DIRT]}>
+    <instancedMesh ref={ref} args={[null, null, DIRT]} frustumCulled={false}>
       <sphereGeometry args={[1, 4, 4]} />
       <meshStandardMaterial color="#5a7d3a" roughness={1} />
     </instancedMesh>
@@ -935,29 +1342,37 @@ function LightRig({ game }) {
 function ChaseCam({ game }) {
   // Camera position is computed rigidly from a *smoothed heading*, so the
   // car never rubber-bands away at speed — only the swing angle lags.
-  const cs = useRef({ heading: null, y: 0 });
+  const cs = useRef({ heading: null, y: 0, spd: 0, swing: 0 });
   useFrame(({ camera }, dt) => {
     const g = game.current;
-    const car = g.car;
-    const spd = car.speed / MAX_SPEED;
+    const car = g.mode === 'drift' ? g.driftCar : g.car;
+    const vy = g.mode === 'drift' ? 0 : g.visY;
     const st = cs.current;
-    if (st.heading === null) { st.heading = car.heading; st.y = g.visY; }
+    if (st.heading === null) { st.heading = car.heading; st.y = vy; }
 
-    const kh = 1 - Math.exp(-5.5 * Math.min(dt, 0.05));
+    const cdt = Math.min(dt, 0.05);
+    // smoothed speed drives follow distance / height / FOV without pumping
+    st.spd += (car.speed / MAX_SPEED - st.spd) * (1 - Math.exp(-6 * cdt));
+    const spd = st.spd;
+
+    // catch-up tightens with speed: loose swing at low speed, locked-on flat out
+    const kh = 1 - Math.exp(-(6 + 10 * spd) * cdt);
+    const ky = 1 - Math.exp(-12 * cdt);
     st.heading += wrapAngle(car.heading - st.heading) * kh;
-    st.y += (g.visY - st.y) * kh;
+    st.y += (vy - st.y) * ky;
 
     const back = 8.5 + spd * 3.5;
     const up = 3.2 + spd * 1.2;
     let tx = car.x - Math.sin(st.heading) * back;
     let tz = car.z - Math.cos(st.heading) * back;
 
-    if (car.drifting && car.slip > 0.12) {
-      const rx = -Math.cos(st.heading), rz = Math.sin(st.heading);
-      const swing = Math.min(car.slip * 3, 3.5) * -car.slipSign;
-      tx += rx * swing;
-      tz += rz * swing;
-    }
+    // drift swing eases in/out instead of snapping with the drift flag
+    const swingT = (car.drifting && car.slip > 0.12)
+      ? Math.min(car.slip * 3, 3.5) * -car.slipSign : 0;
+    st.swing += (swingT - st.swing) * (1 - Math.exp(-5 * cdt));
+    const rx = -Math.cos(st.heading), rz = Math.sin(st.heading);
+    tx += rx * st.swing;
+    tz += rz * st.swing;
 
     camera.position.set(tx, st.y + up, tz);
 
@@ -970,8 +1385,8 @@ function ChaseCam({ game }) {
     camera.fov += (targetFov - camera.fov) * kh;
     camera.updateProjectionMatrix();
 
-    camera.lookAt(car.x, g.visY + 0.9, car.z);
-  });
+    camera.lookAt(car.x, st.y + 0.9, car.z);
+  }, -1);
   return null;
 }
 
@@ -1069,12 +1484,48 @@ export default function Drift() {
 
   const [touch] = useState(() => typeof window !== 'undefined' && matchMedia('(pointer: coarse)').matches);
   const [hud, setHud] = useState({
-    speed: 0, gear: 1, started: false,
+    speed: 0, gear: 1, started: false, mode: 'race',
+    driftScore: 0, driftBest: game.current.driftBest,
     lapTime: 0, lastLap: 0, bestLap: game.current.bestLap, laps: 0,
     speedPct: 0, carX: game.current.car.x, carZ: game.current.car.z,
   });
   const [popup, setPopup] = useState(null);
   const popupRef = useRef(0);
+  const [soundOn, setSoundOn] = useState(true);
+  const audioRef = useRef(null);
+  const ensureAudio = () => {
+    if (!audioRef.current) audioRef.current = createRaceAudio();
+    audioRef.current.start();
+  };
+  const toggleSound = () => setSoundOn((on) => {
+    const next = !on;
+    ensureAudio();
+    audioRef.current.setMuted(!next);
+    return next;
+  });
+
+  /* ── Audio follows the active car; impacts fire one-shots ── */
+  useEffect(() => {
+    let raf, lastImpact = 0;
+    const loop = () => {
+      raf = requestAnimationFrame(loop);
+      const a = audioRef.current;
+      if (!a) return;
+      const g = game.current;
+      const c = g.mode === 'drift' ? g.driftCar : g.car;
+      a.update({
+        mode: g.mode, rpm: c.rpm, speed: c.speed,
+        throttle: g.input.throttle, drifting: c.drifting,
+        slip: c.slip, onRoad: c.onRoad,
+      });
+      if (g.impactId > lastImpact) { lastImpact = g.impactId; a.impact(g.impactStr); }
+    };
+    raf = requestAnimationFrame(loop);
+    return () => {
+      cancelAnimationFrame(raf);
+      if (audioRef.current) { audioRef.current.dispose(); audioRef.current = null; }
+    };
+  }, []);
 
   /* ── Keyboard input ── */
   useEffect(() => {
@@ -1092,8 +1543,17 @@ export default function Drift() {
       if (v && !game.current.started) game.current.started = true;
     };
     const down = (e) => {
-      if (e.code === 'KeyR') { resetToLine(game.current); return; }
-      if (map[e.code]) { e.preventDefault(); set(e.code, true); }
+      const g = game.current;
+      if (e.code === 'KeyR') {
+        if (g.mode === 'drift') {
+          g.driftCar = createCarState(PAD.x, PAD.z - 20, 0);
+          g.driftScore = 0;
+        } else resetToLine(g);
+        return;
+      }
+      if (e.code === 'KeyC') { g.mode = g.mode === 'race' ? 'drift' : 'race'; g.started = true; ensureAudio(); return; }
+      if (e.code === 'KeyM') { toggleSound(); return; }
+      if (map[e.code]) { e.preventDefault(); set(e.code, true); ensureAudio(); }
     };
     const up = (e) => set(e.code, false);
     const blur = () => {
@@ -1111,16 +1571,20 @@ export default function Drift() {
     const id = setInterval(() => {
       const g = game.current;
       if (import.meta.env.DEV) window.__hpDrift = g;
+      const c = g.mode === 'drift' ? g.driftCar : g.car;
       setHud({
-        speed: Math.round(g.car.speed * 3.6),
-        gear: gearFor(g.car.speed),
+        speed: Math.round(c.speed * 3.6),
+        gear: c.reverse ? 'R' : gearFor(c.speed),
         started: g.started,
+        mode: g.mode,
+        driftScore: Math.floor(g.driftScore),
+        driftBest: Math.floor(g.driftBest),
         lapTime: g.lapTime,
         lastLap: g.lastLap,
         bestLap: g.bestLap,
         laps: g.laps,
-        speedPct: g.car.speed / MAX_SPEED,
-        carX: g.car.x, carZ: g.car.z,
+        speedPct: c.speed / MAX_SPEED,
+        carX: c.x, carZ: c.z,
       });
       const dp = g.popup;
       if (dp && dp.id > popupRef.current) {
@@ -1135,7 +1599,7 @@ export default function Drift() {
   const press = (key, v) => (e) => {
     e.preventDefault();
     game.current.input[key] = v;
-    if (v) game.current.started = true;
+    if (v) { game.current.started = true; ensureAudio(); }
   };
 
   const touchBtn = 'pointer-events-auto select-none flex items-center justify-center w-[68px] h-[68px] rounded-full bg-white/10 backdrop-blur-xl border border-white/25 text-white text-xl font-bold active:bg-white/30 touch-none';
@@ -1149,6 +1613,8 @@ export default function Drift() {
         <hemisphereLight args={['#bfe3ff', '#3f7a42', 0.5]} />
         <LightRig game={game} />
         <Speedway track={trackRef.current} />
+        <TrafficCars game={game} />
+        <DriftCarModel game={game} />
         <SkidMarks api={skidApi} />
         <F1CarModel game={game} />
         <TyreSmoke api={smokeApi} />
@@ -1170,23 +1636,49 @@ export default function Drift() {
             <div className="flex gap-2">
               <Link to="/" className="pointer-events-auto font-mono text-[10px] tracking-[.12em] uppercase text-white/70 hover:text-white transition-colors bg-black/30 backdrop-blur-xl border border-white/15 px-4 py-2.5 rounded-full shadow-lg no-underline">← SITE</Link>
               <Link to="/playground" className="pointer-events-auto font-mono text-[10px] tracking-[.12em] uppercase text-white/70 hover:text-white transition-colors bg-black/30 backdrop-blur-xl border border-white/15 px-4 py-2.5 rounded-full shadow-lg no-underline">PLAYGROUND</Link>
+              <button
+                onClick={() => { const g = game.current; g.mode = g.mode === 'race' ? 'drift' : 'race'; g.started = true; ensureAudio(); }}
+                className="pointer-events-auto font-mono text-[10px] tracking-[.12em] uppercase font-bold border-none cursor-pointer px-4 py-2.5 rounded-full shadow-lg transition-colors"
+                style={hud.mode === 'drift'
+                  ? { background: '#08D9D6', color: 'black' }
+                  : { background: PAPAYA, color: 'black' }}
+              >
+                {hud.mode === 'drift' ? '→ RACE F1' : '→ DRIFT CAR'}
+              </button>
+              <button
+                onClick={toggleSound}
+                title={soundOn ? 'Mute (M)' : 'Unmute (M)'}
+                className="pointer-events-auto font-mono text-[12px] border-none cursor-pointer bg-black/30 backdrop-blur-xl border border-white/15 text-white/80 hover:text-white px-3 py-2 rounded-full shadow-lg transition-colors"
+              >
+                {soundOn ? '🔊' : '🔇'}
+              </button>
             </div>
             <div className="bg-black/30 backdrop-blur-xl border border-white/10 rounded-xl px-2 py-1 shadow-lg self-start">
               <Minimap track={trackRef.current} carX={hud.carX} carZ={hud.carZ} />
             </div>
           </div>
 
-          {/* Lap panel */}
-          <div className="font-mono text-white bg-black/30 backdrop-blur-xl border border-white/15 rounded-2xl px-5 py-3 shadow-lg text-right">
-            <div className="text-[10px] tracking-[.2em] text-white/50 mb-1">LAP {hud.laps + 1}</div>
-            <div className="text-[24px] font-bold leading-none tabular-nums">{fmtLap(hud.lapTime)}</div>
-            <div className="text-[10px] tracking-[.1em] text-white/60 mt-2 tabular-nums">
-              LAST {fmtLap(hud.lastLap)}
+          {/* Lap / drift-score panel */}
+          {hud.mode === 'drift' ? (
+            <div className="font-mono text-white bg-black/30 backdrop-blur-xl border border-white/15 rounded-2xl px-5 py-3 shadow-lg text-right">
+              <div className="text-[10px] tracking-[.2em] text-white/50 mb-1">DRIFT SCORE</div>
+              <div className="text-[24px] font-bold leading-none tabular-nums" style={{ color: '#08D9D6' }}>{hud.driftScore}</div>
+              <div className="text-[10px] tracking-[.1em] tabular-nums mt-2" style={{ color: '#FF7C00' }}>
+                BEST {hud.driftBest}
+              </div>
             </div>
-            <div className="text-[10px] tracking-[.1em] tabular-nums" style={{ color: '#FF7C00' }}>
-              BEST {fmtLap(hud.bestLap)}
+          ) : (
+            <div className="font-mono text-white bg-black/30 backdrop-blur-xl border border-white/15 rounded-2xl px-5 py-3 shadow-lg text-right">
+              <div className="text-[10px] tracking-[.2em] text-white/50 mb-1">LAP {hud.laps + 1}</div>
+              <div className="text-[24px] font-bold leading-none tabular-nums">{fmtLap(hud.lapTime)}</div>
+              <div className="text-[10px] tracking-[.1em] text-white/60 mt-2 tabular-nums">
+                LAST {fmtLap(hud.lastLap)}
+              </div>
+              <div className="text-[10px] tracking-[.1em] tabular-nums" style={{ color: '#FF7C00' }}>
+                BEST {fmtLap(hud.bestLap)}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Start screen */}
@@ -1198,7 +1690,7 @@ export default function Drift() {
                 One car. One banked oval.<br />Flat out.
               </div>
               <div className="font-mono text-[11px] tracking-[.1em] text-white/70 leading-[2]">
-                {touch ? 'TAP ◀ ▶ TO STEER · AUTO THROTTLE' : 'W — GAS · A/D — STEER · S — BRAKE'}<br />
+                {touch ? 'TAP ◀ ▶ TO STEER · AUTO THROTTLE' : 'W — GAS · A/D — STEER · S — BRAKE/REVERSE'}<br />
                 {touch ? 'BRAKE FOR THE TURNS · SET A LAP TIME' : 'SPACE — SLIDE · R — RESET · SET A LAP TIME'}
               </div>
             </div>
@@ -1223,7 +1715,7 @@ export default function Drift() {
               <Speedometer speed={hud.speed} gear={hud.gear} />
             </div>
             <div className="font-mono text-[9px] md:text-[10px] tracking-[.1em] text-white/50 leading-[1.9] bg-black/30 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/10">
-              W GAS · A/D STEER · S BRAKE · SPACE SLIDE · R RESET
+              W GAS · A/D STEER · S BRAKE/REV · SPACE SLIDE · C SWITCH CAR · R RESET · M SOUND
             </div>
           </div>
         )}

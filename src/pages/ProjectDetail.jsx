@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { selectedWork, getProjectBySlug } from '../data/portfolio';
 import { Reveal } from '../components/Reveal/Reveal';
 import useSEO from '../utils/useSEO';
+import { SITE_URL } from '../../site.config.mjs';
 
 /* Case-study page for a single project — /projects/:slug */
 export default function ProjectDetail() {
@@ -13,6 +14,16 @@ export default function ProjectDetail() {
     title: project?.title,
     description: project?.description,
     path: `/projects/${slug}`,
+    image: project?.image,
+    jsonLd: project && {
+      '@context': 'https://schema.org',
+      '@type': 'CreativeWork',
+      name: project.title,
+      description: project.description,
+      url: `${SITE_URL}/projects/${slug}`,
+      dateCreated: project.year,
+      author: { '@type': 'Person', name: 'Harshil Patel' },
+    },
   });
 
   if (!project) return <Navigate to="/projects" replace />;

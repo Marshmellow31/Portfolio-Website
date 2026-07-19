@@ -1,7 +1,5 @@
 import { useEffect } from 'react';
-
-const SITE = 'https://design-lab-portfolio.vercel.app';
-const DEFAULT_TITLE = 'Harshil Patel | Full-Stack Developer & Content Creator';
+import { SITE_URL, DEFAULT_TITLE, OG_IMAGE } from '../../site.config.mjs';
 
 function setMeta(attr, key, content) {
   let el = document.head.querySelector(`meta[${attr}="${key}"]`);
@@ -13,21 +11,30 @@ function setMeta(attr, key, content) {
   el.setAttribute('content', content);
 }
 
-/* Per-route SEO: title, description, canonical, OG/Twitter mirrors.
-   SPA-level best effort — crawlers that execute JS (Google) pick these up;
-   the index.html defaults cover the rest. */
-export default function useSEO({ title, description, path = '' }) {
+/* Per-route SEO: title, description, canonical, OG/Twitter mirrors,
+   optional per-page image, noindex, and JSON-LD.
+   SPA-level best effort for JS-executing crawlers; the build-time
+   prerender (scripts/generate-seo.mjs) covers everything else. */
+export default function useSEO({ title, description, path = '', image, noindex = false, jsonLd }) {
+  const ldString = jsonLd ? JSON.stringify(jsonLd) : null;
   useEffect(() => {
     const fullTitle = title ? `${title} — Harshil Patel` : DEFAULT_TITLE;
+    const url = SITE_URL + path;
+    const img = SITE_URL + (image || OG_IMAGE);
+
     document.title = fullTitle;
     if (description) {
       setMeta('name', 'description', description);
       setMeta('property', 'og:description', description);
-      setMeta('property', 'twitter:description', description);
+      setMeta('name', 'twitter:description', description);
     }
     setMeta('property', 'og:title', fullTitle);
-    setMeta('property', 'twitter:title', fullTitle);
-    setMeta('property', 'og:url', SITE + path);
+    setMeta('name', 'twitter:title', fullTitle);
+    setMeta('property', 'og:url', url);
+    setMeta('name', 'twitter:url', url);
+    setMeta('property', 'og:image', img);
+    setMeta('name', 'twitter:image', img);
+    setMeta('name', 'robots', noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1');
 
     let canonical = document.head.querySelector('link[rel="canonical"]');
     if (!canonical) {
@@ -35,8 +42,22 @@ export default function useSEO({ title, description, path = '' }) {
       canonical.setAttribute('rel', 'canonical');
       document.head.appendChild(canonical);
     }
-    canonical.setAttribute('href', SITE + path);
+    canonical.setAttribute('href', url);
+
+    // Route-specific structured data (BlogPosting, CreativeWork, …)
+    let ld = document.getElementById('route-jsonld');
+    if (ldString) {
+      if (!ld) {
+        ld = document.createElement('script');
+        ld.type = 'application/ld+json';
+        ld.id = 'route-jsonld';
+        document.head.appendChild(ld);
+      }
+      ld.textContent = ldString;
+    } else if (ld) {
+      ld.remove();
+    }
 
     return () => { document.title = DEFAULT_TITLE; };
-  }, [title, description, path]);
+  }, [title, description, path, image, noindex, ldString]);
 }

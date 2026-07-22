@@ -115,8 +115,8 @@ const routes = [
   })),
   {
     path: '/creative', priority: 0.7,
-    title: 'Creative',
-    description: 'The automotive content side — reels, brand collaborations, and 22M+ views as @guywithblack350.',
+    title: 'Guy With Black 350',
+    description: 'The automotive content side of Harshil Patel — the guy with black 350. Reels, brand collaborations, and 22M+ views as @guywithblack350 on Instagram.',
   },
   {
     path: '/contact', priority: 0.8,

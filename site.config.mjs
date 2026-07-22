@@ -14,7 +14,7 @@ export const LOCALE = 'en_US';
 
 export const AUTHOR = {
   name: 'Harshil Patel',
-  alternateName: 'guywithblack350',
+  alternateName: ['guywithblack350', 'guy with black 350', 'the guy with black 350'],
   email: '1080patelharshil@gmail.com',
   jobTitle: 'Full-Stack Developer',
   alumniOf: 'IIIT Vadodara',

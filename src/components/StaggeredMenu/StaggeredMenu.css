@@ -26,7 +26,10 @@
   justify-content: space-between;
   padding: 1rem clamp(20px, 4vw, 48px);
   height: 64px;
-  background: transparent;
+  background: rgba(10, 10, 11, 0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   pointer-events: none;
   z-index: 20;
 }

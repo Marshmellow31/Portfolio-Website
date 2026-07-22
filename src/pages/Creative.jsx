@@ -60,7 +60,7 @@ function StatCard({ label, value, suffix }) {
 }
 
 export default function Creative() {
-  useSEO({ title: 'Creative', description: 'The automotive content side — reels, brand collaborations, and 22M+ views as @guywithblack350.', path: '/creative' });
+  useSEO({ title: 'Guy With Black 350', description: 'The automotive content side of Harshil Patel — the guy with black 350. Reels, brand collaborations, and 22M+ views as @guywithblack350 on Instagram.', path: '/creative' });
   return (
     <div className="pt-24">
       {/* ──── Hero ──── */}
@@ -75,28 +75,16 @@ export default function Creative() {
                 </div>
               </Reveal>
 
-              <Reveal delay={0.1}>
-                <h1
-                  className="m-0 font-bold text-text-bright leading-none"
-                  style={{
-                    fontSize: 'clamp(40px,7vw,100px)',
-                    letterSpacing: '-0.04em',
-                  }}
-                >
-                  GUY WITH
-                </h1>
-              </Reveal>
-              <Reveal delay={0.15}>
-                <h1
-                  className="m-0 font-bold text-text-dim leading-none"
-                  style={{
-                    fontSize: 'clamp(40px,7vw,100px)',
-                    letterSpacing: '-0.04em',
-                  }}
-                >
-                  BLACK 350
-                </h1>
-              </Reveal>
+              <h1
+                className="m-0 font-bold leading-none"
+                style={{
+                  fontSize: 'clamp(40px,7vw,100px)',
+                  letterSpacing: '-0.04em',
+                }}
+              >
+                <Reveal as="span" delay={0.1} className="block text-text-bright">GUY WITH</Reveal>
+                <Reveal as="span" delay={0.15} className="block text-text-dim">BLACK 350</Reveal>
+              </h1>
 
               <Reveal delay={0.25}>
                 <p className="mt-6 text-text-muted max-w-lg" style={{ fontSize: 'clamp(14px,1.2vw,18px)', lineHeight: 1.6 }}>

@@ -1,6 +1,7 @@
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FiArrowLeft, FiClock } from 'react-icons/fi';
+import { FiArrowLeft, FiClock, FiArrowRight } from 'react-icons/fi';
 import { blogPosts } from '../data/blog';
 import useSEO from '../utils/useSEO';
 import { SITE_URL, OG_IMAGE } from '../../site.config.mjs';
@@ -8,6 +9,7 @@ import { SITE_URL, OG_IMAGE } from '../../site.config.mjs';
 export default function BlogPost() {
   const { slug } = useParams();
   const post = blogPosts.find(p => p.slug === slug);
+  const [showGuide, setShowGuide] = useState(false);
   useSEO({
     title: post?.title,
     description: post?.excerpt,
@@ -22,6 +24,7 @@ export default function BlogPost() {
       image: SITE_URL + OG_IMAGE,
       author: { '@type': 'Person', name: 'Harshil Patel', url: SITE_URL },
       mainEntityOfPage: `${SITE_URL}/blog/${slug}`,
+      keywords: post.tags?.join(', '),
     },
   });
 
@@ -38,6 +41,27 @@ export default function BlogPost() {
     );
   }
 
+  // Parses **bold**, [text](url), and `code` within a line of text
+  const renderInline = (text) => {
+    const tokens = text.split(/(\*\*.+?\*\*|\[.+?\]\(.+?\)|`.+?`)/g);
+    return tokens.map((token, k) => {
+      if (!token) return null;
+      const boldMatch = token.match(/^\*\*(.+)\*\*$/);
+      if (boldMatch) return <strong key={k} className="text-text">{boldMatch[1]}</strong>;
+      const linkMatch = token.match(/^\[(.+)\]\((.+)\)$/);
+      if (linkMatch) {
+        return (
+          <a key={k} href={linkMatch[2]} target="_blank" rel="noopener noreferrer" className="text-text underline underline-offset-2 hover:text-text-bright transition-colors">
+            {linkMatch[1]}
+          </a>
+        );
+      }
+      const codeMatch = token.match(/^`(.+)`$/);
+      if (codeMatch) return <code key={k} className="px-1.5 py-0.5 bg-surface border border-border rounded text-text text-xs">{codeMatch[1]}</code>;
+      return token;
+    });
+  };
+
   // Simple markdown-like rendering
   const renderContent = (content) => {
     return content.split('\n').map((line, i) => {
@@ -46,26 +70,19 @@ export default function BlogPost() {
       if (trimmed.startsWith('## ')) {
         return <h2 key={i} className="font-heading text-3xl md:text-4xl text-text-bright mt-12 mb-4" style={{ letterSpacing: '-0.03em' }}>{trimmed.slice(3)}</h2>;
       }
-      if (trimmed.startsWith('**') && trimmed.endsWith('**')) {
-        return <p key={i} className="font-mono text-sm text-text-dim uppercase tracking-widest mt-6 mb-2">{trimmed.slice(2, -2)}</p>;
-      }
-      if (trimmed.startsWith('**')) {
-        const parts = trimmed.split('**');
-        return (
-          <p key={i} className="font-mono text-sm text-text-muted leading-relaxed mb-2">
-            {parts.map((part, j) => j % 2 === 1 ? <strong key={j} className="text-text">{part}</strong> : part)}
-          </p>
-        );
+      const wholeLineBold = trimmed.match(/^\*\*([^*]+)\*\*$/);
+      if (wholeLineBold) {
+        return <p key={i} className="font-mono text-sm text-text-dim uppercase tracking-widest mt-6 mb-2">{wholeLineBold[1]}</p>;
       }
       if (trimmed.startsWith('- ')) {
         return (
           <div key={i} className="flex gap-3 mb-2 pl-4">
             <span className="text-text-faint mt-1">•</span>
-            <p className="font-mono text-sm text-text-muted leading-relaxed">{trimmed.slice(2)}</p>
+            <p className="font-mono text-sm text-text-muted leading-relaxed">{renderInline(trimmed.slice(2))}</p>
           </div>
         );
       }
-      return <p key={i} className="font-mono text-sm text-text-muted leading-relaxed mb-4">{trimmed}</p>;
+      return <p key={i} className="font-mono text-sm text-text-muted leading-relaxed mb-4">{renderInline(trimmed)}</p>;
     });
   };
 
@@ -110,6 +127,29 @@ export default function BlogPost() {
         className="max-w-4xl mx-auto px-6 md:px-12 py-16"
       >
         {renderContent(post.content)}
+
+        {/* Read More — expandable guide */}
+        {post.hasGuide && (
+          <div className="mt-12">
+            {!showGuide ? (
+              <button
+                onClick={() => setShowGuide(true)}
+                className="inline-flex items-center gap-3 px-6 py-3 border border-border rounded-full font-mono text-sm uppercase tracking-widest text-text hover:bg-text hover:text-bg transition-colors"
+              >
+                {post.guideLabel || 'Read More'} <FiArrowRight />
+              </button>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="border-t border-border pt-4"
+              >
+                {renderContent(post.guideContent)}
+              </motion.div>
+            )}
+          </div>
+        )}
 
         {/* Bottom nav */}
         <div className="mt-16 pt-8 border-t border-border">

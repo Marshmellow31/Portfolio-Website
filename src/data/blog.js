@@ -1,5 +1,137 @@
 export const blogPosts = [
   {
+    slug: 'custom-roms-android-modding',
+    title: 'Pixel OS on Redmi Note 10 Pro Max: How Custom ROMs Shaped My Path Into Computer Science',
+    date: '2026-07-22',
+    readTime: '6 min read',
+    tags: ['Android', 'Custom ROMs', 'Pixel OS', 'Xiaomi'],
+    excerpt: 'How flashing custom ROMs on a Redmi Note 4 and Redmi Note 10 Pro Max — now running Pixel OS on Android 16 — sparked my love for computer science, plus a full guide to unlocking the bootloader, installing TWRP, and flashing Pixel OS yourself.',
+    hasGuide: true,
+    guideLabel: 'Read the Full Installation Guide',
+    guideContent: `
+## Installation Guide — Redmi Note 10 Pro Max (and Mi Devices)
+
+This is the general process for putting Pixel OS on the Redmi Note 10 Pro / Pro Max, codenamed **sweet** (Note 10 Pro Max is specifically **sweetin**). The same skeleton — unlock, recovery, flash — applies to almost any Xiaomi/Mi device; only the file names and codename change.
+
+**Read this fully before you start.** This voids your warranty and wipes your phone. Do not attempt it on your only device, and do not skip the backup step.
+
+## Prerequisites
+
+- **Backup everything.** Bootloader unlocking and flashing both wipe internal storage. Photos, app data, everything — get it off the device first.
+- A PC with **ADB and Fastboot** platform-tools installed, plus Xiaomi's official USB drivers.
+- The device charged to at least **60%** — an unlock or flash that dies mid-way from a dead battery can brick the phone.
+- **USB debugging** and **OEM unlocking** enabled under Developer Options (unlock Developer Options first: Settings → About phone → tap MIUI version 7 times).
+- A Mi Account, bound to the device under Developer Options → Mi Unlock status.
+- The **Mi Unlock Tool** (miflash_unlock.exe) from Xiaomi.
+- The **PixelOS build for your device** from [pixelos.net/download/sweet](https://pixelos.net/download/sweet), plus the matching **recovery zip** from the same page.
+- A custom recovery — **TWRP** for sweet/sweetin is available at [twrp.me/xiaomi/xiaomiredminote10pro.html](https://twrp.me/xiaomi/xiaomiredminote10pro.html).
+
+## Step 1 — Unlock the Bootloader
+
+**This is the slow part, and it's Xiaomi's doing, not yours.** After you bind your Mi Account and request an unlock, Xiaomi enforces a mandatory waiting period before the tool will let you proceed — historically anywhere from 168 hours (7 days) up to 360 hours or more for newer accounts, entirely at Xiaomi's discretion. Request it early and go do something else.
+
+- Log into your Mi Account on the phone and bind it under Developer Options → Mi Unlock status.
+- Power off the phone, then boot into Fastboot mode (usually Volume Down + Power).
+- Connect it to your PC and open the Mi Unlock Tool.
+- Log into the same Mi Account inside the tool. It will tell you if you're still in the waiting period.
+- Once eligible, hit Unlock and confirm "Unlock anyway" — this wipes the device.
+- Wait for "Unlocked successfully," then reboot.
+
+## Step 2 — Flash a Custom Recovery (TWRP)
+
+- Rename the TWRP image you downloaded to something simple, e.g. \`twrp.img\`, and place it in your platform-tools folder.
+- Boot the phone into Fastboot mode and connect it to your PC.
+- Run:
+
+fastboot flash recovery twrp.img
+
+- Immediately hold the key combo to boot straight into recovery (don't let it boot to MIUI first, or stock firmware may overwrite TWRP).
+- Once inside TWRP, let it patch the system so stock ROM stops replacing the custom recovery on boot.
+
+## Step 3 — Flash Pixel OS
+
+Pixel OS ships with its own vendor/boot images and GApps baked in, so there's no separate Google Apps package to flash.
+
+- Download the Pixel OS build and its matching recovery zip for **sweet/sweetin** from [pixelos.net/download/sweet](https://pixelos.net/download/sweet).
+- Extract \`boot.img\`, \`vendor_boot.img\`, and \`dtbo.img\` from the recovery zip into your platform-tools folder.
+- Boot to Fastboot and flash them:
+
+fastboot flash vendor_boot vendor_boot.img
+fastboot flash dtbo dtbo.img
+fastboot flash boot boot.img
+
+- Reboot into recovery: \`fastboot reboot recovery\`
+- In recovery, go to **Factory Reset → Format data** (not just wipe cache — a full format is required on a clean flash, and yes, it erases internal storage again).
+- Back at the recovery main menu, choose **Apply Update → Apply from ADB**, then on your PC run:
+
+adb sideload PixelOS_sweet-*.zip
+
+- When it finishes, reboot the phone.
+
+## Updating to a Newer Pixel OS Build Later
+
+You don't need to repeat the whole process for every update. Either take the OTA under Settings → System → System Updater, or boot to recovery and sideload the new zip directly — no re-formatting needed for a dirty flash.
+
+## Warnings
+
+- **Every step here can brick your phone if done out of order** — flashing the wrong partition, skipping the wipe, or losing power mid-flash are the most common ways it goes wrong.
+- **Unlocking the bootloader trips Xiaomi's warranty flag permanently** and stops official OTA updates from MIUI.
+- **Verify your exact codename before downloading anything.** Note 10 Pro is "sweet," Note 10 Pro Max is "sweetin" — grabbing the wrong device's firmware is the single most common cause of a bricked phone in these threads.
+- Always download recovery/ROM files from the ROM's official page, not from random forum mirrors.
+    `,
+    content: `
+Some people find their way into computer science through a school course or a famous programmer they admired. I found mine through a mid-range phone and a burning desire to make it run games better.
+
+## It Started With a Redmi Note 4
+
+When I was in 7th–8th standard, I got my first personal device: a Redmi Note 4. Like most kids with their first phone, I wanted to squeeze every drop of performance out of it — specifically for gaming. Stock MIUI wasn't cutting it, so I started digging.
+
+That's when I discovered custom ROMs — community-built versions of Android that replace the software your phone ships with. Cleaner interfaces, better performance, newer Android versions, features the manufacturer never intended to give you. The whole modding world opened up in front of me.
+
+## Learning by Doing (and Risking)
+
+There was no course for this. I learned everything from YouTube — how to unlock a bootloader, how to flash TWRP (a custom recovery), how to install a ROM without turning my phone into an expensive paperweight.
+
+Armed with a laptop, a USB cable, and more confidence than experience, I unlocked the bootloader on my Redmi Note 4 and started experimenting. I tried out numerous different ROMs, one after another, just to see what each one felt like. At one point I even had OxygenOS — OnePlus's operating system — running on my Xiaomi device. A 13-year-old flashing another manufacturer's OS onto their phone, purely out of curiosity.
+
+Was it risky? Absolutely. One wrong step during a flash can brick a device. But here's the thing — in all these years of modding, nothing has ever gone wrong. No bricked phones, no broken hardware, nothing. Careful research before every flash paid off.
+
+## The Redmi Note 10 Pro Max Era
+
+In 10th standard, I upgraded to a Redmi Note 10 Pro Max — and did exactly the same thing to it. Bootloader unlocked, custom recovery installed, and a rotation of ROMs until I found the one that stuck.
+
+That ROM is Pixel OS, and I'm still running it today. As of right now, my phone is on Android 16 — a version most flagship phones are only just receiving. It's been almost six years since I bought this device, and it still runs smooth, secure, and completely up to date.
+
+Let me put that in perspective:
+
+- The Redmi Note 10 Pro Max cost around ₹20,000
+- A Google Pixel with a comparable software experience costs ₹70,000–80,000
+- My six-year-old device delivers that flagship-level experience every single day
+
+That's the real power of the custom ROM community — it turns yesterday's mid-ranger into today's flagship, for free.
+
+## Why This Matters More Than the Phone
+
+Looking back, this is one of the best things that ever happened to me in the world of software. It wasn't the primary reason I chose computer science, but it shaped who I am today in ways a classroom never could.
+
+It taught me to be curious — to ask "what if I could change this?" instead of accepting defaults. It taught me to take calculated risks — I was willing to risk my own hardware just to try a different OS. And it taught me that the best learning happens when you're genuinely obsessed with the outcome.
+
+I don't regret a single flash. I get to enjoy the best user experience a phone can offer, on hardware most people wrote off years ago.
+
+## Still My Daily Driver — Even Next to an iPhone 17
+
+Here's the part that surprises people the most: I own an iPhone 17 today, and the Redmi Note 10 Pro Max hasn't gone anywhere. It's still my secondary device, still running Pixel OS, still on Android 16.
+
+I keep it around for exactly one reason — it lets me use the latest Android version and experience everything the newest Android release has to offer, without buying expensive flagship hardware that puts a hole in my bank account. A brand-new flagship Android phone with day-one updates costs upwards of ₹70,000–80,000. My six-year-old Redmi does the same job for the ₹20,000 I paid for it back in 10th standard, thanks entirely to the custom ROM community keeping it current.
+
+So the iPhone handles daily life, and the modded Redmi stays my window into stock Android — proof that the itch I picked up at 13 never really left.
+
+## Want to Try It Yourself?
+
+I'm putting together a complete, structured installation guide — how I did it on the Redmi Note 10 Pro Max, applicable to most Mi devices — including every warning and precaution you should know before touching your bootloader. Hit the Read More button below to check it out.
+    `,
+  },
+  {
     slug: 'esp32-smart-ac',
     title: 'I Made My Dumb AC Smart for ₹600 (and Learned to Respect Hardware)',
     date: '2026-07-11',

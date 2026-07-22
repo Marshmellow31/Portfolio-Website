@@ -117,48 +117,70 @@ export default function ProjectDetail() {
         </Reveal>
       </section>
 
-      {/* ── Hero image ── */}
+      {/* ── Hero image (+ Problem/Approach flanking it on wide screens) ── */}
       <section className="px-[clamp(20px,6vw,96px)] pb-[clamp(48px,6vw,88px)]">
-        <motion.div
-          layoutId={`project-image-${project.slug}`}
-          className="rounded-xl overflow-hidden border border-border bg-surface"
-        >
-          {hasGallery ? (
-            <img
-              src={heroImage}
-              alt={`${project.title} — main view`}
-              className="w-full max-h-[60vh] md:max-h-[75vh] object-cover block"
-              loading="eager"
-            />
-          ) : (
-            <div className="flex items-center justify-center py-[clamp(48px,8vw,110px)] px-8">
+        {hasGallery ? (
+          <div className="grid gap-[clamp(28px,3vw,48px)] xl:grid-cols-[auto_minmax(0,1fr)] xl:items-center">
+            <div className="flex justify-center">
+              <motion.div
+                layoutId={`project-image-${project.slug}`}
+                className="inline-flex max-w-full rounded-xl overflow-hidden border border-border bg-black/20"
+              >
+                <img
+                  src={heroImage}
+                  alt={`${project.title} — main view`}
+                  className="h-[45vh] sm:h-[55vh] md:h-[70vh] w-auto max-w-full object-contain block"
+                  loading="eager"
+                />
+              </motion.div>
+            </div>
+
+            <div className="grid gap-[clamp(28px,3vw,44px)]">
+              <Reveal>
+                <div className="mono-label mb-5">The Problem</div>
+                <p className="m-0 text-text-muted" style={{ fontSize: 'clamp(16px,1.4vw,19px)', lineHeight: 1.7, textWrap: 'pretty' }}>
+                  {project.problem}
+                </p>
+              </Reveal>
+
+              <Reveal>
+                <div className="mono-label mb-5">The Approach</div>
+                <p className="m-0 text-text-muted" style={{ fontSize: 'clamp(16px,1.4vw,19px)', lineHeight: 1.7, textWrap: 'pretty' }}>
+                  {project.approach}
+                </p>
+              </Reveal>
+            </div>
+          </div>
+        ) : (
+          <>
+            <motion.div
+              layoutId={`project-image-${project.slug}`}
+              className="rounded-xl overflow-hidden border border-border bg-surface flex items-center justify-center py-[clamp(48px,8vw,110px)] px-8"
+            >
               <img
                 src={heroImage}
                 alt={`${project.title} — logo`}
                 className="max-h-[120px] w-auto"
                 loading="eager"
               />
-            </div>
-          )}
-        </motion.div>
-      </section>
+            </motion.div>
 
-      {/* ── Problem / Approach ── */}
-      <section className="px-[clamp(20px,6vw,96px)] pb-[clamp(48px,6vw,88px)]">
-        <div className="grid gap-[clamp(36px,5vw,80px)] [grid-template-columns:repeat(auto-fit,minmax(300px,1fr))]">
-          <Reveal>
-            <div className="mono-label mb-5">The Problem</div>
-            <p className="m-0 text-text-muted" style={{ fontSize: 'clamp(16px,1.4vw,19px)', lineHeight: 1.7, textWrap: 'pretty' }}>
-              {project.problem}
-            </p>
-          </Reveal>
-          <Reveal>
-            <div className="mono-label mb-5">The Approach</div>
-            <p className="m-0 text-text-muted" style={{ fontSize: 'clamp(16px,1.4vw,19px)', lineHeight: 1.7, textWrap: 'pretty' }}>
-              {project.approach}
-            </p>
-          </Reveal>
-        </div>
+            <div className="grid gap-[clamp(36px,5vw,80px)] mt-[clamp(48px,6vw,88px)] [grid-template-columns:repeat(auto-fit,minmax(300px,1fr))]">
+              <Reveal>
+                <div className="mono-label mb-5">The Problem</div>
+                <p className="m-0 text-text-muted" style={{ fontSize: 'clamp(16px,1.4vw,19px)', lineHeight: 1.7, textWrap: 'pretty' }}>
+                  {project.problem}
+                </p>
+              </Reveal>
+              <Reveal>
+                <div className="mono-label mb-5">The Approach</div>
+                <p className="m-0 text-text-muted" style={{ fontSize: 'clamp(16px,1.4vw,19px)', lineHeight: 1.7, textWrap: 'pretty' }}>
+                  {project.approach}
+                </p>
+              </Reveal>
+            </div>
+          </>
+        )}
       </section>
 
       {/* ── Features ── */}

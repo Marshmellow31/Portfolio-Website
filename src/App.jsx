@@ -96,7 +96,7 @@ export default function App() {
       {/* ──────────── NAVIGATION (desktop) ──────────── */}
       {!isPlayground && (
         <nav
-          className="hidden md:flex fixed top-0 left-0 right-0 z-[200] h-16 items-center justify-between px-[clamp(20px,4vw,48px)] transition-[background,border-color] duration-300"
+          className="hidden lg:flex fixed top-0 left-0 right-0 z-[200] h-16 items-center justify-between px-[clamp(20px,4vw,48px)] transition-[background,border-color] duration-300"
           style={{
             background: isScrolled ? 'rgba(10,10,11,.72)' : 'rgba(10,10,11,0)',
             backdropFilter: 'blur(14px)',
@@ -163,7 +163,7 @@ export default function App() {
 
       {/* ──────────── NAVIGATION (mobile — StaggeredMenu) ──────────── */}
       {!isPlayground && (
-        <div className="md:hidden">
+        <div className="lg:hidden">
           <StaggeredMenu
             isFixed
             position="right"

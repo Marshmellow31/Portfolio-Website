@@ -9,7 +9,7 @@ export const SITE_NAME = 'Harshil Patel';
 export const DEFAULT_TITLE = 'Harshil Patel | Full-Stack Developer & Content Creator';
 export const DEFAULT_DESCRIPTION =
   'Full-stack developer and B.Tech student at IIIT Vadodara. Builds production web apps, mobile apps, and AI tools. Content creator @guywithblack350 with 22M+ views.';
-export const OG_IMAGE = '/og-image.png';
+export const OG_IMAGE = '/og-image.webp';
 export const LOCALE = 'en_US';
 
 export const AUTHOR = {

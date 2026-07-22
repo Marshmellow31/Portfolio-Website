@@ -121,7 +121,7 @@
   background: #0a0a0b;
   display: flex;
   flex-direction: column;
-  padding: 80px clamp(20px, 6vw, 48px) 2rem;
+  padding: clamp(56px, 11vh, 80px) clamp(20px, 6vw, 48px) clamp(16px, 3vh, 32px);
   overflow-y: auto;
   z-index: 10;
   pointer-events: auto;
@@ -194,14 +194,15 @@
   position: relative;
   color: rgba(255, 255, 255, 0.85);
   font-weight: 700;
-  font-size: clamp(2.4rem, 12vw, 3.5rem);
+  font-size: clamp(1.5rem, min(6.2vh, 11vw), 3.5rem);
   cursor: pointer;
   line-height: 1;
   letter-spacing: -0.03em;
   text-transform: uppercase;
   display: inline-block;
   text-decoration: none;
-  padding: 0.35em 1.4em 0.35em 0;
+  white-space: nowrap;
+  padding: 0.22em 1em 0.22em 0;
   transition: color 0.2s ease;
 }
 

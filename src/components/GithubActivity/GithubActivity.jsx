@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 
 const GITHUB_USER = 'Marshmellow31';
 const POLL_INTERVAL = 60 * 1000; // refetch every minute for near-real-time updates
@@ -11,6 +11,16 @@ export default function GithubActivity() {
   const [total, setTotal] = useState(null);
   const [error, setError] = useState(false);
   const [hovered, setHovered] = useState(null);
+  const scrollRef = useRef(null);
+
+  // Grid reads oldest → newest left-to-right; jump straight to the most
+  // recent weeks so mobile users see current activity without discovering
+  // that the graph scrolls. No-op on desktop where it already fits.
+  useEffect(() => {
+    if (weeks && scrollRef.current) {
+      scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
+    }
+  }, [weeks]);
 
   useEffect(() => {
     let hasLoaded = false;
@@ -93,39 +103,42 @@ export default function GithubActivity() {
         </div>
       </div>
 
-      <div className="overflow-x-auto -mx-[clamp(20px,6vw,96px)] px-[clamp(20px,6vw,96px)]">
+      <div
+        ref={scrollRef}
+        className="heatmap-scroll overflow-x-auto pb-2 -mx-[clamp(20px,6vw,96px)] px-[clamp(20px,6vw,96px)] [--cell:6px] [--gap:2px] sm:[--cell:8px] sm:[--gap:2px]"
+      >
         {!weeks ? (
-          <div className="flex gap-[3px]">
+          <div className="flex gap-[var(--gap)]">
             {Array.from({ length: 53 }).map((_, i) => (
-              <div key={i} className="flex flex-col gap-[3px]">
+              <div key={i} className="flex flex-col gap-[var(--gap)]">
                 {Array.from({ length: 7 }).map((_, j) => (
-                  <div key={j} className="w-[11px] h-[11px] rounded-[2px]" style={{ background: LEVEL_COLORS[0] }} />
+                  <div key={j} className="w-[var(--cell)] h-[var(--cell)] rounded-[2px]" style={{ background: LEVEL_COLORS[0] }} />
                 ))}
               </div>
             ))}
           </div>
         ) : (
           <div className="inline-block min-w-full">
-            <div className="flex gap-[3px] mb-2 relative h-[14px]">
+            <div className="flex gap-[var(--gap)] mb-2 relative h-[14px]">
               {monthLabels.map(({ index, label }) => (
                 <span
                   key={index}
                   className="absolute font-mono text-[10px] text-text-faint"
-                  style={{ left: `${index * 14}px` }}
+                  style={{ left: `calc((var(--cell) + var(--gap)) * ${index})` }}
                 >
                   {label}
                 </span>
               ))}
             </div>
-            <div className="flex gap-[3px]">
+            <div className="flex gap-[var(--gap)]">
               {weeks.map((week, wi) => (
-                <div key={wi} className="flex flex-col gap-[3px]">
+                <div key={wi} className="flex flex-col gap-[var(--gap)]">
                   {week.map((day) => (
                     <div
                       key={day.date}
                       onMouseEnter={() => setHovered(day)}
                       onMouseLeave={() => setHovered((h) => (h === day ? null : h))}
-                      className="w-[11px] h-[11px] rounded-[2px] cursor-pointer transition-transform hover:scale-125"
+                      className="w-[var(--cell)] h-[var(--cell)] rounded-[2px] cursor-pointer transition-transform hover:scale-125"
                       style={{ background: LEVEL_COLORS[Math.min(day.level, 4)] }}
                       title={`${day.count} contribution${day.count === 1 ? '' : 's'} on ${day.date}`}
                     />
@@ -137,7 +150,7 @@ export default function GithubActivity() {
         )}
       </div>
 
-      <div className="flex items-center justify-between mt-6 flex-wrap gap-4">
+      <div className="flex items-center justify-between mt-4 flex-wrap gap-4">
         <a
           href={`https://github.com/${GITHUB_USER}`}
           target="_blank"

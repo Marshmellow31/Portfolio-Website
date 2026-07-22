@@ -1,12 +1,11 @@
 import { useRef, useEffect, useState } from 'react';
 import { useInView } from 'framer-motion';
-import { FaInstagram, FaPlay, FaEye, FaHandshake, FaChartLine } from 'react-icons/fa';
+import { FaInstagram, FaHandshake, FaChartLine, FaExternalLinkAlt } from 'react-icons/fa';
 import { Reveal } from '../components/Reveal/Reveal';
 import {
   instagramHandle,
   instagramUrl,
   stats,
-  featuredReels,
   brandCollabs,
   insights,
 } from '../data/instagram';
@@ -123,55 +122,6 @@ export default function Creative() {
         </div>
       </section>
 
-      {/* ──── Featured Reels ──── */}
-      <section className="section-pad border-b border-border">
-        <Reveal className="mb-[clamp(24px,4vw,40px)]">
-          <div className="mono-label mb-3">
-            <FaPlay className="inline mr-2 text-[9px]" /> Top Performing
-          </div>
-          <h2 className="m-0 font-bold" style={{ fontSize: 'clamp(28px,4vw,56px)', lineHeight: 1 }}>
-            Featured Reels
-          </h2>
-        </Reveal>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-px" style={{ background: 'var(--color-border)' }}>
-          {featuredReels.map((reel, i) => (
-            <Reveal key={reel.title}>
-              <a
-                href={reel.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative border border-border bg-bg overflow-hidden cursor-pointer block no-underline"
-              >
-                {/* Thumbnail / Placeholder */}
-                {reel.thumbnail ? (
-                  <img src={reel.thumbnail} alt={reel.title} className="w-full aspect-[4/5] object-cover opacity-60 group-hover:opacity-30 transition-opacity duration-500 block" />
-                ) : (
-                  <div className="w-full aspect-[16/9] md:aspect-[3/2] bg-surface flex flex-col items-center justify-center gap-3 opacity-100 group-hover:opacity-10 transition-opacity duration-300 px-4 text-center">
-                    <FaInstagram className="text-3xl text-text-faint" />
-                  </div>
-                )}
-
-                {/* Hover overlay */}
-                <div className="absolute inset-0 bg-white/[0.03] opacity-0 group-hover:opacity-100 transition-all duration-500" />
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <FaPlay className="text-3xl text-text" />
-                  <span className="font-mono text-xs text-text uppercase tracking-widest">Watch on Instagram</span>
-                </div>
-
-                {/* Bottom info strip */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-bg/90 to-transparent pointer-events-none">
-                  <p className="font-heading text-lg text-text m-0">{reel.title}</p>
-                  <div className="flex items-center gap-1 mt-1">
-                    <FaEye className="text-text-faint text-xs" />
-                    <span className="font-mono text-xs text-text-faint">{reel.views} views</span>
-                  </div>
-                </div>
-              </a>
-            </Reveal>
-          ))}
-        </div>
-      </section>
-
       {/* ──── Brand Collaborations ──── */}
       <section className="section-pad border-b border-border">
         <Reveal className="mb-[clamp(32px,5vw,56px)]">
@@ -182,23 +132,24 @@ export default function Creative() {
             Brand Collaborations
           </h2>
         </Reveal>
-        <div className="grid md:grid-cols-3 gap-px" style={{ background: 'var(--color-border)' }}>
+        <div className="grid md:grid-cols-2 gap-px" style={{ background: 'var(--color-border)' }}>
           {brandCollabs.map((collab) => (
             <Reveal key={collab.name}>
-              <div className="group p-8 bg-bg border border-border hover:border-border-strong transition-all duration-500 relative overflow-hidden">
+              <a
+                href={collab.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-center justify-between gap-4 p-8 bg-bg border border-border hover:border-border-strong transition-all duration-500 relative overflow-hidden no-underline"
+              >
                 <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-text-faint to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <h3
-                  className="font-heading text-2xl md:text-3xl font-bold text-text group-hover:text-text-bright transition-colors duration-300 mb-3 m-0"
+                  className="font-heading text-2xl md:text-3xl font-bold text-text group-hover:text-text-bright transition-colors duration-300 m-0"
                   style={{ letterSpacing: '-0.02em' }}
                 >
                   {collab.name}
                 </h3>
-                <p className="text-[14px] text-text-muted mb-4 m-0">{collab.description}</p>
-                <div className="flex items-center gap-2">
-                  <FaEye className="text-text-faint text-xs" />
-                  <span className="font-mono text-xs text-text-faint">{collab.reach}</span>
-                </div>
-              </div>
+                <FaExternalLinkAlt className="text-text-faint text-sm group-hover:text-text transition-colors duration-300 flex-none" />
+              </a>
             </Reveal>
           ))}
         </div>

@@ -63,6 +63,25 @@
     scrollbar-width: none;
   }
 
+  /* Always-visible horizontal scrollbar (heatmap-style widgets) */
+  .heatmap-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+  }
+  .heatmap-scroll::-webkit-scrollbar {
+    height: 6px;
+  }
+  .heatmap-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .heatmap-scroll::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 3px;
+  }
+  .heatmap-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.4);
+  }
+
   /* Mono micro-label: `01 — Section` */
   .mono-label {
     font-family: var(--font-mono);

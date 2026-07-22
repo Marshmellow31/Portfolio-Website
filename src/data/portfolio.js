@@ -30,7 +30,7 @@ export const items = [
     image: '/projects/picklerage.webp',
     link: 'https://github.com/Marshmellow31/PickleRage-website',
     title: 'PickleRage',
-    description: 'Sports venue website'
+    description: 'Pickleball venue & restaurant'
   },
   {
     image: '/projects/bhumi.svg',
@@ -54,7 +54,7 @@ export const items = [
     image: '/projects/attendance.webp',
     link: '#projects',
     title: 'Attendance Manager',
-    description: 'Secret-key protected dashboard'
+    description: 'Staff attendance for Mann Beauty Studio'
   },
   {
     image: '/projects/navigator.webp',
@@ -155,8 +155,8 @@ const selectedWorkRaw = [
       '/projects/picklerage/03.webp',
       '/projects/picklerage/04.webp',
     ],
-    description: 'Marketing website for a pickleball venue with premium animation and SEO.',
-    problem: 'A new pickleball venue needed to stand out in a fast-growing sport where every competitor\'s website looks like the same template — and it needed to rank locally from day one.',
+    description: 'Marketing website for a pickleball venue & restaurant with premium animation and SEO.',
+    problem: 'A new pickleball venue and restaurant needed to stand out in a fast-growing sports-cafe market where every competitor\'s website looks like the same template — and it needed to rank locally from day one.',
     approach: 'Designed and built a motion-first marketing site: scroll-driven reveals, kinetic type, and court photography treated like editorial spreads. Under the hood it\'s a fast React 19 SPA with route-level code splitting and SEO meta done properly per page.',
     features: [
       ['Premium motion design', 'Framer Motion choreography on every section — reveals, parallax, and hover states that feel engineered, not decorated.'],
@@ -477,6 +477,12 @@ export const workHistory = [
         description: 'Luxury-tier PWA replacing paper loyalty cards. Features phone auth, visual loyalty tracking, and a comprehensive admin CRM dashboard.',
         stack: ['React 19', 'Tailwind v4', 'Framer Motion', 'Firebase v12'],
         slug: 'mann-beauty',
+      },
+      {
+        name: 'ATTENDANCE MANAGER',
+        description: 'Secret-key protected attendance dashboard with real-time sync and CSV exports for salon staff payroll.',
+        stack: ['React 19', 'Zustand', 'Firebase'],
+        slug: 'attendance-manager',
       }
     ]
   },

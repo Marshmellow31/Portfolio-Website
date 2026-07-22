@@ -3,7 +3,7 @@
    Everything downstream (canonicals, OG tags, sitemap, robots,
    structured data, prerendered route meta) derives from this file. */
 
-export const SITE_URL = 'https://design-lab-portfolio.vercel.app';
+export const SITE_URL = 'https://www.harshilpatel.co.in';
 
 export const SITE_NAME = 'Harshil Patel';
 export const DEFAULT_TITLE = 'Harshil Patel | Full-Stack Developer & Content Creator';

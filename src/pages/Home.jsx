@@ -4,7 +4,7 @@ import { Reveal, CountUp } from '../components/Reveal/Reveal';
 import CopyButton from '../components/CopyButton';
 import GithubActivity from '../components/GithubActivity/GithubActivity';
 import { Link } from 'react-router-dom';
-import { skillGroups, workHistory, getProjectBySlug } from '../data/portfolio';
+import { workHistory, getProjectBySlug } from '../data/portfolio';
 import { testimonials } from '../data/testimonials';
 import useMediaQuery from '../utils/useMediaQuery';
 import useSEO from '../utils/useSEO';
@@ -150,6 +150,7 @@ export default function Home() {
             </a>
             <button
               onClick={() => window.dispatchEvent(new CustomEvent('hp-terminal-toggle'))}
+              aria-label="Open interactive terminal (Cmd or Ctrl plus K)"
               className="inline-flex items-center justify-between gap-4 text-text no-underline bg-[#111] border border-border-strong px-5 h-[46px] rounded-[6px] transition-colors hover:border-white/50 cursor-pointer shadow-lg"
             >
               <span className="font-mono text-[13px] font-medium text-text-muted">Terminal</span>

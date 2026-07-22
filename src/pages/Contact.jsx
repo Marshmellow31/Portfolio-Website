@@ -13,6 +13,7 @@ const socialLinks = [
 
 const paperItems = socialLinks.map(s => (
   <a
+    key={s.label}
     href={s.href}
     target="_blank"
     rel="noreferrer"

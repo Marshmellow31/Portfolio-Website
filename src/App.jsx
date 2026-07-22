@@ -84,8 +84,6 @@ export default function App() {
 
   // Section anchors work on Home; from any other route, route home first then jump.
   const sectionHref = (hash) => (onHome ? hash : `/${hash}`);
-  // For nav items that are routes vs hash anchors
-  const navHref = (item) => item.to || sectionHref(item.hash);
 
   // Reading-progress hairline under the nav
   const { scrollYProgress } = useScroll();
@@ -103,6 +101,7 @@ export default function App() {
             WebkitBackdropFilter: 'blur(14px)',
             borderBottom: `1px solid ${isScrolled ? 'rgba(255,255,255,.08)' : 'rgba(255,255,255,0)'}`,
           }}
+          aria-label="Main Navigation"
         >
           <Link to="/" className="text-[14px] font-semibold tracking-[-0.01em] text-text no-underline">
             Harshil Patel
@@ -151,6 +150,7 @@ export default function App() {
               <button
                 onClick={openTerminal}
                 title="Terminal (⌘K)"
+                aria-label="Toggle terminal overlay (Cmd or Ctrl plus K)"
                 className="group flex items-center gap-2 font-mono text-[11px] tracking-widest text-white/60 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-full px-4 py-1.5 cursor-pointer transition-all duration-300 backdrop-blur-md shadow-sm"
               >
                 <span className="uppercase tracking-[.1em]">Terminal</span>
@@ -197,30 +197,32 @@ export default function App() {
       )}
 
       {/* ──────────── Page Content (fade-rise on route change) ──────────── */}
-      <ErrorBoundary>
-      <Suspense fallback={<SkeletonPage />}>
-        <motion.div
-          key={location.pathname}
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <Routes location={location}>
-            <Route path="/" element={<Home />} />
-            <Route path="/projects" element={<Projects />} />
-            <Route path="/projects/:slug" element={<ProjectDetail />} />
-            <Route path="/creative" element={<Creative />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:slug" element={<BlogPost />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/playground" element={<Playground />} />
-            <Route path="/drive" element={<Drive />} />
-          <Route path="/drift" element={<Drift />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </motion.div>
-      </Suspense>
-      </ErrorBoundary>
+      <main id="main-content">
+        <ErrorBoundary>
+        <Suspense fallback={<SkeletonPage />}>
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <Routes location={location}>
+              <Route path="/" element={<Home />} />
+              <Route path="/projects" element={<Projects />} />
+              <Route path="/projects/:slug" element={<ProjectDetail />} />
+              <Route path="/creative" element={<Creative />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:slug" element={<BlogPost />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/playground" element={<Playground />} />
+              <Route path="/drive" element={<Drive />} />
+              <Route path="/drift" element={<Drift />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </motion.div>
+        </Suspense>
+        </ErrorBoundary>
+      </main>
 
       {/* ──────────── Custom cursor (desktop only) ──────────── */}
       <Cursor />

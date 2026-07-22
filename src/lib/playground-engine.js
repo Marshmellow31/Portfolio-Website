@@ -40,7 +40,6 @@
     const s = 1/1.9;
     return { v: v.map(q => q.map(c => c*s)), e };
   }
-  const SHAPES = [cube, octa, tetra, icosa];
 
   class HPPlayground extends HTMLElement {
     connectedCallback() {
@@ -309,13 +308,11 @@
             o.held = null;
           }
           // fist: attract, and crush when close
-          let crushing = false;
           for (const h of hands) {
             if (!h.fist || state.gameOver) continue;
             const dx = h.pinchPt.x - o.x, dy = h.pinchPt.y - o.y;
             const d = Math.hypot(dx, dy) || 1;
             if (d < Math.max(90, o.r * 1.3)) { 
-              crushing = true;
               // Add debounce so it doesn't instantly die in one frame if it has health
               if (!o.lastCrush || now - o.lastCrush > 300) {
                 o.health--;

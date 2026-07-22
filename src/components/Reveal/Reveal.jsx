@@ -1,4 +1,4 @@
-import { useRef, useCallback } from 'react';
+import { useRef } from 'react';
 import { motion, useInView, useMotionValue, animate, useReducedMotion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 

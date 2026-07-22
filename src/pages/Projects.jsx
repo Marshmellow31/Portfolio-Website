@@ -32,6 +32,8 @@ function ShowcaseCard({ project }) {
             key={imgIndex}
             src={images[imgIndex]}
             alt={project.title}
+            loading="lazy"
+            decoding="async"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -86,6 +88,7 @@ function ShowcaseCard({ project }) {
         <div className="mt-auto flex flex-wrap items-center gap-5">
           <Link
             to={`/projects/${project.slug}`}
+            aria-label={`See details for ${project.title}`}
             className="font-mono text-[12px] tracking-widest text-black bg-white hover:bg-white/85 no-underline rounded-[3px] px-4 py-2 transition-colors font-bold"
           >
             SEE DETAILS →
@@ -95,6 +98,7 @@ function ShowcaseCard({ project }) {
               href={project.link}
               target="_blank"
               rel="noreferrer"
+              aria-label={`Visit live site for ${project.title}`}
               className="font-mono text-[11px] tracking-widest text-text no-underline border-b border-white/30 pb-0.5 hover:border-white transition-colors"
             >
               VISIT ↗
@@ -105,6 +109,7 @@ function ShowcaseCard({ project }) {
               href={project.github}
               target="_blank"
               rel="noreferrer"
+              aria-label={`View source code for ${project.title} on GitHub`}
               className="font-mono text-[11px] tracking-widest text-text-dim no-underline border-b border-white/[0.15] pb-0.5 hover:text-text transition-colors"
             >
               CODE ↗

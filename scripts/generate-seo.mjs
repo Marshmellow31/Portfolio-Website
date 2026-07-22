@@ -20,7 +20,7 @@ import { blogPosts } from '../src/data/blog.js';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
 // Origin hard-coded in index.html; rewritten to SITE_URL in every emitted file.
-const PLACEHOLDER_ORIGIN = 'https://design-lab-portfolio.vercel.app';
+const PLACEHOLDER_ORIGIN = 'https://www.harshilpatel.co.in';
 const BUILD_DATE = new Date().toISOString().slice(0, 10);
 
 const esc = (s) =>

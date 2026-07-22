@@ -87,12 +87,12 @@ export default function BlogPost() {
   };
 
   return (
-    <div className="pt-20">
+    <article className="pt-20">
       {/* Header */}
-      <section className="relative w-full py-16 border-b border-border">
+      <header className="relative w-full py-16 border-b border-border">
         <div className="max-w-4xl mx-auto px-6 md:px-12">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <Link to="/blog" className="inline-flex items-center gap-2 font-mono text-xs text-text-dim uppercase tracking-widest hover:text-text transition-colors mb-8">
+            <Link to="/blog" aria-label="Back to blog index" className="inline-flex items-center gap-2 font-mono text-xs text-text-dim uppercase tracking-widest hover:text-text transition-colors mb-8">
               <FiArrowLeft /> Back to Blog
             </Link>
             
@@ -117,7 +117,7 @@ export default function BlogPost() {
             </div>
           </motion.div>
         </div>
-      </section>
+      </header>
 
       {/* Content */}
       <motion.section
@@ -134,6 +134,7 @@ export default function BlogPost() {
             {!showGuide ? (
               <button
                 onClick={() => setShowGuide(true)}
+                aria-label={post.guideLabel || 'Read More Guide'}
                 className="inline-flex items-center gap-3 px-6 py-3 border border-border rounded-full font-mono text-sm uppercase tracking-widest text-text hover:bg-text hover:text-bg transition-colors"
               >
                 {post.guideLabel || 'Read More'} <FiArrowRight />
@@ -153,11 +154,11 @@ export default function BlogPost() {
 
         {/* Bottom nav */}
         <div className="mt-16 pt-8 border-t border-border">
-          <Link to="/blog" className="inline-flex items-center gap-2 font-mono text-sm text-text-dim uppercase tracking-widest hover:text-text transition-colors">
+          <Link to="/blog" aria-label="Return to blog index" className="inline-flex items-center gap-2 font-mono text-sm text-text-dim uppercase tracking-widest hover:text-text transition-colors">
             <FiArrowLeft /> All Articles
           </Link>
         </div>
       </motion.section>
-    </div>
+    </article>
   );
 }

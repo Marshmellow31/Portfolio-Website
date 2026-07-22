@@ -255,10 +255,16 @@ const StaggeredMenu = ({
     }
   }, [playClose, animateIcon, animateColor, animateText, onMenuClose]);
 
-  const handleItemClick = useCallback((e, link) => {
-    e.preventDefault();
-    closeMenu();
-    setTimeout(() => navigate(link), 80);
+  const handleItemClick = useCallback((e, item) => {
+    const link = item.link;
+    const isExternalOrFile = item.download || link.startsWith('http') || link.endsWith('.pdf');
+    if (!isExternalOrFile) {
+      e.preventDefault();
+      closeMenu();
+      setTimeout(() => navigate(link), 80);
+    } else {
+      closeMenu();
+    }
   }, [closeMenu, navigate]);
 
   React.useEffect(() => {
@@ -328,7 +334,7 @@ const StaggeredMenu = ({
                     download={it.download ? true : undefined}
                     aria-label={it.ariaLabel}
                     data-index={idx + 1}
-                    onClick={e => handleItemClick(e, it.link)}
+                    onClick={e => handleItemClick(e, it)}
                   >
                     <span className="sm-panel-itemLabel">{it.label}</span>
                   </a>

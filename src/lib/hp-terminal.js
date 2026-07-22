@@ -172,7 +172,7 @@
       });
       this._bar.addEventListener('pointermove', (e) => {
         if (!this._drag) return;
-        const w = this._win.offsetWidth, h = this._win.offsetHeight;
+        const w = this._win.offsetWidth;
         const x = Math.min(Math.max(8 - w * 0.6, e.clientX - this._drag.dx), window.innerWidth - w * 0.25);
         const y = Math.min(Math.max(8, e.clientY - this._drag.dy), window.innerHeight - 46);
         this._place(x, y);
@@ -230,7 +230,7 @@
     }
     close() { this._open = false; this._win.classList.remove('open'); this._pill.classList.remove('show'); }
     minimize() { this._open = false; this._win.classList.remove('open'); this._pill.classList.add('show'); }
-    toggle() { this._open ? this.minimize() : this.open(); }
+    toggle() { if (this._open) { this.minimize(); } else { this.open(); } }
     _toggleMax() {
       this._max = !this._max;
       if (this._max) {

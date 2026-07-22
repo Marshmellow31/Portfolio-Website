@@ -438,11 +438,13 @@ export const workHistory = [
         name: 'COURT BOOKING APP',
         description: 'Full-stack court booking application featuring payment gateway integration, digital wallet passes, interactive maps, and a comprehensive admin dashboard with role-based access.',
         stack: ['React 19', 'TypeScript', 'Firebase', 'Razorpay', 'Capacitor'],
+        slug: 'playhub',
       },
       {
         name: 'MARKETING WEBSITE',
         description: 'High-performance marketing website with premium animations, SEO optimization, and dynamic routing for a pickleball venue.',
         stack: ['React 19', 'React Router v7', 'Tailwind CSS', 'Framer Motion'],
+        slug: 'picklerage',
       }
     ]
   },
@@ -455,11 +457,13 @@ export const workHistory = [
         name: 'CORPORATE WEBSITE',
         description: 'Corporate site and project portfolio for a real-estate firm. Lenis smooth scrolling, 3D elements, premium animations, PDF brochures.',
         stack: ['Next.js', 'React 19', 'Tailwind CSS', 'Framer Motion'],
+        slug: 'bhumi-developers',
       },
       {
         name: 'BD BUILDCON PORTAL',
         description: 'Production-ready marketing site for a turnkey industrial EPC contractor. Filterable project gallery, employee portal, custom motion components.',
         stack: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Lenis'],
+        slug: 'bd-buildcon',
       }
     ]
   },
@@ -472,6 +476,7 @@ export const workHistory = [
         name: 'SALON PWA & CRM',
         description: 'Luxury-tier PWA replacing paper loyalty cards. Features phone auth, visual loyalty tracking, and a comprehensive admin CRM dashboard.',
         stack: ['React 19', 'Tailwind v4', 'Framer Motion', 'Firebase v12'],
+        slug: 'mann-beauty',
       }
     ]
   },
@@ -484,6 +489,7 @@ export const workHistory = [
         name: 'RESTAURANT WEBSITE',
         description: 'Designed and built a modern, responsive website with scroll-driven animations and a digital menu showcase.',
         stack: ['HTML5', 'CSS3', 'JavaScript'],
+        slug: 'hare-krishna',
       }
     ]
   },
@@ -496,6 +502,7 @@ export const workHistory = [
         name: 'DIGITAL QR MENU',
         description: 'Developed a high-performance, zero-dependency digital menu application with interactive categorization and fast rendering.',
         stack: ['HTML5', 'CSS3', 'JavaScript'],
+        slug: 'taste-of-punjab',
       }
     ]
   }

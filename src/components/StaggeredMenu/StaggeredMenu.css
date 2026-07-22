@@ -6,6 +6,14 @@
   pointer-events: none;
 }
 
+/* Block clicks to the page underneath for the entire open/close transition —
+   not just once the panel finishes sliding in. Without this, a tap during the
+   ~0.65s slide-in can pass through to whatever page content the panel hasn't
+   visually covered yet. */
+.staggered-menu-wrapper[data-open] {
+  pointer-events: auto;
+}
+
 .staggered-menu-wrapper.fixed-wrapper {
   position: fixed;
   top: 0;

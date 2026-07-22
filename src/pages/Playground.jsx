@@ -4,22 +4,15 @@ import useSEO from '../utils/useSEO';
 
 const MODES = [
   ['objects', 'Objects'],
-  ['particles', 'Particles'],
   ['avatar', 'Avatar'],
 ];
 
 const HINTS = {
-  objects: 'PINCH grab/throw · pinch empty space = spawn · FIST attract/crush',
-  particles: 'OPEN HAND attract · PINCH burst · FIST vortex',
+  objects: 'PINCH grab/throw · pinch empty space = spawn · FIST attract/crush · 3 lives',
   avatar: 'move your head · blink · open mouth · smile · raise brows',
 };
 
-const LEGEND = [
-  ['PINCH', 'grab an object · drag it · release to throw · pinch empty space to spawn'],
-  ['FIST', 'attract objects · crush them up close · vortex in particle mode'],
-  ['OPEN HAND', 'steer particles gently'],
-  ['YOUR HEAD', 'parallaxes the scene · drives the robot in avatar mode'],
-];
+const OBJECTS_RULES = "Catch the shapes drifting across the screen — every time one bounces out too many times, you lose one of 3 lives. PINCH a shape to grab, drag, and throw it. PINCH empty space to spawn a new one. Make a FIST near a shape to crush it for points (tougher shapes take more hits). PINCH when the game ends to restart.";
 
 export default function Playground() {
   useSEO({ title: 'Playground', description: 'Webcam hand-tracking physics playground — pinch, grab, and throw objects with your hands.', path: '/playground' });
@@ -96,17 +89,26 @@ export default function Playground() {
           </div>
         )}
 
+      </div>
+
+      {/* ── UI Overlay (Floating Glassmorphism) ── */}
+      <div className="absolute inset-0 pointer-events-none p-[clamp(16px,4vw,32px)] flex flex-col justify-between z-10">
+
         {/* running gesture hint */}
         {running && (
           <div className="absolute left-[clamp(16px,4vw,32px)] bottom-[clamp(90px,12vh,120px)] font-mono text-[9px] md:text-[10px] tracking-[.1em] text-text-dim leading-[1.9] pointer-events-none bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/5 max-w-[200px] md:max-w-none">
             {HINTS[mode]}
           </div>
         )}
-      </div>
 
-      {/* ── UI Overlay (Floating Glassmorphism) ── */}
-      <div className="absolute inset-0 pointer-events-none p-[clamp(16px,4vw,32px)] flex flex-col justify-between z-10">
-        
+        {/* pre-game instructions — visible before the camera is even on */}
+        {!running && mode === 'objects' && (
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 max-w-[320px] text-center font-mono text-[11px] leading-relaxed text-text-dim pointer-events-none bg-black/40 backdrop-blur-md px-6 py-5 rounded-xl border border-white/10">
+            <div className="text-text text-[11px] font-bold tracking-[.16em] uppercase mb-3">How to play</div>
+            {OBJECTS_RULES}
+          </div>
+        )}
+
         {/* Top Row: Navigation & Camera Power */}
         <div className="flex justify-between items-start w-full gap-4">
           

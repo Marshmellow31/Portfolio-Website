@@ -3,7 +3,8 @@ import { motion, AnimatePresence, useInView, useReducedMotion } from 'framer-mot
 import { Reveal, CountUp } from '../components/Reveal/Reveal';
 import CopyButton from '../components/CopyButton';
 import GithubActivity from '../components/GithubActivity/GithubActivity';
-import { skillGroups, workHistory } from '../data/portfolio';
+import { Link } from 'react-router-dom';
+import { skillGroups, workHistory, getProjectBySlug } from '../data/portfolio';
 import { testimonials } from '../data/testimonials';
 import useMediaQuery from '../utils/useMediaQuery';
 import useSEO from '../utils/useSEO';
@@ -285,12 +286,12 @@ export default function Home() {
           <div className="absolute inset-y-0 left-0 w-24 md:w-48 bg-gradient-to-r from-bg to-transparent z-10 pointer-events-none" />
           <div className="absolute inset-y-0 right-0 w-24 md:w-48 bg-gradient-to-l from-bg to-transparent z-10 pointer-events-none" />
           
-          <div className="animate-marquee gap-[4.5rem] px-[2.25rem]">
+          <div className="animate-marquee gap-[1.75rem] px-[0.875rem] sm:gap-[4.5rem] sm:px-[2.25rem]">
             {stackIcons.map((item, i) => (
               <div key={i} className="group relative flex justify-center">
-                <item.Icon 
-                  className="text-[60px] group-hover:scale-110 transition-transform duration-300 cursor-pointer" 
-                  style={{ color: item.color }} 
+                <item.Icon
+                  className="text-[30px] sm:text-[60px] group-hover:scale-110 transition-transform duration-300 cursor-pointer"
+                  style={{ color: item.color }}
                 />
                 <span className="absolute -bottom-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[11px] font-mono tracking-widest text-text-muted whitespace-nowrap pointer-events-none">
                   {item.name}
@@ -299,9 +300,9 @@ export default function Home() {
             ))}
             {stackIcons.map((item, i) => (
               <div key={'dup'+i} className="group relative flex justify-center">
-                <item.Icon 
-                  className="text-[60px] group-hover:scale-110 transition-transform duration-300 cursor-pointer" 
-                  style={{ color: item.color }} 
+                <item.Icon
+                  className="text-[30px] sm:text-[60px] group-hover:scale-110 transition-transform duration-300 cursor-pointer"
+                  style={{ color: item.color }}
                 />
                 <span className="absolute -bottom-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[11px] font-mono tracking-widest text-text-muted whitespace-nowrap pointer-events-none">
                   {item.name}
@@ -353,23 +354,46 @@ export default function Home() {
                       className="overflow-hidden"
                     >
                       <div className="px-[clamp(20px,6vw,96px)] pb-8 pt-2 flex flex-col md:flex-row gap-12 md:gap-24">
-                        {job.projects.map((proj, pIdx) => (
-                          <div key={pIdx} className="flex-1">
-                            <h4 className="m-0 font-bold uppercase tracking-tighter text-[18px] md:text-[20px] mb-3 text-white">
-                              {proj.name}
-                            </h4>
-                            <p className="text-[14px] md:text-[15px] leading-relaxed text-text-muted max-w-lg mb-6 text-pretty">
-                              {proj.description}
-                            </p>
-                            <div className="flex flex-wrap gap-2">
-                              {proj.stack.map(tech => (
-                                <span key={tech} className="font-mono text-[10px] tracking-[.1em] uppercase text-text-dim border border-white/10 rounded-full px-3 py-1">
-                                  {tech}
-                                </span>
-                              ))}
+                        {job.projects.map((proj, pIdx) => {
+                          const linked = proj.slug ? getProjectBySlug(proj.slug) : null;
+                          return (
+                            <div key={pIdx} className="flex-1">
+                              <h4 className="m-0 font-bold uppercase tracking-tighter text-[18px] md:text-[20px] mb-3 text-white">
+                                {proj.name}
+                              </h4>
+                              <p className="text-[14px] md:text-[15px] leading-relaxed text-text-muted max-w-lg mb-6 text-pretty">
+                                {proj.description}
+                              </p>
+                              <div className="flex flex-wrap gap-2 mb-5">
+                                {proj.stack.map(tech => (
+                                  <span key={tech} className="font-mono text-[10px] tracking-[.1em] uppercase text-text-dim border border-white/10 rounded-full px-3 py-1">
+                                    {tech}
+                                  </span>
+                                ))}
+                              </div>
+                              {linked && (
+                                <div className="flex items-center gap-5">
+                                  <Link
+                                    to={`/projects/${linked.slug}`}
+                                    className="font-mono text-[11px] tracking-[.1em] uppercase text-text no-underline border-b border-white/30 pb-0.5 hover:border-white transition-colors"
+                                  >
+                                    See details →
+                                  </Link>
+                                  {linked.link && (
+                                    <a
+                                      href={linked.link}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      className="font-mono text-[11px] tracking-[.1em] uppercase text-text no-underline border-b border-white/30 pb-0.5 hover:border-white transition-colors"
+                                    >
+                                      Visit ↗
+                                    </a>
+                                  )}
+                                </div>
+                              )}
                             </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </motion.div>
                   )}

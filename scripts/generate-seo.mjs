@@ -277,6 +277,13 @@ function renderRoute(base, r) {
       `  <script type="application/ld+json">${JSON.stringify(r.jsonLd)}</script>\n  </head>`,
     );
   }
+
+  const routeH1 = r.path === '/' ? DEFAULT_TITLE : `${r.title} — ${SITE_NAME}`;
+  html = html.replace(
+    /<div id="root">.*?<\/div>/s,
+    `<div id="root"><h1 class="sr-only">${esc(routeH1)}</h1></div>`,
+  );
+
   return html;
 }
 

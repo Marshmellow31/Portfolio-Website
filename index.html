@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/webp" href="/favicon.webp" />
     <link rel="apple-touch-icon" href="/favicon.webp" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="alternate" type="application/rss+xml" title="Harshil Patel's Blog RSS Feed" href="https://www.harshilpatel.co.in/rss.xml" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <!-- Primary Meta Tags -->
@@ -14,6 +16,8 @@
     <meta name="author" content="Harshil Patel" />
     <meta name="keywords" content="Harshil Patel, Harshil Patel developer, Harshil Patel portfolio, Harshil Patel IIIT Vadodara, Full Stack Developer, React Developer, Web Developer, Content Creator, guywithblack350, guy with black 350, the guy with black 350, PayMatrix, ESP32 Smart AC" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+    <!-- Google Search Console verification — replace YOUR_CODE after registering -->
+    <!-- <meta name="google-site-verification" content="YOUR_CODE" /> -->
     <link rel="canonical" href="https://www.harshilpatel.co.in/" />
 
     <!-- Open Graph / Facebook -->
@@ -31,12 +35,13 @@
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@guywithblack350" />
+    <meta name="twitter:creator" content="@guywithblack350" />
     <meta name="twitter:url" content="https://www.harshilpatel.co.in/" />
     <meta name="twitter:title" content="Harshil Patel | Full-Stack Developer & Content Creator" />
     <meta name="twitter:description" content="Full-stack developer building production web apps, mobile apps, and AI tools. Content creator with 22M+ views." />
     <meta name="twitter:image" content="https://www.harshilpatel.co.in/og-image.webp" />
 
-    <!-- Structured data: Person + WebSite graph -->
+    <!-- Structured data: Person + WebSite + ProfilePage graph -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -63,11 +68,18 @@
           "knowsAbout": ["React", "TypeScript", "Node.js", "Firebase", "Kotlin", "Android Development", "AI APIs", "Three.js", "Web Development"]
         },
         {
+          "@type": "ProfilePage",
+          "@id": "https://www.harshilpatel.co.in/#profile",
+          "url": "https://www.harshilpatel.co.in/",
+          "name": "Harshil Patel Profile",
+          "mainEntity": { "@id": "https://www.harshilpatel.co.in/#person" }
+        },
+        {
           "@type": "WebSite",
           "@id": "https://www.harshilpatel.co.in/#website",
           "url": "https://www.harshilpatel.co.in/",
           "name": "Harshil Patel — Portfolio",
-          "inLanguage": "en",
+          "inLanguage": "en-US",
           "publisher": { "@id": "https://www.harshilpatel.co.in/#person" }
         }
       ]
@@ -80,7 +92,33 @@
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   </head>
   <body>
+    <!-- Skip to main content — a11y + crawlability -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[9999] focus:bg-white focus:text-black focus:px-4 focus:py-2 focus:rounded">Skip to content</a>
     <div id="root"></div>
+    <noscript>
+      <div style="max-width:720px;margin:80px auto;padding:24px;font-family:system-ui,sans-serif;color:#f2f2f3;background:#0a0a0b">
+        <h1>Harshil Patel — Full-Stack Developer &amp; Content Creator</h1>
+        <p>Full-stack developer and B.Tech student at IIIT Vadodara. Builds production web apps, mobile apps, and AI tools. Content creator <a href="https://www.instagram.com/guywithblack350/" style="color:#ddd">@guywithblack350</a> with 22M+ views.</p>
+        <h2>Projects</h2>
+        <ul>
+          <li><strong>PayMatrix</strong> — AI-powered group expense &amp; debt settlement platform</li>
+          <li><strong>ESP32 Smart AC</strong> — ₹600 IoT smart AC controller with on-device PWA</li>
+          <li><strong>PickleRage</strong> — Marketing website for pickleball venue</li>
+          <li><strong>PlayHub</strong> — Court booking with Razorpay &amp; Google Wallet passes</li>
+          <li><strong>Bhumi Developers</strong> — Real estate corporate site</li>
+          <li><strong>BD Buildcon</strong> — Industrial EPC contractor portal</li>
+          <li><strong>Ascend</strong> — Gamified productivity PWA</li>
+          <li><strong>Navigator+</strong> — Native Android GPS dashboard</li>
+        </ul>
+        <h2>Contact</h2>
+        <p>Email: <a href="mailto:1080patelharshil@gmail.com" style="color:#ddd">1080patelharshil@gmail.com</a></p>
+        <p>
+          <a href="https://github.com/Marshmellow31" style="color:#ddd">GitHub</a> ·
+          <a href="https://linkedin.com/in/harshil-patel-5a7373333" style="color:#ddd">LinkedIn</a> ·
+          <a href="https://www.instagram.com/harshil_3105_/" style="color:#ddd">Instagram</a>
+        </p>
+      </div>
+    </noscript>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

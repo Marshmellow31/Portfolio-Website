@@ -1,0 +1,106 @@
+# Harshil Patel
+
+> Full-Stack Developer, Mobile App Developer, AI Tooling Engineer, and Content Creator (@guywithblack350). B.Tech Computer Science student at IIIT Vadodara.
+
+## Bio & Overview
+Harshil Patel is a full-stack developer and computer science student at IIIT Vadodara (Indian Institute of Information Technology, Vadodara). He specializes in React, TypeScript, Node.js, Firebase, Svelte 5, Android (Kotlin), PWA, and AI API integrations (Gemini, Claude, Ollama).
+
+Alongside software engineering, Harshil is an automotive content creator operating under the handle **@guywithblack350** across Instagram and YouTube, generating 22M+ views and collaborating with automotive and lifestyle brands.
+
+- **Website**: https://www.harshilpatel.co.in/
+- **GitHub**: https://github.com/Marshmellow31
+- **LinkedIn**: https://linkedin.com/in/harshil-patel-5a7373333
+- **Instagram (Personal)**: https://www.instagram.com/harshil_3105_/
+- **Instagram (Creator)**: https://www.instagram.com/guywithblack350/
+- **Email**: 1080patelharshil@gmail.com
+
+---
+
+## Featured Software Projects
+
+- **PayMatrix** (https://www.harshilpatel.co.in/projects/paymatrix)
+  - *Type*: AI-Powered Group Expense & Debt Settlement Platform
+  - *Tech Stack*: React 19, Firebase, Tailwind CSS, Gemini Vision API
+  - *Highlights*: Scans physical bills with Gemini Vision AI, calculates minimal debt settlement graphs, native UPI deep-linking, real-time group sync.
+  - *Live App*: https://pay-matrix.vercel.app/
+  - *GitHub*: https://github.com/Marshmellow31/PayMatrix
+
+- **ESP32 Smart AC** (https://www.harshilpatel.co.in/projects/esp32-smart-ac)
+  - *Type*: Hardware / Firmware / IoT Smart AC Controller
+  - *Tech Stack*: ESP32, C++ / Arduino, PlatformIO, Vanilla JS PWA
+  - *Highlights*: Turn a standard Samsung split AC into a smart AC for ~₹600 via 38 kHz IR, on-device web app PWA, sleep curves, live energy/cost tracking, and Alexa/Google Voice control.
+  - *GitHub*: https://github.com/Marshmellow31/Smart-AC-Dashboard
+
+- **PickleRage** (https://www.harshilpatel.co.in/projects/picklerage)
+  - *Type*: Commercial Marketing Website & Booking Funnel
+  - *Tech Stack*: React 19, React Router v7, Framer Motion
+  - *Highlights*: Website for pickleball sports venue and restaurant with scroll animations, custom UI, and local SEO structure.
+  - *Live Site*: https://www.picklerage.in/
+
+- **Bhumi Developers** (https://www.harshilpatel.co.in/projects/bhumi-developers)
+  - *Type*: Corporate Real Estate Site & Project Portfolio
+  - *Tech Stack*: Next.js, React 19, Framer Motion, Lenis Smooth Scroll
+  - *Highlights*: Corporate site with Lenis smooth scrolling, interactive project gallery, and print-quality PDF brochures.
+  - *Live Site*: https://www.bhumidevelopers.co.in/
+
+- **BD Buildcon** (https://www.harshilpatel.co.in/projects/bd-buildcon)
+  - *Type*: Industrial EPC Contractor Marketing Site
+  - *Tech Stack*: Next.js, TypeScript, Lenis Smooth Scroll
+  - *Highlights*: Filterable project gallery for procurement engineers, custom motion system, employee portal.
+  - *Live Site*: https://bdbuildcon.com/
+
+- **PlayHub** (https://www.harshilpatel.co.in/projects/playhub)
+  - *Type*: Sports Venue & Court Booking Platform
+  - *Tech Stack*: React 19, TypeScript, Firebase, Razorpay, Google Wallet Passes, Capacitor
+  - *Highlights*: Real-time court availability grid, Razorpay payment processing, Google Wallet QR passes, role-based admin dashboard, Android APK.
+
+- **Ascend** (https://www.harshilpatel.co.in/projects/ascend)
+  - *Type*: Gamified Productivity PWA
+  - *Tech Stack*: Svelte 5, Vite, Firebase, PWA
+  - *Highlights*: Gamified task management with XP, levels, Pomodoro timer, 24-week activity heatmap, and command palette interface.
+  - *GitHub*: https://github.com/Marshmellow31/Ascend
+
+- **Mann Beauty Studio & CRM** (https://www.harshilpatel.co.in/projects/mann-beauty)
+  - *Type*: Salon Loyalty PWA & Admin CRM
+  - *Tech Stack*: React 19, Tailwind v4, Firebase v12
+  - *Highlights*: OTP phone authentication, visual loyalty stamp card, admin visit log, retention stats.
+
+- **Navigator+** (https://www.harshilpatel.co.in/projects/navigator-plus)
+  - *Type*: Native Android Telemetry Dashboard
+  - *Tech Stack*: Kotlin, Jetpack Compose, Android Foreground Service
+  - *Highlights*: Background GPS tracking resilient to Android Doze mode and OEM power restrictions.
+
+---
+
+## Technical Skills & Expertise
+
+- **Languages**: TypeScript, JavaScript, Python, C++, Java, Dart, Kotlin, SQL
+- **Frontend**: React 19, Next.js, Svelte 5, Tailwind CSS, Framer Motion, Three.js, HTML5, CSS3
+- **Backend & Cloud**: Node.js, Express, Firebase (Firestore, Auth), MySQL, REST APIs, Vercel
+- **Mobile & Embedded**: Android Native (Kotlin), Flutter, PWA, Capacitor, ESP32 (C++/Arduino)
+- **AI & ML**: Gemini Vision API, Claude API, Ollama (Local LLMs), Whisper Speech-to-Text, Embeddings
+- **Tools**: Git, GitHub Actions, Vercel, Docker, Vitest, ESLint, Oxlint
+
+---
+
+## Technical Blog Posts
+
+- **Pixel OS on Redmi Note 10 Pro Max: How Custom ROMs Shaped My Path Into Computer Science**
+  - *URL*: https://www.harshilpatel.co.in/blog/custom-roms-android-modding
+  - *Summary*: Flashing custom ROMs, unlocking Xiaomi bootloaders, installing TWRP, and running Pixel OS on Android 16. Includes a complete installation guide.
+
+- **I Made My Dumb AC Smart for ₹600 (and Learned to Respect Hardware)**
+  - *URL*: https://www.harshilpatel.co.in/blog/esp32-smart-ac
+  - *Summary*: Building an IR smart AC controller with ESP32, dealing with MOSFET vs NPN transistor bugs, and building single-owner hardware loop architectures.
+
+- **What I Learned Building Production React Apps for Real Clients**
+  - *URL*: https://www.harshilpatel.co.in/blog/building-production-react-apps
+  - *Summary*: Lessons from shipping client websites, Core Web Vitals performance budgets, and client handoffs.
+
+- **How I Use AI Tools in My Developer Workflow Without Losing My Edge**
+  - *URL*: https://www.harshilpatel.co.in/blog/ai-tools-developer-workflow
+  - *Summary*: Practical breakdown of integrating Claude, Gemini, Whisper, and local Ollama without sacrificing core engineering fundamentals.
+
+- **Why Every Developer Should Try Content Creation**
+  - *URL*: https://www.harshilpatel.co.in/blog/content-creation-meets-coding
+  - *Summary*: How building @guywithblack350 (22M+ views) improved product design, iteration speed, and user psychology insights.

@@ -17,12 +17,26 @@ export default function ProjectDetail() {
     image: project?.image,
     jsonLd: project && {
       '@context': 'https://schema.org',
-      '@type': 'CreativeWork',
-      name: project.title,
-      description: project.description,
-      url: `${SITE_URL}/projects/${slug}`,
-      dateCreated: project.year,
-      author: { '@type': 'Person', name: 'Harshil Patel' },
+      '@graph': [
+        {
+          '@type': 'SoftwareApplication',
+          name: project.title,
+          description: project.description,
+          url: `${SITE_URL}/projects/${slug}`,
+          applicationCategory: 'DeveloperApplication',
+          operatingSystem: project.stack?.some(s => s.toLowerCase().includes('android') || s.toLowerCase().includes('kotlin')) ? 'Android, Web Browser' : 'Web Browser',
+          author: { '@type': 'Person', '@id': `${SITE_URL}/#person`, name: 'Harshil Patel', url: `${SITE_URL}/` },
+          offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
+            { '@type': 'ListItem', position: 2, name: 'Projects', item: `${SITE_URL}/projects` },
+            { '@type': 'ListItem', position: 3, name: project.title, item: `${SITE_URL}/projects/${slug}` },
+          ],
+        },
+      ],
     },
   });
 

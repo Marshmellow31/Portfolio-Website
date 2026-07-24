@@ -15,7 +15,7 @@ function setMeta(attr, key, content) {
    optional per-page image, noindex, and JSON-LD.
    SPA-level best effort for JS-executing crawlers; the build-time
    prerender (scripts/generate-seo.mjs) covers everything else. */
-export default function useSEO({ title, description, path = '', image, noindex = false, jsonLd }) {
+export default function useSEO({ title, description, path = '', image, noindex = false, jsonLd, ogType = 'website' }) {
   const ldString = jsonLd ? JSON.stringify(jsonLd) : null;
   useEffect(() => {
     const fullTitle = title ? `${title} — Harshil Patel` : DEFAULT_TITLE;
@@ -34,6 +34,9 @@ export default function useSEO({ title, description, path = '', image, noindex =
     setMeta('name', 'twitter:url', url);
     setMeta('property', 'og:image', img);
     setMeta('name', 'twitter:image', img);
+    setMeta('name', 'twitter:creator', '@guywithblack350');
+    setMeta('property', 'og:type', ogType);
+    setMeta('property', 'og:image:alt', `${title || 'Harshil Patel'} — Harshil Patel`);
     setMeta('name', 'robots', noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1');
 
     let canonical = document.head.querySelector('link[rel="canonical"]');
@@ -59,5 +62,5 @@ export default function useSEO({ title, description, path = '', image, noindex =
     }
 
     return () => { document.title = DEFAULT_TITLE; };
-  }, [title, description, path, image, noindex, ldString]);
+  }, [title, description, path, image, noindex, ldString, ogType]);
 }

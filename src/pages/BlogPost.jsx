@@ -14,17 +14,33 @@ export default function BlogPost() {
     title: post?.title,
     description: post?.excerpt,
     path: `/blog/${slug}`,
+    ogType: 'article',
     jsonLd: post && {
       '@context': 'https://schema.org',
-      '@type': 'BlogPosting',
-      headline: post.title,
-      description: post.excerpt,
-      datePublished: post.date,
-      url: `${SITE_URL}/blog/${slug}`,
-      image: SITE_URL + OG_IMAGE,
-      author: { '@type': 'Person', name: 'Harshil Patel', url: SITE_URL },
-      mainEntityOfPage: `${SITE_URL}/blog/${slug}`,
-      keywords: post.tags?.join(', '),
+      '@graph': [
+        {
+          '@type': 'BlogPosting',
+          headline: post.title,
+          description: post.excerpt,
+          datePublished: post.date,
+          dateModified: post.date,
+          url: `${SITE_URL}/blog/${slug}`,
+          image: SITE_URL + OG_IMAGE,
+          inLanguage: 'en-US',
+          author: { '@type': 'Person', '@id': `${SITE_URL}/#person`, name: 'Harshil Patel', url: SITE_URL },
+          publisher: { '@type': 'Person', '@id': `${SITE_URL}/#person`, name: 'Harshil Patel', url: SITE_URL },
+          mainEntityOfPage: `${SITE_URL}/blog/${slug}`,
+          keywords: post.tags?.join(', '),
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
+            { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE_URL}/blog` },
+            { '@type': 'ListItem', position: 3, name: post.title, item: `${SITE_URL}/blog/${slug}` },
+          ],
+        },
+      ],
     },
   });
 

@@ -7,12 +7,24 @@
   static `dist/<route>/index.html` for all 24 routes with the correct `<title>`, description,
   canonical, Open Graph / Twitter tags, and JSON-LD. Vercel serves these files *before* the SPA
   rewrite, so Google, LinkedIn, WhatsApp, and Discord see correct per-page meta with zero JavaScript.
-- **Auto-generated `sitemap.xml` + `robots.txt`** — built from `src/data/portfolio.js` and
-  `src/data/blog.js` every build. Add a project or blog post and the sitemap updates itself.
-- **Structured data** — Person + WebSite graph on every page, BlogPosting on posts (with publish
-  dates), CreativeWork + BreadcrumbList on project pages, Blog/CollectionPage on the indexes.
-- **Runtime `useSEO` hook** — keeps title/canonical/OG/JSON-LD in sync during client-side
-  navigation, and sets `noindex` on the 404 page.
+- **Auto-generated `sitemap.xml` + `robots.txt` + `rss.xml`** — built from `src/data/portfolio.js` and
+  `src/data/blog.js` every build. Includes Google Image Search extensions (`<image:image>`) for project screenshots and an RSS 2.0 feed for blog readers.
+- **Structured data** — `Person` + `WebSite` + `ProfilePage` graph on homepage, `BlogPosting` on posts (with publish/mod dates and publisher references), `SoftwareApplication` + `BreadcrumbList` on project pages, `CollectionPage` on `/projects`, and `BreadcrumbList` on all subpages.
+- **Generative Engine Optimization (GEO)** — `public/llms.txt` standard file for AI search engines (ChatGPT Search, Perplexity, Claude, Gemini) providing a clean markdown knowledge index of Harshil Patel's bio, projects, blog posts, and verified handles.
+- **Web App Manifest** — `public/site.webmanifest` defining PWA metadata, theme colors (`#0A0A0B`), and maskable icon declarations.
+- **Runtime `useSEO` hook** — keeps title/canonical/OG (`og:type` article vs website)/Twitter
+  creator (`@guywithblack350`)/`og:image:alt`/JSON-LD in sync during client-side navigation, and
+  sets `noindex` on the 404 page.
+- **`<noscript>` fallback** — meaningful HTML content (name, bio, project list, contact links) inside
+  `<noscript>` so crawlers that don't execute JS still index core page content.
+- **Skip-to-content link** — hidden `<a href="#main-content">` for accessibility (a11y signals
+  contribute to search quality).
+- **Font deduplication** — JetBrains Mono loaded once via `<link>` in `index.html`; removed duplicate
+  `@import` from `index.css` to eliminate a render-blocking network request (improves FCP/LCP).
+- **Vercel caching** — `vercel.json` serves SEO assets (`sitemap.xml`, `rss.xml`, `robots.txt`,
+  `llms.txt`, `site.webmanifest`) with `Cache-Control: public, max-age=3600, stale-while-revalidate=86400`.
+- **Google Search Console** — placeholder `<meta name="google-site-verification">` tag is commented
+  in `index.html`; uncomment and replace `YOUR_CODE` after registering the domain in GSC.
 
 ## When you buy the domain (do these in order)
 
@@ -25,6 +37,8 @@
    - Add the new domain (Domain property, verified via DNS record).
    - Submit `https://yourdomain.com/sitemap.xml`.
    - Use "URL Inspection → Request Indexing" on the homepage to get crawled within hours.
+   - **Uncomment** the `<meta name="google-site-verification">` tag in `index.html` and paste
+     your verification code.
 4. **Bing Webmaster Tools** — https://www.bing.com/webmasters — import from Search Console
    (one click). Covers Bing, DuckDuckGo, and ChatGPT/Copilot search.
 5. **Validate rich results** — https://search.google.com/test/rich-results on the homepage and
@@ -56,3 +70,5 @@ site that other trusted profiles point to:
 - Projects/blog posts need no extra work — data files drive everything.
 - Never edit `public/sitemap.xml` or `public/robots.txt` — they don't exist anymore; the build
   generates them.
+- `public/llms.txt` should be updated when you add new major projects or blog posts so AI
+  search engines surface accurate information.

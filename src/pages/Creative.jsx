@@ -75,14 +75,19 @@ export default function Creative() {
               </Reveal>
 
               <h1
-                className="m-0 font-bold leading-none"
+                className="m-0 font-bold leading-none relative"
                 style={{
                   fontSize: 'clamp(40px,7vw,100px)',
                   letterSpacing: '-0.04em',
                 }}
               >
-                <Reveal as="span" delay={0.1} className="block text-text-bright">GUY WITH</Reveal>
-                <Reveal as="span" delay={0.15} className="block text-text-dim">BLACK 350</Reveal>
+                {/* Real text for search engines and screen readers */}
+                <span className="sr-only">GUY WITH BLACK 350</span>
+                {/* Animated text visually displayed but hidden from screen readers */}
+                <span aria-hidden="true" className="block">
+                  <Reveal as="span" delay={0.1} className="block text-text-bright">GUY WITH</Reveal>
+                  <Reveal as="span" delay={0.15} className="block text-text-dim">BLACK 350</Reveal>
+                </span>
               </h1>
 
               <Reveal delay={0.25}>

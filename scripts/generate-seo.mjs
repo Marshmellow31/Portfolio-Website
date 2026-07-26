@@ -44,7 +44,7 @@ const routes = [
   {
     path: '/', priority: 1.0,
     title: DEFAULT_TITLE,
-    description: 'Full-stack developer at IIIT Vadodara shipping production web, mobile, and AI products for real businesses.',
+    description: 'Software engineer and B.Tech student at IIIT Vadodara shipping production web, mobile, and AI products for real businesses.',
   },
   {
     path: '/projects', priority: 0.9,

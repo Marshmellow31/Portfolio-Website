@@ -6,9 +6,9 @@
 export const SITE_URL = 'https://www.harshilpatel.co.in';
 
 export const SITE_NAME = 'Harshil Patel';
-export const DEFAULT_TITLE = 'Harshil Patel | Full-Stack Developer & Content Creator';
+export const DEFAULT_TITLE = 'Harshil Patel | Software Engineer | IIIT Vadodara';
 export const DEFAULT_DESCRIPTION =
-  'Full-stack developer and B.Tech student at IIIT Vadodara. Builds production web apps, mobile apps, and AI tools. Content creator @guywithblack350 with 22M+ views.';
+  'Harshil Patel is a software engineer and B.Tech student at IIIT Vadodara who builds production web apps, mobile apps, and AI tools.';
 export const OG_IMAGE = '/og-image.webp';
 export const LOCALE = 'en_US';
 

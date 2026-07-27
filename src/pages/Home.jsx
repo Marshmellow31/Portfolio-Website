@@ -320,16 +320,18 @@ export default function Home() {
       </section>
 
       {/* ──────────── EXPERIENCE ──────────── */}
-      <section id="experience" className="border-b border-border" style={{ padding: 'clamp(60px,8vw,120px) 0' }}>
+      {/* Sized so the whole list lands on one screen rather than making the
+          reader scroll through six near-full-height rows. */}
+      <section id="experience" className="border-b border-border" style={{ padding: 'clamp(44px,5.5vw,80px) 0' }}>
         <div className="px-[clamp(20px,6vw,96px)]">
-          <Reveal className="mb-[clamp(40px,6vw,72px)]">
-            <div className="mono-label mb-4">03 — Experience</div>
-            <h2 className="m-0 font-bold uppercase tracking-tighter" style={{ fontSize: 'clamp(34px,4.5vw,64px)', lineHeight: 1 }}>
+          <Reveal className="mb-[clamp(24px,3vw,40px)]">
+            <div className="mono-label mb-3">03 — Experience</div>
+            <h2 className="m-0 font-bold uppercase tracking-tighter" style={{ fontSize: 'clamp(30px,3.6vw,52px)', lineHeight: 1 }}>
               Work History
             </h2>
           </Reveal>
         </div>
-        
+
         <div className="border-t border-border flex flex-col">
           {workHistory.map((job, idx) => {
             const isOpen = openAccordion === idx;
@@ -337,17 +339,17 @@ export default function Home() {
               <div key={job.company} className="border-b border-border group flex flex-col">
                 <button
                   onClick={() => setOpenAccordion(isOpen ? null : idx)}
-                  className="w-full text-left px-[clamp(20px,6vw,96px)] py-6 md:py-8 flex flex-col md:flex-row md:items-center justify-between hover:bg-white/[0.02] transition-colors cursor-pointer"
+                  className="w-full text-left px-[clamp(20px,6vw,96px)] py-3.5 md:py-4 flex flex-col md:flex-row md:items-center justify-between hover:bg-white/[0.02] transition-colors cursor-pointer"
                 >
-                  <h3 
-                    className={`m-0 font-bold uppercase tracking-tighter transition-colors duration-500 ${isOpen ? 'text-white' : 'text-white/70 group-hover:text-white'}`} 
-                    style={{ fontSize: 'clamp(32px,5vw,72px)', lineHeight: 0.9 }}
+                  <h3
+                    className={`m-0 font-bold uppercase tracking-tighter transition-colors duration-500 ${isOpen ? 'text-white' : 'text-white/70 group-hover:text-white'}`}
+                    style={{ fontSize: 'clamp(24px,3.2vw,44px)', lineHeight: 1 }}
                   >
                     {job.company}
                   </h3>
-                  <div className="flex flex-col items-start md:items-end mt-4 md:mt-0 opacity-60">
-                    <span className="font-mono text-[10px] md:text-[11px] tracking-[.15em] uppercase">{job.role}</span>
-                    <span className="font-serif italic text-text-muted mt-1 text-[13px]">{job.location}</span>
+                  <div className="flex flex-col items-start md:items-end mt-2 md:mt-0 opacity-60">
+                    <span className="font-mono text-[9.5px] md:text-[10px] tracking-[.15em] uppercase">{job.role}</span>
+                    <span className="font-serif italic text-text-muted mt-0.5 text-[12px]">{job.location}</span>
                   </div>
                 </button>
                 <AnimatePresence>

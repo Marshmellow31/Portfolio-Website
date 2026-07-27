@@ -97,7 +97,9 @@ export default function Contact() {
     <div className="min-h-screen flex flex-col justify-center pt-20">
       <section
         className="w-full"
-        style={{ padding: 'clamp(100px,12vw,180px) clamp(20px,6vw,96px)' }}
+        /* pt-20 on the wrapper already clears the fixed header — keep the
+           section's own top padding light so the centered block sits centered */
+        style={{ padding: 'clamp(32px,4vw,64px) clamp(20px,6vw,96px) clamp(64px,8vw,120px)' }}
       >
         {/* Two-column grid — collapses to single column below lg */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">

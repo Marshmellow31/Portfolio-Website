@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import useSEO from '../utils/useSEO';
+import useFullscreen from '../utils/useFullscreen';
 
 const MODES = [
   ['objects', 'Objects'],
@@ -18,6 +19,8 @@ export default function Playground() {
   useSEO({ title: 'Playground', description: 'Webcam hand-tracking physics playground — pinch, grab, and throw objects with your hands.', path: '/playground' });
   const stageRef = useRef(null);
   const elRef = useRef(null);
+  const rootRef = useRef(null);
+  const { isFullscreen, supported: fsSupported, toggle: toggleFullscreen, enter: enterFullscreen } = useFullscreen(rootRef);
   const [mode, setMode] = useState('objects');
   const [status, setStatus] = useState('idle'); // idle | loading | running | error
   const [msg, setMsg] = useState('');
@@ -58,7 +61,8 @@ export default function Playground() {
     setMode(id);
     if (elRef.current?.setMode) elRef.current.setMode(id);
   };
-  const startCam = () => elRef.current?.start?.();
+  /* Enabling the camera is the game's real start — go fullscreen with it. */
+  const startCam = () => { if (fsSupported) enterFullscreen(); elRef.current?.start?.(); };
   const stopCam = () => elRef.current?.stop?.();
 
   const running = status === 'running';
@@ -71,7 +75,13 @@ export default function Playground() {
     : '';
 
   return (
-    <div className="fixed inset-0 bg-bg text-text overflow-hidden font-sans">
+    <div
+      ref={rootRef}
+      className="fixed inset-0 bg-bg text-text overflow-hidden font-sans select-none"
+      /* double-tap on a game control must not select text or pop the iOS callout */
+      style={{ WebkitUserSelect: 'none', WebkitTouchCallout: 'none', touchAction: 'manipulation' }}
+      onContextMenu={(e) => e.preventDefault()}
+    >
       
       {/* ── stage (fills entirely) ── */}
       <div ref={stageRef} className="absolute inset-0">
@@ -106,6 +116,12 @@ export default function Playground() {
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 max-w-[320px] text-center font-mono text-[11px] leading-relaxed text-text-dim pointer-events-none bg-black/40 backdrop-blur-md px-6 py-5 rounded-xl border border-white/10">
             <div className="text-text text-[11px] font-bold tracking-[.16em] uppercase mb-3">How to play</div>
             {OBJECTS_RULES}
+            {fsSupported && !isFullscreen && (
+              <div className="mt-4 pt-3 border-t border-white/10 text-[10px] tracking-[.14em] uppercase text-text-faint flex items-center justify-center gap-2">
+                <span aria-hidden>⛶</span>
+                Goes fullscreen on start · ESC to exit
+              </div>
+            )}
           </div>
         )}
 
@@ -119,6 +135,16 @@ export default function Playground() {
           >
             ← SITE
           </Link>
+
+          {fsSupported && (
+            <button
+              onClick={toggleFullscreen}
+              title={isFullscreen ? 'Exit fullscreen (ESC)' : 'Play fullscreen'}
+              className="pointer-events-auto font-mono text-[12px] cursor-pointer bg-white/5 backdrop-blur-xl border border-white/10 text-text-dim hover:text-white px-3 py-2 rounded-full shadow-lg transition-colors ml-auto"
+            >
+              {isFullscreen ? '⤡' : '⛶'}
+            </button>
+          )}
 
           {/* Top Right: Camera Controls & Stats */}
           <div className="flex flex-col items-end gap-2">

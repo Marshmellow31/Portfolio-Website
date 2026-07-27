@@ -73,14 +73,67 @@ export const items = [
     link: '#projects',
     title: 'Taste of Punjab',
     description: 'Digital QR Menu'
+  },
+  {
+    image: '/projects/nofly.svg',
+    link: '#projects',
+    title: 'No-Fly Zone Simulator',
+    description: 'Drone airspace validation & GPS spoofing research'
   }
 ];
+
+/* ─── Internship credentials ───
+   One certificate and one letter, both issued by Bhumi Developers / BD Buildcon
+   LLP for the same two-month internship and both covering both websites — so
+   the pair hangs off each of the two internship projects. */
+export const internshipCredentials = {
+  issuer: 'Bhumi Developers / BD Buildcon LLP',
+  period: '19 May 2026 — 25 July 2026',
+  ref: 'BD/INT/2026/001',
+  signatories: 'Kiran Majmudar (Chairman & Founder) · Avik Majmudar (Director)',
+  documents: [
+    { label: 'Internship Certificate', href: '/credentials/bd-buildcon-internship-certificate.pdf' },
+    { label: 'Letter of Recommendation', href: '/credentials/bd-buildcon-letter-of-recommendation.pdf' },
+  ],
+};
 
 /* ─── Selected Work — monochrome redesign, one case study per project ───
    Each entry drives both the /projects list and the /projects/:slug page. */
 const selectedWorkRaw = [
   {
+    slug: 'no-fly-zone-simulator',
+    group: 'research',
+    weight: 'feature',
+    title: 'No-Fly Zone Simulator',
+    year: '2026',
+    role: 'Research · Geospatial Engineering',
+    type: 'Research Project',
+    image: '/projects/nofly.svg',
+    images: [],
+    description: 'Co-authored paper on GPS spoofing–based drone path manipulation, plus the airspace simulator being built alongside it to map restricted zones and validate flight paths against them.',
+    problem: 'Drones that stray into airports, military installations, or government airspace cause real safety, security, and legal fallout. Our research showed the inverse is just as true: a ground spoofer can push a GPS-guided drone out of a protected zone in 15–30 time steps without tripping its own anomaly detection, because the Kalman filter meant to stabilise navigation amplifies the injected bias instead of rejecting it.',
+    approach: 'The paper is finished; the simulator is the tool that makes that airspace layer visible and testable, and it is still in progress. Restricted zones are modelled as circles and polygons with a category and safety level; a user drops a start and a destination, and the tool computes the route and tests it against every zone before launch. Haversine distance, point-in-circle containment, and segment–polygon intersection do the geometry — no black-box routing API — and the paper supplies the threat model the validation is arguing against.',
+    features: [
+      ['Kalman filter bias analysis — published', 'Modelled the drone\'s navigation filter in spherical coordinates and showed the steady-state gain (K∞ ≈ 0.27) converts injected spoof offsets straight into position error.'],
+      ['SPRT evasion proof — published', 'Constraining per-step drift below the Sequential Probability Ratio Test threshold gives a formal guarantee the diversion never trips anomaly detection.'],
+      ['Python simulation — published', 'A 1000-sample run confirms full exit from a 50 m geofence within 15–30 time steps of spoofing onset, well before any alarm fires.'],
+      ['Interactive airspace map — built', 'Pan, zoom, and inspect restricted regions rendered as circles and polygons with category and safety level.'],
+      ['Pre-flight route validation — built', 'The full path is tested against every zone before simulation starts — approved, or flagged with the offending segment highlighted.'],
+      ['Live drone simulation — in progress', 'A marker walking the route with distance covered, remaining distance, and continuous proximity checks.'],
+      ['Flight telemetry panel — planned', 'Total distance, estimated flight time, zones crossed, live coordinates, and overall flight status.'],
+    ],
+    outcome: 'The paper — "GPS Spoofing-Based Drone Path Manipulation Using Kalman Filter Bias and SPRT Evasion" (IIIT Vadodara — International Campus Diu) — is complete and readable below. Its core finding: the Kalman filter designed to make navigation robust is precisely the surface that amplifies a spoofing attack. The simulator is the ongoing applied half.',
+    stack: ['React', 'TypeScript', 'Leaflet', 'Turf.js', 'Python (simulation)'],
+    link: null,
+    github: null,
+    paper: '/gps-spoofing-drone-path-manipulation.pdf',
+    live: false,
+    statusLabel: 'IN DEVELOPMENT',
+  },
+  {
     slug: 'paymatrix',
+    group: 'product',
+    weight: 'feature',
     title: 'PayMatrix',
     year: '2026',
     role: 'Design · Full-Stack · AI',
@@ -114,6 +167,8 @@ const selectedWorkRaw = [
   },
   {
     slug: 'esp32-smart-ac',
+    group: 'product',
+    weight: 'feature',
     title: 'ESP32 Smart AC',
     year: '2026',
     role: 'Hardware · Firmware · Full-Stack',
@@ -144,6 +199,8 @@ const selectedWorkRaw = [
   },
   {
     slug: 'picklerage',
+    group: 'client',
+    weight: 'feature',
     title: 'PickleRage',
     year: '2026',
     role: 'Freelance — Design & Build',
@@ -171,6 +228,9 @@ const selectedWorkRaw = [
   },
   {
     slug: 'bhumi-developers',
+    credentials: internshipCredentials,
+    group: 'internship',
+    weight: 'feature',
     title: 'Bhumi Developers',
     year: '2025',
     role: 'Web Development Intern',
@@ -197,6 +257,9 @@ const selectedWorkRaw = [
   },
   {
     slug: 'bd-buildcon',
+    credentials: internshipCredentials,
+    group: 'internship',
+    weight: 'feature',
     title: 'BD Buildcon',
     year: '2025',
     role: 'Web Development Intern',
@@ -218,6 +281,8 @@ const selectedWorkRaw = [
   },
   {
     slug: 'playhub',
+    group: 'client',
+    weight: 'feature',
     title: 'PlayHub',
     year: '2026',
     role: 'Freelance — Full-Stack',
@@ -253,11 +318,12 @@ const selectedWorkRaw = [
   },
   {
     slug: 'mann-beauty',
+    group: 'client',
+    weight: 'feature',
     title: 'Mann Beauty Studio',
     year: '2025',
     role: 'Freelance — Full-Stack',
     type: 'Client Work',
-    featured: false,
     image: '/projects/mannbeauty-gallery/01.webp',
     images: [
       '/projects/mannbeauty-gallery/01.webp',
@@ -280,11 +346,12 @@ const selectedWorkRaw = [
   },
   {
     slug: 'attendance-manager',
+    group: 'client',
+    weight: 'compact',
     title: 'Attendance Manager',
     year: '2025',
     role: 'Freelance — Full-Stack',
     type: 'Client Work',
-    featured: false,
     image: '/projects/attendance-gallery/01.webp',
     images: [
       '/projects/attendance-gallery/01.webp',
@@ -308,6 +375,8 @@ const selectedWorkRaw = [
   },
   {
     slug: 'ascend',
+    group: 'product',
+    weight: 'feature',
     title: 'Ascend',
     year: '2025',
     role: 'Design · Frontend',
@@ -338,6 +407,8 @@ const selectedWorkRaw = [
   },
   {
     slug: 'navigator-plus',
+    group: 'product',
+    weight: 'feature',
     title: 'Navigator+',
     year: '2025',
     role: 'Android Developer',
@@ -363,11 +434,12 @@ const selectedWorkRaw = [
   },
   {
     slug: 'hare-krishna',
+    group: 'client',
+    weight: 'compact',
     title: 'Hare Krishna',
     year: '2026',
     role: 'Freelance — Design & Build',
     type: 'Client Work',
-    featured: false,
     image: '/projects/harekrishna.webp',
     images: ['/projects/harekrishna.webp'],
     description: 'Modern, performant restaurant website with animated sections and multi-page layout.',
@@ -386,11 +458,12 @@ const selectedWorkRaw = [
   },
   {
     slug: 'taste-of-punjab',
+    group: 'client',
+    weight: 'compact',
     title: 'Taste of Punjab',
     year: '2026',
     role: 'Freelance — Design & Build',
     type: 'Client Work',
-    featured: false,
     image: '/projects/tasteofpunjab.webp',
     images: ['/projects/tasteofpunjab.webp'],
     description: 'Interactive Digital QR Menu with category tabs and fast vanilla JS rendering.',
@@ -413,9 +486,58 @@ export const selectedWork = selectedWorkRaw.map((p, i) => ({
   ...p,
   num: String(i + 1).padStart(2, '0'),
   stackLine: p.stack.join(' · '),
+  /* Tiles want a real screenshot, not a logo. `image` is still the logo mark
+     for the sphere and og:image; `cover` is the first gallery shot when there
+     is one, and falls back to the mark only for projects with no captures. */
+  cover: p.images?.[0] || p.image,
+  hasShot: Boolean(p.images?.length),
 }));
 
 export const getProjectBySlug = (slug) => selectedWork.find((p) => p.slug === slug);
+
+/* ─── Sections for the /projects page ───
+   Order here is the order on the page. Every project carries a `group` that
+   points at one of these ids and a `weight` ('feature' | 'compact') that picks
+   its card, so adding a project never means touching the page component. */
+export const projectGroups = [
+  {
+    id: 'product',
+    label: 'Products',
+    title: 'Products I Built',
+    blurb: 'Things I shipped because I wanted them to exist — hardware, AI, and apps that people other than me now use.',
+  },
+  {
+    id: 'internship',
+    label: 'Internship',
+    title: 'Internship',
+    blurb: 'Corporate sites shipped during my web development internship in Bharuch, Gujarat.',
+  },
+  {
+    id: 'research',
+    label: 'Research',
+    title: 'Research',
+    blurb: 'Published work on drone navigation security, plus the tooling built alongside it.',
+  },
+  {
+    id: 'client',
+    label: 'Client Work',
+    title: 'Client & Freelance',
+    blurb: 'Paid builds for real businesses: booking platforms, loyalty CRMs, marketing sites, and internal tools.',
+  },
+].map((g) => {
+  /* `weight` no longer picks a card — every rail card is the same size — but it
+     still sorts the quicker builds to the end of their section. */
+  const inGroup = selectedWork
+    .filter((p) => p.group === g.id)
+    .sort((a, b) => (a.weight === 'compact' ? 1 : 0) - (b.weight === 'compact' ? 1 : 0));
+  return {
+    ...g,
+    projects: inGroup,
+    features: inGroup.filter((p) => p.weight !== 'compact'),
+    compacts: inGroup.filter((p) => p.weight === 'compact'),
+    count: inGroup.length,
+  };
+}).filter((g) => g.count > 0);
 
 /* ─── Capabilities grid (grouped stack, comma lists) ─── */
 export const skillGroups = [
@@ -458,7 +580,14 @@ export const workHistory = [
         description: 'Corporate site and project portfolio for a real-estate firm. Lenis smooth scrolling, 3D elements, premium animations, PDF brochures.',
         stack: ['Next.js', 'React 19', 'Tailwind CSS', 'Framer Motion'],
         slug: 'bhumi-developers',
-      },
+      }
+    ]
+  },
+  {
+    company: 'BD BUILDCON',
+    role: 'WEB DEVELOPMENT INTERN',
+    location: 'Bharuch, Gujarat',
+    projects: [
       {
         name: 'BD BUILDCON PORTAL',
         description: 'Production-ready marketing site for a turnkey industrial EPC contractor. Filterable project gallery, employee portal, custom motion components.',

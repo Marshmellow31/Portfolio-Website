@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import useSEO from '../utils/useSEO';
+import useFullscreen from '../utils/useFullscreen';
 
 /* ────────────────────────────────────────────────────────────────
    DRIVE — the colorful corner of an otherwise monochrome site.
@@ -284,6 +285,16 @@ export default function Drive() {
   const game = useRef(createGame());
   const [hud, setHud] = useState({ speed: 0, lap: 0, lapMs: 0, bestMs: game.current.bestMs, started: false, lappedFlash: false });
   const [touch] = useState(() => typeof window !== 'undefined' && matchMedia('(pointer: coarse)').matches);
+  const rootRef = useRef(null);
+  const { isFullscreen, supported: fsSupported, toggle: toggleFullscreen, enter: enterFullscreen, lockLandscape } = useFullscreen(rootRef);
+
+  /* First real input takes the game fullscreen — must ride a user gesture. */
+  const fsArmed = useRef(false);
+  const goFullscreenOnce = () => {
+    if (fsArmed.current || !fsSupported) return;
+    fsArmed.current = true;
+    enterFullscreen().then(lockLandscape);
+  };
 
   useSEO({ title: 'Drive', description: 'A playable arcade racer hidden in the portfolio. The world is gray until you drive.', path: '/drive' });
 
@@ -299,7 +310,7 @@ export default function Drive() {
       }
       if (v && code === 'KeyR') { resetGame(g); g.started = true; g.raceOn = true; g.lapStart = performance.now(); }
     };
-    const down = (e) => { if (map[e.code] || e.code === 'KeyR') { e.preventDefault(); set(e.code, true); } };
+    const down = (e) => { if (map[e.code] || e.code === 'KeyR') { e.preventDefault(); goFullscreenOnce(); set(e.code, true); } };
     const up = (e) => set(e.code, false);
     // stuck-throttle guard: clear all input when the tab loses focus
     const blur = () => { const g = game.current; Object.keys(g.input).forEach((k) => (g.input[k] = false)); };
@@ -328,13 +339,20 @@ export default function Drive() {
     e.preventDefault();
     const g = game.current;
     g.input[key] = v;
+    if (v) goFullscreenOnce();
     if (v && key === 'up' && !g.started) { g.started = true; g.raceOn = true; g.lapStart = performance.now(); }
   };
 
   const touchBtn = 'pointer-events-auto select-none flex items-center justify-center w-16 h-16 rounded-full bg-white/10 backdrop-blur-xl border border-white/25 text-white text-xl font-bold active:bg-white/30 touch-none';
 
   return (
-    <div className="fixed inset-0 bg-black overflow-hidden font-sans">
+    <div
+      ref={rootRef}
+      className="fixed inset-0 bg-black overflow-hidden font-sans select-none"
+      /* double-tap on a game control must not select text or pop the iOS callout */
+      style={{ WebkitUserSelect: 'none', WebkitTouchCallout: 'none', touchAction: 'manipulation' }}
+      onContextMenu={(e) => e.preventDefault()}
+    >
       {/* Oz moment: world saturates on first throttle */}
       <div
         className="absolute inset-0"
@@ -366,6 +384,15 @@ export default function Drive() {
             <Link to="/playground" className="pointer-events-auto flex items-center gap-2 font-mono text-[10px] tracking-[.12em] uppercase text-white/70 hover:text-white transition-colors bg-black/30 backdrop-blur-xl border border-white/15 px-4 py-2.5 rounded-full shadow-lg no-underline">
               PLAYGROUND
             </Link>
+            {fsSupported && (
+              <button
+                onClick={() => { fsArmed.current = true; toggleFullscreen().then(() => !isFullscreen && lockLandscape()); }}
+                title={isFullscreen ? 'Exit fullscreen (ESC)' : 'Play fullscreen'}
+                className="pointer-events-auto font-mono text-[12px] cursor-pointer bg-black/30 backdrop-blur-xl border border-white/15 text-white/80 hover:text-white px-3 py-2 rounded-full shadow-lg transition-colors"
+              >
+                {isFullscreen ? '⤡' : '⛶'}
+              </button>
+            )}
           </div>
           <div className="flex flex-col items-end gap-2">
             <div className="font-mono text-white bg-black/30 backdrop-blur-xl border border-white/15 rounded-2xl px-5 py-2.5 shadow-lg text-right">
@@ -397,6 +424,12 @@ export default function Drive() {
                 {touch ? 'TAP AND HOLD ▲ TO START' : 'W / ↑ — GAS · S / ↓ — BRAKE'}<br />
                 {touch ? 'STEER WITH ◀ ▶' : 'A / D — STEER · R — RESET'}
               </div>
+              {fsSupported && !isFullscreen && (
+                <div className="mt-5 font-mono text-[10px] tracking-[.14em] uppercase text-white/55 flex items-center justify-center gap-2 border-t border-white/10 pt-4">
+                  <span aria-hidden>⛶</span>
+                  Goes fullscreen on first input · ESC to exit
+                </div>
+              )}
             </div>
           </div>
         )}

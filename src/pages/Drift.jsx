@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import useSEO from '../utils/useSEO';
+import useFullscreen from '../utils/useFullscreen';
 import { createCarState, stepCar, stepDriftCar, gearFor, MAX_SPEED } from '../lib/drift-physics';
 import { createRaceAudio } from '../lib/drift-audio';
 import {
@@ -1481,6 +1482,16 @@ export default function Drift() {
   const skidApi = useRef(null);
   const sparkApi = useRef(null);
   const dirtApi = useRef(null);
+  const rootRef = useRef(null);
+  const { isFullscreen, supported: fsSupported, toggle: toggleFullscreen, enter: enterFullscreen, lockLandscape } = useFullscreen(rootRef);
+
+  /* First real input takes the game fullscreen — must ride a user gesture. */
+  const fsArmed = useRef(false);
+  const goFullscreenOnce = () => {
+    if (fsArmed.current || !fsSupported) return;
+    fsArmed.current = true;
+    enterFullscreen().then(lockLandscape);
+  };
 
   const [touch] = useState(() => typeof window !== 'undefined' && matchMedia('(pointer: coarse)').matches);
   const [hud, setHud] = useState({
@@ -1540,7 +1551,7 @@ export default function Drift() {
       const key = map[code];
       if (!key) return;
       game.current.input[key] = v;
-      if (v && !game.current.started) game.current.started = true;
+      if (v && !game.current.started) { game.current.started = true; goFullscreenOnce(); }
     };
     const down = (e) => {
       const g = game.current;
@@ -1599,13 +1610,19 @@ export default function Drift() {
   const press = (key, v) => (e) => {
     e.preventDefault();
     game.current.input[key] = v;
-    if (v) { game.current.started = true; ensureAudio(); }
+    if (v) { game.current.started = true; ensureAudio(); goFullscreenOnce(); }
   };
 
   const touchBtn = 'pointer-events-auto select-none flex items-center justify-center w-[68px] h-[68px] rounded-full bg-white/10 backdrop-blur-xl border border-white/25 text-white text-xl font-bold active:bg-white/30 touch-none';
 
   return (
-    <div className="fixed inset-0 bg-black overflow-hidden font-sans">
+    <div
+      ref={rootRef}
+      className="fixed inset-0 bg-black overflow-hidden font-sans select-none"
+      /* double-tap on a game control must not select text or pop the iOS callout */
+      style={{ WebkitUserSelect: 'none', WebkitTouchCallout: 'none', touchAction: 'manipulation' }}
+      onContextMenu={(e) => e.preventDefault()}
+    >
       <Canvas shadows camera={{ position: [0, 5, 90], fov: 55 }} dpr={[1, 1.75]}>
         <color attach="background" args={['#7ec4ef']} />
         <fog attach="fog" args={['#8fccf2', 140, 560]} />
@@ -1652,6 +1669,15 @@ export default function Drift() {
               >
                 {soundOn ? '🔊' : '🔇'}
               </button>
+              {fsSupported && (
+                <button
+                  onClick={() => { fsArmed.current = true; toggleFullscreen().then(() => !isFullscreen && lockLandscape()); }}
+                  title={isFullscreen ? 'Exit fullscreen (ESC)' : 'Play fullscreen'}
+                  className="pointer-events-auto font-mono text-[12px] border-none cursor-pointer bg-black/30 backdrop-blur-xl border border-white/15 text-white/80 hover:text-white px-3 py-2 rounded-full shadow-lg transition-colors"
+                >
+                  {isFullscreen ? '⤡' : '⛶'}
+                </button>
+              )}
             </div>
             <div className="bg-black/30 backdrop-blur-xl border border-white/10 rounded-xl px-2 py-1 shadow-lg self-start">
               <Minimap track={trackRef.current} carX={hud.carX} carZ={hud.carZ} />
@@ -1693,6 +1719,12 @@ export default function Drift() {
                 {touch ? 'TAP ◀ ▶ TO STEER · AUTO THROTTLE' : 'W — GAS · A/D — STEER · S — BRAKE/REVERSE'}<br />
                 {touch ? 'BRAKE FOR THE TURNS · SET A LAP TIME' : 'SPACE — SLIDE · R — RESET · SET A LAP TIME'}
               </div>
+              {fsSupported && !isFullscreen && (
+                <div className="mt-5 font-mono text-[10px] tracking-[.14em] uppercase text-white/55 flex items-center justify-center gap-2 border-t border-white/10 pt-4">
+                  <span aria-hidden>⛶</span>
+                  Goes fullscreen on first input · ESC to exit
+                </div>
+              )}
             </div>
           </div>
         )}

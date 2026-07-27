@@ -1,214 +1,183 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { selectedWork } from '../data/portfolio';
-import { Reveal } from '../components/Reveal/Reveal';
+import { useEffect, useState } from 'react';
+import { selectedWork, projectGroups } from '../data/portfolio';
+import ProjectTile from '../components/Projects/ProjectTile';
+import { SectionCell } from '../components/Projects/SectionCell';
+import SectionNav from '../components/Projects/SectionNav';
 import useSEO from '../utils/useSEO';
 
-/* Each card's image area preserves the screenshot's real proportions
-   (object-contain, letterboxed) instead of cropping to a fixed ratio —
-   portrait phone shots and wide desktop shots both stay fully visible.
-   All text lives in a solid panel below the image, so nothing ever
-   overlaps the photo. */
-function ShowcaseCard({ project }) {
-  const images = project.images?.length ? project.images : [project.image];
-  const [imgIndex, setImgIndex] = useState(0);
+/* The page's column rhythm. Inline rather than an arbitrary Tailwind class —
+   the nested commas in repeat(auto-fill, minmax(...)) don't survive the
+   class-name parser — so it travels as a CSS variable instead. */
+/* The track floor drives everything: on a desktop it's wide enough that the
+   screenshots are actually readable, it shrinks with the viewport so narrower
+   screens trade tile size for more tiles per row, and it bottoms out at 160px
+   so phones keep the two-up layout they already had. */
+const TRACKS = 'repeat(auto-fill, minmax(clamp(160px, 21vw, 310px), 1fr))';
 
-  useEffect(() => {
-    if (images.length <= 1) return;
-    const timer = setInterval(() => setImgIndex(i => (i + 1) % images.length), 3000);
-    return () => clearInterval(timer);
-  }, [images.length]);
+/* Short sections share a band on wide screens: Internship's two tiles on the
+   left, Research's one to the right of them, on the same row. Each block spans
+   exactly as many of the page's columns as it has projects, so the tiles stay
+   the same size as everywhere else — the saving is a whole row of height. */
+const BANDS = [['internship', 'research']];
+
+function SectionBlock({ group, index, first, inBand, alignEnd }) {
+  /* End-anchored so the block hugs the right edge of the row rather than
+     butting up against the block beside it. */
+  const span = alignEnd ? `-${group.count + 1} / -1` : `span ${group.count}`;
 
   return (
-    <div className="group rounded-2xl overflow-hidden border border-border bg-white/[0.02] hover:border-white/15 transition-colors duration-300 h-full flex flex-col">
-      {/* Image box — sized to fit the photo, never crops or overlaps text */}
-      <Link
-        to={`/projects/${project.slug}`}
-        className="relative flex items-center justify-center bg-black/30 h-80 sm:h-72 md:h-80 p-3 sm:p-5 md:p-6 flex-none"
+    <section style={inBand ? { gridColumn: span } : undefined}>
+      <SectionCell
+        group={group}
+        index={index}
+        first={first}
+        stacked={inBand}
+        alignEnd={alignEnd}
+      />
+
+      <div
+        className={`grid gap-3 md:gap-4 mt-[clamp(14px,2vh,20px)] [grid-template-columns:var(--tracks)] ${
+          inBand ? 'lg:[grid-template-columns:var(--fixed)]' : ''
+        }`}
+        style={{ '--tracks': TRACKS, '--fixed': `repeat(${group.count}, minmax(0, 1fr))` }}
       >
-        <AnimatePresence mode="wait">
-          <motion.img
-            key={imgIndex}
-            src={images[imgIndex]}
-            alt={project.title}
-            loading="lazy"
-            decoding="async"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
-            className="w-full h-full object-contain"
-          />
-        </AnimatePresence>
-
-        {images.length > 1 && (
-          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
-            {images.map((_, i) => (
-              <span
-                key={i}
-                className={`rounded-full transition-all duration-200 ${i === imgIndex ? 'w-4 h-1.5 bg-white' : 'w-1.5 h-1.5 bg-white/40'}`}
-              />
-            ))}
-          </div>
-        )}
-      </Link>
-
-      {/* Text panel — always below the image, own background, never overlapping */}
-      <div className="p-6 md:p-7 border-t border-border flex flex-col flex-1">
-        <div className="flex items-center gap-3 mb-3">
-          {project.live ? (
-            <span className="font-mono text-[10px] tracking-[.14em] text-black bg-white rounded-[3px] px-2 py-0.5">
-              LIVE
-            </span>
-          ) : (
-            <span className="font-mono text-[10px] tracking-[.14em] text-white/70 border border-white/20 rounded-[3px] px-2 py-0.5">
-              {project.statusLabel || 'IN DEVELOPMENT'}
-            </span>
-          )}
-          <span className="font-mono text-[10px] tracking-widest text-text-faint uppercase">
-            {project.type}
-          </span>
-        </div>
-
-        <Link to={`/projects/${project.slug}`} className="no-underline">
-          <h2 className="font-bold text-2xl md:text-[26px] text-text-bright mb-2 tracking-tight group-hover:text-white transition-colors">
-            {project.title}
-          </h2>
-        </Link>
-
-        <p className="text-text-dim text-[14px] leading-relaxed mb-4 max-w-[560px]">
-          {project.description}
-        </p>
-
-        <div className="font-mono text-[11px] tracking-widest text-text-faint mb-5">
-          {project.stackLine}
-        </div>
-
-        <div className="mt-auto flex flex-wrap items-center gap-5">
-          <Link
-            to={`/projects/${project.slug}`}
-            aria-label={`See details for ${project.title}`}
-            className="font-mono text-[12px] tracking-widest text-black bg-white hover:bg-white/85 no-underline rounded-[3px] px-4 py-2 transition-colors font-bold"
-          >
-            SEE DETAILS →
-          </Link>
-          {project.link && (
-            <a
-              href={project.link}
-              target="_blank"
-              rel="noreferrer"
-              aria-label={`Visit live site for ${project.title}`}
-              className="font-mono text-[11px] tracking-widest text-text no-underline border-b border-white/30 pb-0.5 hover:border-white transition-colors"
-            >
-              VISIT ↗
-            </a>
-          )}
-          {project.github && (
-            <a
-              href={project.github}
-              target="_blank"
-              rel="noreferrer"
-              aria-label={`View source code for ${project.title} on GitHub`}
-              className="font-mono text-[11px] tracking-widest text-text-dim no-underline border-b border-white/[0.15] pb-0.5 hover:text-text transition-colors"
-            >
-              CODE ↗
-            </a>
-          )}
-        </div>
+        {group.projects.map((p) => (
+          <ProjectTile key={p.slug} project={p} />
+        ))}
       </div>
-    </div>
+    </section>
   );
 }
 
 export default function Projects() {
-  useSEO({ title: 'Projects', description: 'Nine shipped projects — payments, bookings, PWAs, native Android, and AI tools — each with a full case study.', path: '/projects' });
-  const featuredWork = selectedWork
-    .filter(p => p.featured !== false)
-    .map((p, i) => ({ ...p, num: String(i + 1).padStart(2, '0') }));
-  const clientSites = selectedWork.filter(p => p.featured === false);
+  useSEO({
+    title: 'Projects',
+    description: `${selectedWork.length} projects across research, personal products, internships, and client work — payments, bookings, PWAs, native Android, embedded hardware, and AI tools, each with a full case study.`,
+    path: '/projects',
+  });
+
+  const projectYears = selectedWork.map((p) => Number(p.year)).filter(Boolean);
+  const years = `${Math.min(...projectYears)} — ${Math.max(...projectYears)}`;
+  const stats = [
+    [selectedWork.length, 'Projects'],
+    [selectedWork.filter((p) => p.live).length, 'Live'],
+    [projectGroups.length, 'Categories'],
+  ];
+
+  /* Group order still comes from the data; this only decides which of them
+     share a row, so the sticky nav keeps reading left to right. Each group
+     keeps its index in that order — that's the number its heading shows. */
+  const rows = [];
+  projectGroups.forEach((group, index) => {
+    const entry = { group, index };
+    const band = BANDS.find((b) => b.includes(group.id));
+    const last = rows[rows.length - 1];
+    if (band && last && band.includes(last[0].group.id)) last.push(entry);
+    else rows.push([entry]);
+  });
+
+  /* Bands only exist from lg up. Below that the sections stack, so the bar goes
+     back to listing them one by one. */
+  const [banded, setBanded] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1024px)');
+    const sync = () => setBanded(mq.matches);
+    sync();
+    mq.addEventListener('change', sync);
+    return () => mq.removeEventListener('change', sync);
+  }, []);
+
+  const num = (i) => String(i + 1).padStart(2, '0');
+  const navItems = (banded ? rows : projectGroups.map((group, index) => [{ group, index }])).map(
+    (row) => ({
+      /* the row's first heading is what the bar scrolls to and tracks */
+      id: row[0].group.id,
+      label: row.map((e) => e.group.label).join(' & '),
+      count: row.reduce((n, e) => n + e.group.count, 0),
+      number: row.length > 1 ? `${num(row[0].index)}–${num(row[row.length - 1].index)}` : num(row[0].index),
+    })
+  );
 
   return (
-    <div className="min-h-screen">
-      <section id="projects" className="px-[clamp(20px,6vw,96px)] pt-[90px] pb-6">
-        <Reveal>
-          <div className="flex items-center gap-[14px] mb-4">
-            <div className="w-10 h-px bg-text" />
-            <span className="mono-label">Projects</span>
-          </div>
-          <h1
-            className="m-0 font-bold text-text-bright mb-8"
-            style={{
-              fontSize: 'clamp(40px,7vw,100px)',
-              letterSpacing: '-0.045em',
-              lineHeight: 0.92,
-            }}
-          >
-            ALL PROJECTS
-          </h1>
-        </Reveal>
-
-        {/* ──────────── FLAGSHIP WORK — box grid ──────────── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-6 md:gap-8 mt-10 max-w-[1800px]">
-          {featuredWork.map((p) => (
-            <Reveal key={p.title}>
-              <ShowcaseCard project={p} />
-            </Reveal>
-          ))}
+    <div className="min-h-screen px-[clamp(16px,4vw,64px)]">
+      {/* Masthead. Kept short enough that the first row of tiles still clears
+          the fold, but with enough structure that it doesn't read as a stray
+          line of text above a toolbar. */}
+      <header className="pt-[clamp(64px,9vh,88px)] pb-[clamp(16px,2.5vh,26px)]">
+        <div className="flex items-center gap-4">
+          <span className="font-mono text-[9.5px] tracking-[.26em] uppercase text-text-faint whitespace-nowrap">
+            Project Index
+          </span>
+          <span className="flex-1 h-px bg-border" />
+          <span className="font-mono text-[9.5px] tracking-[.26em] uppercase text-text-faint whitespace-nowrap tabular-nums">
+            {years}
+          </span>
         </div>
 
-        {/* ──────────── CLIENT WEBSITES — compact grid ──────────── */}
-        {clientSites.length > 0 && (
-          <div className="mt-20 pt-12 border-t border-border">
-            <Reveal>
-              <div className="flex items-center gap-[14px] mb-2">
-                <div className="w-10 h-px bg-text-faint" />
-                <span className="mono-label text-text-faint">Some More Client Projects</span>
-              </div>
-              <p className="text-text-dim text-sm max-w-[560px] mb-8">
-                A few more client builds — restaurant sites, digital menus, and internal tools delivered fast for local businesses.
-              </p>
-            </Reveal>
+        <h1
+          className="m-0 mt-[clamp(14px,2vh,22px)] font-bold text-text-bright"
+          style={{ fontSize: 'clamp(38px,6vw,86px)', letterSpacing: '-0.05em', lineHeight: 0.9 }}
+        >
+          ALL PROJECTS
+        </h1>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {clientSites.map((p) => (
-                <Reveal key={p.title}>
-                  <Link
-                    to={`/projects/${p.slug}`}
-                    className="group block no-underline rounded-xl overflow-hidden border border-border bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/20 transition-all duration-300"
-                  >
-                    <div className="aspect-[4/3] relative bg-black/20 overflow-hidden">
-                      <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-white/[0.06] to-white/[0.02]">
-                        <span className="font-heading text-3xl text-text-faint" style={{ letterSpacing: '-0.02em' }}>
-                          {p.title.split(' ').map(w => w[0]).join('').slice(0, 2)}
-                        </span>
-                      </div>
-                      <img
-                        src={p.image}
-                        alt={p.title}
-                        loading="lazy"
-                        className="absolute inset-0 w-full h-full object-contain p-4"
-                        onError={e => { e.currentTarget.style.display = 'none'; }}
-                      />
-                    </div>
-                    <div className="p-4">
-                      <div className="font-mono text-[9px] tracking-[.14em] text-text-faint uppercase mb-2">
-                        Client Project
-                      </div>
-                      <h3 className="font-semibold text-text text-base mb-1 group-hover:text-white transition-colors">
-                        {p.title}
-                      </h3>
-                      <p className="text-text-dim text-[13px] leading-relaxed">
-                        {p.description}
-                      </p>
-                    </div>
-                  </Link>
-                </Reveal>
-              ))}
-            </div>
+        <div className="mt-[clamp(14px,2.2vh,24px)] flex flex-wrap items-end justify-between gap-x-12 gap-y-5">
+          <p className="m-0 max-w-[52ch] text-text-dim text-[13.5px] md:text-[15px] leading-relaxed">
+            Published research, products I built because I wanted them to exist, internship work,
+            and paid client builds — every one of them opens into a full case study.
+          </p>
+          <div className="flex gap-[clamp(24px,3vw,48px)]">
+            {stats.map(([value, label]) => (
+              <div key={label}>
+                <div
+                  className="font-bold text-text-bright tabular-nums"
+                  style={{ fontSize: 'clamp(22px,2.2vw,34px)', letterSpacing: '-0.04em', lineHeight: 1 }}
+                >
+                  {String(value).padStart(2, '0')}
+                </div>
+                <div className="font-mono text-[9px] tracking-[.18em] uppercase text-text-faint mt-1.5">
+                  {label}
+                </div>
+              </div>
+            ))}
           </div>
-        )}
-      </section>
+        </div>
+      </header>
+
+      <SectionNav items={navItems} />
+
+      {rows.map((row, i) =>
+        row.length === 1 ? (
+          <SectionBlock
+            key={row[0].group.id}
+            group={row[0].group}
+            index={row[0].index}
+            first={i === 0}
+          />
+        ) : (
+          /* Only a grid from lg up — below that the blocks stack and each falls
+             back to its own auto-filling grid. The gap matches the tile grid's
+             md:gap-4 so both sides land on the same columns. */
+          <div
+            key={row.map((e) => e.group.id).join('-')}
+            className="lg:grid lg:gap-x-4 lg:[grid-template-columns:var(--tracks)] lg:items-start"
+            style={{ '--tracks': TRACKS }}
+          >
+            {row.map((entry, j) => (
+              <SectionBlock
+                key={entry.group.id}
+                group={entry.group}
+                index={entry.index}
+                first={i === 0}
+                inBand
+                alignEnd={j === row.length - 1}
+              />
+            ))}
+          </div>
+        )
+      )}
+
+      <div className="h-[clamp(40px,6vh,80px)]" />
     </div>
   );
 }

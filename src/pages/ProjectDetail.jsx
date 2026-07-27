@@ -122,7 +122,13 @@ export default function ProjectDetail() {
                     INSTAGRAM ↗
                   </a>
                 )}
-                {!project.link && !project.github && (
+                {project.paper && (
+                  <a href={project.paper} target="_blank" rel="noreferrer"
+                    className="font-mono text-[12px] tracking-[.08em] text-text no-underline border-b border-white/30 pb-0.5 hover:border-white transition-colors">
+                    PAPER ↗
+                  </a>
+                )}
+                {!project.link && !project.github && !project.paper && !project.credentials && (
                   <span className="font-mono text-[12px] text-text-faint">PRIVATE CLIENT WORK</span>
                 )}
               </div>
@@ -259,6 +265,52 @@ export default function ProjectDetail() {
             >
               {project.outcome}
             </p>
+          </Reveal>
+        </section>
+      )}
+
+      {/* ── Credentials — the certificate and recommendation letter issued for
+             this engagement, kept on the case study rather than the index ── */}
+      {project.credentials && (
+        <section className="px-[clamp(20px,6vw,96px)] pb-[clamp(56px,8vw,110px)]">
+          <Reveal className="border-t border-border pt-[clamp(32px,4vw,52px)]">
+            <div className="mono-label mb-6">Credentials</div>
+
+            <div className="grid gap-[clamp(20px,3vw,40px)] [grid-template-columns:repeat(auto-fit,minmax(280px,1fr))] max-w-[1000px]">
+              <div className="grid gap-5 content-start">
+                {[
+                  ['ISSUED BY', project.credentials.issuer],
+                  ['PERIOD', project.credentials.period],
+                  ['REFERENCE', project.credentials.ref],
+                  ['SIGNED BY', project.credentials.signatories],
+                ].map(([label, value]) => (
+                  <div key={label}>
+                    <div className="font-mono text-[10px] tracking-[.2em] text-text-faint mb-2">{label}</div>
+                    <div className="font-mono text-[12px] leading-[1.7] tracking-[.04em] text-text">{value}</div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="grid gap-4 content-start">
+                {project.credentials.documents.map((doc) => (
+                  <a
+                    key={doc.href}
+                    href={doc.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="group flex items-center justify-between gap-6 rounded-xl border border-border bg-white/[0.02] px-5 py-5 no-underline hover:border-white/25 hover:bg-white/[0.04] transition-colors"
+                  >
+                    <span>
+                      <span className="block font-semibold text-[15px] text-text-bright">{doc.label}</span>
+                      <span className="block font-mono text-[10px] tracking-[.16em] uppercase text-text-faint mt-1.5">
+                        PDF — opens in a new tab
+                      </span>
+                    </span>
+                    <span className="font-mono text-[16px] text-text-dim group-hover:text-white transition-colors">↗</span>
+                  </a>
+                ))}
+              </div>
+            </div>
           </Reveal>
         </section>
       )}

@@ -75,7 +75,7 @@ export const items = [
     description: 'Digital QR Menu'
   },
   {
-    image: '/projects/nofly.svg',
+    image: '/projects/nofly.webp',
     link: '#projects',
     title: 'No-Fly Zone Simulator',
     description: 'Drone airspace validation & GPS spoofing research'
@@ -108,8 +108,8 @@ const selectedWorkRaw = [
     year: '2026',
     role: 'Research · Geospatial Engineering',
     type: 'Research Project',
-    image: '/projects/nofly.svg',
-    images: [],
+    image: '/projects/nofly.webp',
+    images: ['/projects/nofly.webp'],
     description: 'Co-authored paper on GPS spoofing–based drone path manipulation, plus the airspace simulator being built alongside it to map restricted zones and validate flight paths against them.',
     problem: 'Drones that stray into airports, military installations, or government airspace cause real safety, security, and legal fallout. Our research showed the inverse is just as true: a ground spoofer can push a GPS-guided drone out of a protected zone in 15–30 time steps without tripping its own anomaly detection, because the Kalman filter meant to stabilise navigation amplifies the injected bias instead of rejecting it.',
     approach: 'The paper is finished; the simulator is the tool that makes that airspace layer visible and testable, and it is still in progress. Restricted zones are modelled as circles and polygons with a category and safety level; a user drops a start and a destination, and the tool computes the route and tests it against every zone before launch. Haversine distance, point-in-circle containment, and segment–polygon intersection do the geometry — no black-box routing API — and the paper supplies the threat model the validation is arguing against.',

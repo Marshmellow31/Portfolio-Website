@@ -116,7 +116,14 @@
   .live { display: flex; align-items: center; }
   .cursor { display: inline-block; width: 7px; height: 15px; margin-left: 2px; background: #F2F2F3; animation: blink 1.05s step-end infinite; vertical-align: text-bottom; }
   @keyframes blink { 50% { opacity: 0; } }
-  input.ghost { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+  /* Full-width so mobile IMEs have real geometry to place the caret in — a 1px
+     box makes some Android keyboards clamp the caret to index 0 (text reversed).
+     16px font-size stops iOS Safari zooming on focus. */
+  input.ghost {
+    position: absolute; left: 0; bottom: 0; width: 100%; height: 28px;
+    opacity: 0; border: 0; padding: 0; background: transparent;
+    font-size: 16px; color: transparent; caret-color: transparent; pointer-events: none;
+  }
   .pill {
     position: fixed; right: 20px; bottom: 20px; display: none; align-items: center; gap: 8px;
     background: rgba(14,14,16,.92); border: 1px solid rgba(255,255,255,.16); border-radius: 999px;
@@ -143,7 +150,7 @@
     <div class="hint">drag me</div>
   </div>
   <div class="out"></div>
-  <input class="ghost" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Terminal input">
+  <input class="ghost" type="text" inputmode="text" enterkeyhint="go" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Terminal input">
 </div>
 <button class="pill"><span class="dot-live"></span>terminal</button>`;
 
@@ -157,10 +164,17 @@
       root.querySelector('.d-min').addEventListener('click', (e) => { e.stopPropagation(); this.minimize(); });
       root.querySelector('.d-max').addEventListener('click', (e) => { e.stopPropagation(); this._toggleMax(); });
       this._pill.addEventListener('click', () => this.open());
-      this._win.addEventListener('mousedown', () => setTimeout(() => this._input.focus({ preventScroll: true }), 0));
-      this._win.addEventListener('click', () => this._input.focus({ preventScroll: true }));
-      this._input.addEventListener('keydown', (e) => this._onKey(e));
-      this._input.addEventListener('input', () => this._renderLive());
+      this._win.addEventListener('mousedown', () => setTimeout(() => this._focusInput(), 0));
+      this._win.addEventListener('click', () => this._focusInput());
+      // Pin the caret *before* the browser applies the edit — mobile IMEs that
+      // clamp selectionStart to 0 would otherwise insert each character at the
+      // front, producing reversed text.
+      this._input.addEventListener('beforeinput', () => this._caretToEnd());
+      this._input.addEventListener('keydown', (e) => { this._caretToEnd(); this._onKey(e); });
+      this._input.addEventListener('input', () => { this._caretToEnd(); this._renderLive(); });
+      // Some mobile keyboards restore the caret to 0 after autocorrect/composition.
+      this._input.addEventListener('compositionend', () => { this._caretToEnd(); this._renderLive(); });
+      this._input.addEventListener('click', () => this._caretToEnd());
 
       // dragging
       this._bar.addEventListener('pointerdown', (e) => {
@@ -226,7 +240,21 @@
       this._win.classList.add('open');
       this._pill.classList.remove('show');
       if (!this._booted) this._boot();
-      setTimeout(() => this._input.focus({ preventScroll: true }), 60);
+      setTimeout(() => this._focusInput(), 60);
+    }
+    /* The prompt only ever renders a trailing cursor, so the caret always belongs
+       at the end — pinning it there also defeats mobile IMEs that reset it to 0. */
+    _caretToEnd() {
+      const n = this._input.value.length;
+      if (this._input.selectionStart !== n || this._input.selectionEnd !== n) {
+        try { this._input.setSelectionRange(n, n); } catch {}
+      }
+    }
+    _focusInput() {
+      if (this.shadowRoot.activeElement !== this._input) {
+        this._input.focus({ preventScroll: true });
+      }
+      this._caretToEnd();
     }
     close() { this._open = false; this._win.classList.remove('open'); this._pill.classList.remove('show'); }
     minimize() { this._open = false; this._win.classList.remove('open'); this._pill.classList.add('show'); }

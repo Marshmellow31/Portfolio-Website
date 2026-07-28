@@ -2,6 +2,7 @@ import { Link, useParams, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { selectedWork, getProjectBySlug } from '../data/portfolio';
 import { Reveal } from '../components/Reveal/Reveal';
+import CaseImage from '../components/CaseImage/CaseImage';
 import useSEO from '../utils/useSEO';
 import { SITE_URL } from '../../site.config.mjs';
 
@@ -49,6 +50,10 @@ export default function ProjectDetail() {
   // centered band instead of stretching it full-width.
   const hasGallery = Boolean(project.images?.length);
   const [heroImage, ...restImages] = hasGallery ? project.images : [project.image];
+  /* Projects with designed case-study frames opt out of the stock image
+     treatment: the frames already contain the title, meta and per-feature
+     copy, so the page hides the markup that would say it a second time. */
+  const frames = project.frames;
 
   return (
     <div className="min-h-screen">
@@ -72,30 +77,43 @@ export default function ProjectDetail() {
             )}
           </div>
 
-          <h1
-            className="m-0 font-bold text-text-bright"
-            style={{ fontSize: 'clamp(44px,8vw,110px)', letterSpacing: '-0.045em', lineHeight: 0.94 }}
-          >
-            {project.title}
-          </h1>
+          {/* The hero frame renders the title and tagline as artwork, so the
+              real heading is kept for SEO and screen readers but not painted
+              twice. Everything else still renders it normally. */}
+          {frames ? (
+            <>
+              <h1 className="sr-only">{project.title}</h1>
+              <p className="sr-only">{project.description}</p>
+            </>
+          ) : (
+            <>
+              <h1
+                className="m-0 font-bold text-text-bright"
+                style={{ fontSize: 'clamp(44px,8vw,110px)', letterSpacing: '-0.045em', lineHeight: 0.94 }}
+              >
+                {project.title}
+              </h1>
 
-          <p
-            className="mt-7 max-w-[640px] text-text-muted"
-            style={{ fontSize: 'clamp(16px,1.5vw,20px)', lineHeight: 1.6, textWrap: 'pretty' }}
-          >
-            {project.description}
-          </p>
+              <p
+                className="mt-7 max-w-[640px] text-text-muted"
+                style={{ fontSize: 'clamp(16px,1.5vw,20px)', lineHeight: 1.6, textWrap: 'pretty' }}
+              >
+                {project.description}
+              </p>
+            </>
+          )}
         </Reveal>
 
         {/* meta strip */}
         <Reveal className="mt-[clamp(32px,4vw,52px)] border-t border-border">
           <div className="grid gap-x-8 gap-y-5 pt-6 [grid-template-columns:repeat(auto-fit,minmax(150px,1fr))]">
-            {[
+            {/* The hero frame already prints year / role / type / stack. */}
+            {(frames ? [] : [
               ['YEAR', project.year],
               ['ROLE', project.role],
               ['TYPE', project.type],
               ['STACK', project.stackLine],
-            ].map(([label, value]) => (
+            ]).map(([label, value]) => (
               <div key={label}>
                 <div className="font-mono text-[10px] tracking-[.2em] text-text-faint mb-2">{label}</div>
                 <div className="font-mono text-[12px] leading-[1.7] tracking-[.04em] text-text">{value}</div>
@@ -137,9 +155,45 @@ export default function ProjectDetail() {
         </Reveal>
       </section>
 
+      {/* ── Designed hero frame — edge to edge, no card, no border. The band
+             behind it is the frame's own #0A0A0B rather than the page's pure
+             black, so the image has no visible rectangle edge. ── */}
+      {frames && (
+        <section className="bg-[#0A0A0B]">
+          <motion.div layoutId={`project-image-${project.slug}`}>
+            <CaseImage
+              id={frames.hero.id}
+              alt={frames.hero.alt}
+              ratio={frames.hero.ratio}
+              /* 132vh on a 16:10 frame renders ~83% of the viewport height, so
+                 the hero always sits within one screen with room to breathe —
+                 and 1800px stops it ballooning further on a wide monitor. */
+              maxWidth="min(100%, 132vh, 1800px)"
+              sizes="(min-width: 1800px) 1800px, 100vw"
+              priority
+            />
+          </motion.div>
+        </section>
+      )}
+
       {/* ── Hero image (+ Problem/Approach flanking it on wide screens) ── */}
-      <section className="px-[clamp(20px,6vw,96px)] pb-[clamp(48px,6vw,88px)]">
-        {hasGallery ? (
+      <section className={`px-[clamp(20px,6vw,96px)] pb-[clamp(48px,6vw,88px)] ${frames ? 'pt-[clamp(48px,6vw,88px)]' : ''}`}>
+        {frames ? (
+          <div className="grid gap-[clamp(36px,5vw,80px)] [grid-template-columns:repeat(auto-fit,minmax(300px,1fr))]">
+            <Reveal>
+              <div className="mono-label mb-5">The Problem</div>
+              <p className="m-0 text-text-muted" style={{ fontSize: 'clamp(16px,1.4vw,19px)', lineHeight: 1.7, textWrap: 'pretty' }}>
+                {project.problem}
+              </p>
+            </Reveal>
+            <Reveal>
+              <div className="mono-label mb-5">The Approach</div>
+              <p className="m-0 text-text-muted" style={{ fontSize: 'clamp(16px,1.4vw,19px)', lineHeight: 1.7, textWrap: 'pretty' }}>
+                {project.approach}
+              </p>
+            </Reveal>
+          </div>
+        ) : hasGallery ? (
           <div className="grid gap-[clamp(28px,3vw,48px)] xl:grid-cols-[auto_minmax(0,1fr)] xl:items-center">
             <div className="flex justify-center">
               <motion.div
@@ -228,8 +282,32 @@ export default function ProjectDetail() {
         </div>
       </section>
 
+      {/* ── Designed frames — 2 × 2 on desktop, stacked below. Every frame is
+             4:5, so rows align without a single height override. The band and
+             the gaps are the frames' own background, which is what keeps the
+             grid from reading as four separate cards. ── */}
+      {frames && (
+        <section className="bg-[#0A0A0B] mb-[clamp(48px,6vw,88px)]">
+          <div className="grid gap-px lg:grid-cols-2 max-w-[1600px] mx-auto">
+            {frames.sections.map((frame) => (
+              <figure key={frame.id} className="m-0">
+                <CaseImage
+                  id={frame.id}
+                  alt={frame.alt}
+                  ratio="4 / 5"
+                  sizes="(min-width: 1600px) 800px, (min-width: 1024px) 50vw, 100vw"
+                />
+                {/* The callouts live inside the raster, so restate them for
+                    anyone who can't see it. */}
+                <figcaption className="sr-only">{frame.sr}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* ── Gallery ── */}
-      {restImages.length > 0 && (
+      {!frames && restImages.length > 0 && (
         <section className="px-[clamp(20px,6vw,96px)] pb-[clamp(48px,6vw,88px)]">
           <Reveal className="mb-8">
             <div className="mono-label">In Detail</div>

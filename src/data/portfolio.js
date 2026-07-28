@@ -138,16 +138,50 @@ const selectedWorkRaw = [
     year: '2026',
     role: 'Design · Full-Stack · AI',
     type: 'Personal Product',
-    image: '/projects/paymatrix.webp',
+    /* 1200×630 JPEG cut from the hero frame — the social card. The old square
+       logo was being centre-cropped to ribbons by summary_large_image. */
+    image: '/projects/paymatrix/01-hero-og.jpg',
+    /* Card-carousel slides — small WebP derivatives, hero first. */
     images: [
-      '/projects/paymatrix/01-hook.webp',
-      '/projects/paymatrix/02-overview.webp',
-      '/projects/paymatrix/03-scan.webp',
-      '/projects/paymatrix/04-split.webp',
-      '/projects/paymatrix/05-settle.webp',
-      '/projects/paymatrix/06-insights.webp',
-      '/projects/paymatrix/07-cta.webp',
+      '/projects/paymatrix/01-hero-960.webp',
+      '/projects/paymatrix/02-scan-640.webp',
+      '/projects/paymatrix/03-split-640.webp',
+      '/projects/paymatrix/04-balances-640.webp',
+      '/projects/paymatrix/05-upi-640.webp',
     ],
+    /* Designed case-study frames. Each one already carries its own headline,
+       body copy and callout labels, so the page renders them edge to edge and
+       does not repeat that text in markup — the `sr` strings exist only
+       because the callouts inside a raster image aren't machine readable. */
+    frames: {
+      hero: {
+        id: '/projects/paymatrix/01-hero',
+        ratio: '16 / 10',
+        alt: 'PayMatrix case study title card — "Splitting bills with friends shouldn\'t feel like accounting" beside an iPhone showing the dashboard with a ₹10,940.59 balance card, debt and pending-returns tiles, and Goa Trip and Flat 402 settlements.',
+      },
+      sections: [
+        {
+          id: '/projects/paymatrix/02-scan',
+          alt: 'PayMatrix bill scanner extracting seven line items and ₹660 of tax from a ₹4,860 restaurant receipt into a review-and-fill form.',
+          sr: 'AI bill scanning. One Gemini Vision call returns total, merchant, date and category as structured JSON — no manual typing anywhere in the flow. Every dish comes back with its own price, which is what makes the itemized split possible. Items total ₹4,200 against a ₹4,860 bill, and the ₹660 gap is captured as shared tax and charges.',
+        },
+        {
+          id: '/projects/paymatrix/03-split',
+          alt: 'PayMatrix assigning individual dishes to five named people, with a GST split mode distributing ₹660 of tax across the group.',
+          sr: 'Itemized split and GST. Three split modes — equal, exact rupee amounts, or itemized — are handled by the same expense record. GST is apportioned by each person\'s dish subtotal rather than divided by head count. Excluding anyone re-runs the whole distribution instantly, and the last share absorbs rounding so totals stay exact.',
+        },
+        {
+          id: '/projects/paymatrix/04-balances',
+          alt: 'PayMatrix net-position screen for a five-person Goa trip, with a diagram collapsing ten raw obligations into two required settlements.',
+          sr: 'Debt simplification. Every expense nets into one balance per person, then a greedy max-creditor / max-debtor pass pairs them off — collapsing ten raw obligations into two transfers, an 80% reduction, at O(n log n) per settlement and zero rounding drift.',
+        },
+        {
+          id: '/projects/paymatrix/05-upi',
+          alt: 'PayMatrix settle-up screen showing a ₹4,593.93 UPI payment as a scannable QR code, alongside the app\'s data-flow stack.',
+          sr: 'UPI settlement. PayMatrix never touches money — it builds a signed upi://pay intent and hands it off, as a deep link into GPay, PhonePe or Paytm on Android and as a scannable QR on desktop. Marking a payment writes a settlement row, so balances always recompute from expenses plus settlements rather than from a mutable running total. The stack is React 19 and Vite as an installable PWA, Gemini Vision for receipt parsing, Firestore for real-time sync, a balance engine for greedy simplification, and the UPI intent handoff.',
+        },
+      ],
+    },
     description: 'Group-expense platform with AI bill scanning (Gemini Vision), greedy debt simplification, native UPI deep-linking, and real-time sync.',
     problem: 'Splitting group expenses is still a mess of screenshots, manual entry, and "who owes whom" chains. Existing apps make you type every line item by hand and settle debts through long chains of tiny transfers.',
     approach: 'PayMatrix scans the physical bill instead — Gemini Vision reads the receipt, itemizes it, and assigns items to people. A greedy debt-simplification algorithm collapses the who-owes-whom graph into the minimum number of transfers, and each one deep-links straight into the payer\'s UPI app. Firebase keeps every member of the group in sync in real time.',

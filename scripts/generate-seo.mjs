@@ -256,14 +256,23 @@ function renderRoute(base, r) {
   html = setMeta(html, 'property', 'og:url', url);
   html = setMeta(html, 'property', 'og:image', image);
   html = setMeta(html, 'property', 'og:image:alt', `${r.title || SITE_NAME} — ${SITE_NAME}`);
+  /* index.html hard-codes image/webp for the default card. Routes are free to
+     point at a JPEG or PNG instead, so the type has to follow the file. */
+  const MIME = { webp: 'image/webp', jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', svg: 'image/svg+xml' };
+  html = setMeta(html, 'property', 'og:image:type', MIME[image.split('.').pop().toLowerCase()] || 'image/webp');
   html = setMeta(html, 'property', 'og:type', r.type || 'website');
   html = setMeta(html, 'name', 'twitter:title', fullTitle);
   html = setMeta(html, 'name', 'twitter:description', r.description);
   html = setMeta(html, 'name', 'twitter:url', url);
   html = setMeta(html, 'name', 'twitter:image', image);
 
-  // Project screenshots have unknown dimensions — drop the 1200×630 hints.
-  if (r.image) html = html.replace(/\s*<meta property="og:image:(width|height)" content="[^"]*" \/>/g, '');
+  /* Project screenshots have unknown dimensions — drop the 1200×630 hints.
+     Cards cut by scripts/optimize-case-images.mjs are the exception: they're
+     built at exactly 1200×630, so the hints stay and scrapers can reserve the
+     card before the image downloads. */
+  if (r.image && !image.endsWith('-og.jpg')) {
+    html = html.replace(/\s*<meta property="og:image:(width|height)" content="[^"]*" \/>/g, '');
+  }
 
   if (r.published) {
     html = html.replace(

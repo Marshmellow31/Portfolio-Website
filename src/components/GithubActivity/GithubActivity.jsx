@@ -1,26 +1,17 @@
-import { useEffect, useState, useMemo, useRef } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 
 const GITHUB_USER = 'Marshmellow31';
 const POLL_INTERVAL = 60 * 1000; // refetch every minute for near-real-time updates
 
 // GitHub's actual green contribution scale
 const LEVEL_COLORS = ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353'];
+const SKELETON_WEEKS = 53;
 
 export default function GithubActivity() {
   const [weeks, setWeeks] = useState(null);
   const [total, setTotal] = useState(null);
   const [error, setError] = useState(false);
   const [hovered, setHovered] = useState(null);
-  const scrollRef = useRef(null);
-
-  // Grid reads oldest → newest left-to-right; jump straight to the most
-  // recent weeks so mobile users see current activity without discovering
-  // that the graph scrolls. No-op on desktop where it already fits.
-  useEffect(() => {
-    if (weeks && scrollRef.current) {
-      scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
-    }
-  }, [weeks]);
 
   useEffect(() => {
     let hasLoaded = false;
@@ -77,10 +68,13 @@ export default function GithubActivity() {
       const first = week[0];
       if (!first) return;
       const month = new Date(first.date).getMonth();
-      if (month !== lastMonth) {
-        labels.push({ index: i, label: new Date(first.date).toLocaleString('en-US', { month: 'short' }) });
-        lastMonth = month;
-      }
+      if (month === lastMonth) return;
+      lastMonth = month;
+      // a month that starts within a couple of columns of the previous label
+      // would collide with it — drop it rather than overlap the text
+      const prev = labels[labels.length - 1];
+      if (prev && i - prev.index < 3) return;
+      labels.push({ index: i, label: new Date(first.date).toLocaleString('en-US', { month: 'short' }) });
     });
     return labels;
   }, [weeks]);
@@ -103,42 +97,45 @@ export default function GithubActivity() {
         </div>
       </div>
 
-      <div
-        ref={scrollRef}
-        className="heatmap-scroll overflow-x-auto pb-2 -mx-[clamp(20px,6vw,96px)] px-[clamp(20px,6vw,96px)] [--cell:6px] [--gap:2px] sm:[--cell:8px] sm:[--gap:2px] md:[--cell:12px] md:[--gap:3px] lg:[--cell:16px] lg:[--gap:4px] xl:[--cell:18px] xl:[--gap:4px]"
-      >
+      {/* The grid is laid out in fractional columns rather than fixed-pixel
+          cells, so a full year always fits the available width — on a phone
+          it shrinks instead of running off the side of the screen. */}
+      <div className="w-full [--gap:1px] sm:[--gap:2px] md:[--gap:3px] lg:[--gap:4px]">
         {!weeks ? (
-          <div className="flex gap-[var(--gap)]">
-            {Array.from({ length: 53 }).map((_, i) => (
-              <div key={i} className="flex flex-col gap-[var(--gap)]">
+          <div className="grid gap-[var(--gap)]" style={{ gridTemplateColumns: `repeat(${SKELETON_WEEKS}, minmax(0, 1fr))` }}>
+            {Array.from({ length: SKELETON_WEEKS }).map((_, i) => (
+              <div key={i} className="grid grid-rows-7 gap-[var(--gap)]">
                 {Array.from({ length: 7 }).map((_, j) => (
-                  <div key={j} className="w-[var(--cell)] h-[var(--cell)] rounded-[2px] md:rounded-[3px]" style={{ background: LEVEL_COLORS[0] }} />
+                  <div key={j} className="w-full aspect-square rounded-[1px] md:rounded-[3px]" style={{ background: LEVEL_COLORS[0] }} />
                 ))}
               </div>
             ))}
           </div>
         ) : (
-          <div className="inline-block min-w-full">
-            <div className="flex gap-[var(--gap)] mb-2.5 relative h-[16px] md:h-[20px]">
+          <>
+            <div
+              className="grid gap-[var(--gap)] mb-2 h-[14px] md:h-[20px]"
+              style={{ gridTemplateColumns: `repeat(${weeks.length}, minmax(0, 1fr))` }}
+            >
               {monthLabels.map(({ index, label }) => (
                 <span
                   key={index}
-                  className="absolute font-mono text-[10px] md:text-[12px] text-text-faint"
-                  style={{ left: `calc((var(--cell) + var(--gap)) * ${index})` }}
+                  className="font-mono text-[8px] sm:text-[10px] md:text-[12px] text-text-faint whitespace-nowrap"
+                  style={{ gridColumnStart: index + 1 }}
                 >
                   {label}
                 </span>
               ))}
             </div>
-            <div className="flex gap-[var(--gap)]">
+            <div className="grid gap-[var(--gap)]" style={{ gridTemplateColumns: `repeat(${weeks.length}, minmax(0, 1fr))` }}>
               {weeks.map((week, wi) => (
-                <div key={wi} className="flex flex-col gap-[var(--gap)]">
+                <div key={wi} className="grid grid-rows-7 gap-[var(--gap)]">
                   {week.map((day) => (
                     <div
                       key={day.date}
                       onMouseEnter={() => setHovered(day)}
                       onMouseLeave={() => setHovered((h) => (h === day ? null : h))}
-                      className="w-[var(--cell)] h-[var(--cell)] rounded-[2px] md:rounded-[3px] cursor-pointer transition-transform hover:scale-125"
+                      className="w-full aspect-square rounded-[1px] md:rounded-[3px] cursor-pointer transition-transform hover:scale-125"
                       style={{ background: LEVEL_COLORS[Math.min(day.level, 4)] }}
                       title={`${day.count} contribution${day.count === 1 ? '' : 's'} on ${day.date}`}
                     />
@@ -146,7 +143,7 @@ export default function GithubActivity() {
                 </div>
               ))}
             </div>
-          </div>
+          </>
         )}
       </div>
 

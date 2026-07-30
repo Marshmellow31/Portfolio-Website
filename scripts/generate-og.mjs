@@ -55,8 +55,11 @@ await sharp(buf).webp({ quality: 92 }).toFile(path.join(ROOT, 'public/og-image.w
 /* App icons. iOS ignores a WebP apple-touch-icon and the manifest needs PNG
    for the Android install prompt, so cut both from the existing favicon. */
 const favicon = path.join(ROOT, 'public/favicon.webp');
-await sharp(favicon).resize(180, 180).png().toFile(path.join(ROOT, 'public/apple-touch-icon.png'));
-await sharp(favicon).resize(192, 192).png().toFile(path.join(ROOT, 'public/icon-192.png'));
-await sharp(favicon).resize(512, 512).png().toFile(path.join(ROOT, 'public/icon-512.png'));
+/* palette + max compression: the icon is flat artwork, so an indexed PNG is
+   visually identical at a fraction of the size (512px went 187 KB -> ~20 KB). */
+const png = { compressionLevel: 9, palette: true, quality: 90, effort: 10 };
+await sharp(favicon).resize(180, 180).png(png).toFile(path.join(ROOT, 'public/apple-touch-icon.png'));
+await sharp(favicon).resize(192, 192).png(png).toFile(path.join(ROOT, 'public/icon-192.png'));
+await sharp(favicon).resize(512, 512).png(png).toFile(path.join(ROOT, 'public/icon-512.png'));
 
 console.log('OG: og-image.jpg + og-image.webp (1200×630), apple-touch-icon + icon-192 + icon-512 written');

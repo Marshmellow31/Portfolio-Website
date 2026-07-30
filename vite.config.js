@@ -30,9 +30,9 @@ export default defineConfig({
                with the others it would be dragged back onto first paint. */
             { name: 'vendor-animation', test: nm('framer-motion|motion-dom|motion-utils|lenis'), priority: 90 },
             { name: 'vendor-gsap', test: nm('gsap'), priority: 85 },
-            { name: 'vendor-vision', test: nm('@mediapipe'), priority: 80 },
-            { name: 'vendor-3d', test: nm('three|@react-three|meshline|@dimforge'), priority: 70 },
-            { name: 'vendor-gl', test: nm('ogl|gl-matrix'), priority: 60 },
+            /* No @mediapipe group: the playground pulls tasks-vision straight
+               from jsDelivr at start(), so it never enters the bundle graph. */
+            { name: 'vendor-3d', test: nm('three|@react-three'), priority: 70 },
           ],
         },
       }

@@ -13,7 +13,7 @@
  *
  *   npm run images:gallery
  */
-import { readdir, rm, writeFile } from 'node:fs/promises';
+import { readdir, rm, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import sharp from 'sharp';
 import { selectedWork } from '../src/data/portfolio.js';
@@ -35,17 +35,12 @@ const kb = (n) => `${(n / 1024).toFixed(0)} KB`;
 async function main() {
   const sources = [...new Set(selectedWork.flatMap((p) => p.images || []))];
   const manifest = {};
-  let before = 0;
-  let after = 0;
+  let built = 0;
+  let reused = 0;
 
-  // Clear derivatives from a previous run so renamed sources don't linger.
-  const dirs = [...new Set(sources.map((s) => path.dirname(s)))];
-  for (const d of dirs) {
-    const abs = path.join(PUBLIC, d);
-    for (const f of await readdir(abs).catch(() => [])) {
-      if (/-(480|768|1200|1600)\.webp$/.test(f)) await rm(path.join(abs, f));
-    }
-  }
+  /* Every expected output, so orphans from renamed/removed sources can be
+     swept without wiping the ones we're about to reuse. */
+  const expected = new Set();
 
   for (const src of sources) {
     const abs = path.join(PUBLIC, src);
@@ -64,28 +59,45 @@ async function main() {
       const base = path.basename(src, path.extname(src));
       const widths = WIDTHS.filter((w) => w < meta.width);
       const variants = [];
+      const srcMtime = (await stat(abs)).mtimeMs;
 
       for (const w of widths) {
         const name = `${base}-${w}.webp`;
-        const r = await sharp(abs)
-          .resize({ width: w, withoutEnlargement: true })
-          .webp(WEBP)
-          .toFile(path.join(dir, name));
+        const outPath = path.join(dir, name);
+        expected.add(outPath);
+
+        /* This runs on every build, so only re-encode when the source is
+           newer than the variant. A clean rebuild with warm outputs costs a
+           few header reads instead of ~60 WebP encodes. */
+        const fresh = await stat(outPath)
+          .then((s) => s.mtimeMs >= srcMtime)
+          .catch(() => false);
+
+        if (fresh) {
+          reused++;
+        } else {
+          await sharp(abs).resize({ width: w, withoutEnlargement: true }).webp(WEBP).toFile(outPath);
+          built++;
+          console.log(`  built ${path.dirname(src)}/${name}  (${kb((await stat(outPath)).size)})`);
+        }
         variants.push({ w, file: `${path.dirname(src)}/${name}` });
-        after += r.size;
       }
-      if (variants.length) {
-        entry.srcset = variants;
-        const orig = (await sharp(abs).toBuffer()).length;
-        before += orig;
-        console.log(
-          `  ${src}  ${meta.width}x${meta.height} ${kb(orig)} -> ${variants.length} variants ` +
-            `(${variants.map((v) => v.w).join('/')})`,
-        );
-      }
+      if (variants.length) entry.srcset = variants;
     }
 
     manifest[src] = entry;
+  }
+
+  /* Sweep derivatives whose source is gone or was renamed. */
+  for (const d of [...new Set(sources.map((s) => path.dirname(s)))]) {
+    const absDir = path.join(PUBLIC, d);
+    for (const f of await readdir(absDir).catch(() => [])) {
+      const full = path.join(absDir, f);
+      if (/-(480|768|1200|1600)\.webp$/.test(f) && !expected.has(full)) {
+        await rm(full);
+        console.log(`  removed orphan ${d}/${f}`);
+      }
+    }
   }
 
   await writeFile(
@@ -93,8 +105,7 @@ async function main() {
     `${JSON.stringify(manifest, null, 2)}\n`,
   );
   console.log(
-    `\nwrote src/data/gallery-images.json — ${Object.keys(manifest).length} images` +
-      (before ? `; largest-variant total ${kb(after)} vs ${kb(before)} of originals` : ''),
+    `gallery: ${Object.keys(manifest).length} images — ${built} variant(s) built, ${reused} reused`,
   );
 }
 

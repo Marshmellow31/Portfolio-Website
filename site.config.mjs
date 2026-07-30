@@ -14,6 +14,11 @@ export const DEFAULT_DESCRIPTION =
 export const OG_IMAGE = '/og-image.jpg';
 export const LOCALE = 'en_US';
 
+/* X/Twitter card attribution. This is the X handle, which is NOT the same as
+   the Instagram handle (@guywithblack350) — pointing these tags at a handle
+   you don't own on X credits your shares to whoever does. */
+export const TWITTER_HANDLE = '@MelodyDirt';
+
 export const AUTHOR = {
   name: 'Harshil Patel',
   alternateName: ['guywithblack350', 'guy with black 350', 'the guy with black 350'],
@@ -25,6 +30,7 @@ export const AUTHOR = {
     'https://linkedin.com/in/harshil-patel-5a7373333',
     'https://www.instagram.com/harshil_3105_/',
     'https://www.instagram.com/guywithblack350/',
+    'https://x.com/MelodyDirt',
   ],
   knowsAbout: [
     'React', 'TypeScript', 'Node.js', 'Firebase', 'Kotlin',

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { SITE_URL, DEFAULT_TITLE, OG_IMAGE } from '../../site.config.mjs';
+import { SITE_URL, DEFAULT_TITLE, OG_IMAGE, TWITTER_HANDLE } from '../../site.config.mjs';
 
 function setMeta(attr, key, content) {
   let el = document.head.querySelector(`meta[${attr}="${key}"]`);
@@ -34,7 +34,7 @@ export default function useSEO({ title, description, path = '', image, noindex =
     setMeta('name', 'twitter:url', url);
     setMeta('property', 'og:image', img);
     setMeta('name', 'twitter:image', img);
-    setMeta('name', 'twitter:creator', '@guywithblack350');
+    setMeta('name', 'twitter:creator', TWITTER_HANDLE);
     setMeta('property', 'og:type', ogType);
     setMeta('property', 'og:image:alt', `${title || 'Harshil Patel'} — Harshil Patel`);
     setMeta('name', 'robots', noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1');

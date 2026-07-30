@@ -98,6 +98,7 @@ const SOCIALS = linkList([
   ['LinkedIn', 'https://linkedin.com/in/harshil-patel-5a7373333'],
   ['Instagram', 'https://www.instagram.com/harshil_3105_/'],
   ['@guywithblack350', 'https://www.instagram.com/guywithblack350/'],
+  ['X', 'https://x.com/MelodyDirt'],
 ]);
 
 const CONTACT_BLOCK = `<h2>Contact</h2>
@@ -641,6 +642,7 @@ Alongside software engineering, Harshil is an automotive content creator operati
 - **LinkedIn**: https://linkedin.com/in/harshil-patel-5a7373333
 - **Instagram (Personal)**: https://www.instagram.com/harshil_3105_/
 - **Instagram (Creator)**: https://www.instagram.com/guywithblack350/
+- **X**: https://x.com/MelodyDirt
 - **Email**: ${AUTHOR.email}
 `;
 

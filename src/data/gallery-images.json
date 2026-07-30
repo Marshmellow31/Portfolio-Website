@@ -1,0 +1,446 @@
+{
+  "/projects/nofly.webp": {
+    "w": 1024,
+    "h": 546,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/nofly-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/nofly-768.webp"
+      }
+    ]
+  },
+  "/projects/paymatrix/01-hero-960.webp": {
+    "w": 960,
+    "h": 600
+  },
+  "/projects/paymatrix/02-scan-640.webp": {
+    "w": 640,
+    "h": 800
+  },
+  "/projects/paymatrix/03-split-640.webp": {
+    "w": 640,
+    "h": 800
+  },
+  "/projects/paymatrix/04-balances-640.webp": {
+    "w": 640,
+    "h": 800
+  },
+  "/projects/paymatrix/05-upi-640.webp": {
+    "w": 640,
+    "h": 800
+  },
+  "/projects/esp32/esp32-dashboard-01.webp": {
+    "w": 1375,
+    "h": 901
+  },
+  "/projects/esp32/esp32-dashboard-02.webp": {
+    "w": 1250,
+    "h": 903
+  },
+  "/projects/esp32/esp32-dashboard-03.webp": {
+    "w": 1241,
+    "h": 903
+  },
+  "/projects/picklerage/01.webp": {
+    "w": 1887,
+    "h": 912,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/picklerage/01-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/picklerage/01-768.webp"
+      },
+      {
+        "w": 1200,
+        "file": "/projects/picklerage/01-1200.webp"
+      },
+      {
+        "w": 1600,
+        "file": "/projects/picklerage/01-1600.webp"
+      }
+    ]
+  },
+  "/projects/picklerage/02.webp": {
+    "w": 1906,
+    "h": 912,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/picklerage/02-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/picklerage/02-768.webp"
+      },
+      {
+        "w": 1200,
+        "file": "/projects/picklerage/02-1200.webp"
+      },
+      {
+        "w": 1600,
+        "file": "/projects/picklerage/02-1600.webp"
+      }
+    ]
+  },
+  "/projects/picklerage/03.webp": {
+    "w": 991,
+    "h": 878,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/picklerage/03-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/picklerage/03-768.webp"
+      }
+    ]
+  },
+  "/projects/picklerage/04.webp": {
+    "w": 1411,
+    "h": 907,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/picklerage/04-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/picklerage/04-768.webp"
+      },
+      {
+        "w": 1200,
+        "file": "/projects/picklerage/04-1200.webp"
+      }
+    ]
+  },
+  "/projects/bhumi-gallery/01.webp": {
+    "w": 1904,
+    "h": 909,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/bhumi-gallery/01-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/bhumi-gallery/01-768.webp"
+      },
+      {
+        "w": 1200,
+        "file": "/projects/bhumi-gallery/01-1200.webp"
+      },
+      {
+        "w": 1600,
+        "file": "/projects/bhumi-gallery/01-1600.webp"
+      }
+    ]
+  },
+  "/projects/bhumi-gallery/02.webp": {
+    "w": 1900,
+    "h": 909,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/bhumi-gallery/02-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/bhumi-gallery/02-768.webp"
+      },
+      {
+        "w": 1200,
+        "file": "/projects/bhumi-gallery/02-1200.webp"
+      },
+      {
+        "w": 1600,
+        "file": "/projects/bhumi-gallery/02-1600.webp"
+      }
+    ]
+  },
+  "/projects/bhumi-gallery/03.webp": {
+    "w": 1902,
+    "h": 846,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/bhumi-gallery/03-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/bhumi-gallery/03-768.webp"
+      },
+      {
+        "w": 1200,
+        "file": "/projects/bhumi-gallery/03-1200.webp"
+      },
+      {
+        "w": 1600,
+        "file": "/projects/bhumi-gallery/03-1600.webp"
+      }
+    ]
+  },
+  "/projects/playhub/01.webp": {
+    "w": 378,
+    "h": 820
+  },
+  "/projects/playhub/02.webp": {
+    "w": 377,
+    "h": 818
+  },
+  "/projects/playhub/03.webp": {
+    "w": 375,
+    "h": 818
+  },
+  "/projects/playhub/04.webp": {
+    "w": 378,
+    "h": 818
+  },
+  "/projects/playhub/05.webp": {
+    "w": 376,
+    "h": 820
+  },
+  "/projects/playhub/06.webp": {
+    "w": 377,
+    "h": 818
+  },
+  "/projects/playhub/07.webp": {
+    "w": 377,
+    "h": 819
+  },
+  "/projects/playhub/08.webp": {
+    "w": 377,
+    "h": 818
+  },
+  "/projects/playhub/09.webp": {
+    "w": 377,
+    "h": 820
+  },
+  "/projects/playhub/10.webp": {
+    "w": 378,
+    "h": 818
+  },
+  "/projects/mannbeauty-gallery/01.webp": {
+    "w": 1919,
+    "h": 911,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/mannbeauty-gallery/01-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/mannbeauty-gallery/01-768.webp"
+      },
+      {
+        "w": 1200,
+        "file": "/projects/mannbeauty-gallery/01-1200.webp"
+      },
+      {
+        "w": 1600,
+        "file": "/projects/mannbeauty-gallery/01-1600.webp"
+      }
+    ]
+  },
+  "/projects/mannbeauty-gallery/02.webp": {
+    "w": 366,
+    "h": 820
+  },
+  "/projects/attendance-gallery/01.webp": {
+    "w": 1918,
+    "h": 908,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/attendance-gallery/01-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/attendance-gallery/01-768.webp"
+      },
+      {
+        "w": 1200,
+        "file": "/projects/attendance-gallery/01-1200.webp"
+      },
+      {
+        "w": 1600,
+        "file": "/projects/attendance-gallery/01-1600.webp"
+      }
+    ]
+  },
+  "/projects/attendance-gallery/02.webp": {
+    "w": 1916,
+    "h": 908,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/attendance-gallery/02-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/attendance-gallery/02-768.webp"
+      },
+      {
+        "w": 1200,
+        "file": "/projects/attendance-gallery/02-1200.webp"
+      },
+      {
+        "w": 1600,
+        "file": "/projects/attendance-gallery/02-1600.webp"
+      }
+    ]
+  },
+  "/projects/attendance-gallery/03.webp": {
+    "w": 1916,
+    "h": 908,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/attendance-gallery/03-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/attendance-gallery/03-768.webp"
+      },
+      {
+        "w": 1200,
+        "file": "/projects/attendance-gallery/03-1200.webp"
+      },
+      {
+        "w": 1600,
+        "file": "/projects/attendance-gallery/03-1600.webp"
+      }
+    ]
+  },
+  "/projects/ascend/01.webp": {
+    "w": 1073,
+    "h": 927,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/ascend/01-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/ascend/01-768.webp"
+      }
+    ]
+  },
+  "/projects/ascend/02.webp": {
+    "w": 1073,
+    "h": 938,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/ascend/02-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/ascend/02-768.webp"
+      }
+    ]
+  },
+  "/projects/ascend/03.webp": {
+    "w": 1072,
+    "h": 938,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/ascend/03-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/ascend/03-768.webp"
+      }
+    ]
+  },
+  "/projects/ascend/04.webp": {
+    "w": 1075,
+    "h": 938,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/ascend/04-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/ascend/04-768.webp"
+      }
+    ]
+  },
+  "/projects/ascend/05.webp": {
+    "w": 1073,
+    "h": 936,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/ascend/05-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/ascend/05-768.webp"
+      }
+    ]
+  },
+  "/projects/ascend/06.webp": {
+    "w": 1077,
+    "h": 940,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/ascend/06-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/ascend/06-768.webp"
+      }
+    ]
+  },
+  "/projects/navigator-gallery/01.webp": {
+    "w": 590,
+    "h": 1303,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/navigator-gallery/01-480.webp"
+      }
+    ]
+  },
+  "/projects/navigator-gallery/02.webp": {
+    "w": 403,
+    "h": 908
+  },
+  "/projects/harekrishna.webp": {
+    "w": 1902,
+    "h": 910,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/harekrishna-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/harekrishna-768.webp"
+      },
+      {
+        "w": 1200,
+        "file": "/projects/harekrishna-1200.webp"
+      },
+      {
+        "w": 1600,
+        "file": "/projects/harekrishna-1600.webp"
+      }
+    ]
+  },
+  "/projects/tasteofpunjab.webp": {
+    "w": 377,
+    "h": 819
+  }
+}

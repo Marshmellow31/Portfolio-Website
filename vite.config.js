@@ -24,7 +24,12 @@ export default defineConfig({
         codeSplitting: {
           groups: [
             { name: 'vendor-core', test: nm('react|react-dom|scheduler|react-router|react-router-dom'), priority: 100 },
-            { name: 'vendor-animation', test: nm('framer-motion|motion-dom|motion-utils|gsap|lenis'), priority: 90 },
+            /* framer-motion and lenis are used by App/main eagerly, so this
+               chunk is unavoidably on the critical path. gsap is NOT — only
+               the lazy mobile nav uses it — so it gets its own group; grouped
+               with the others it would be dragged back onto first paint. */
+            { name: 'vendor-animation', test: nm('framer-motion|motion-dom|motion-utils|lenis'), priority: 90 },
+            { name: 'vendor-gsap', test: nm('gsap'), priority: 85 },
             { name: 'vendor-vision', test: nm('@mediapipe'), priority: 80 },
             { name: 'vendor-3d', test: nm('three|@react-three|meshline|@dimforge'), priority: 70 },
             { name: 'vendor-gl', test: nm('ogl|gl-matrix'), priority: 60 },

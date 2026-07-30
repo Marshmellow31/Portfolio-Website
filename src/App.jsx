@@ -6,9 +6,17 @@ import { useLenis } from 'lenis/react';
 import { Analytics } from '@vercel/analytics/react';
 import Skeleton from './components/Skeleton/Skeleton';
 import FloatingTerminal from './components/FloatingTerminal/FloatingTerminal';
-import StaggeredMenu from './components/StaggeredMenu/StaggeredMenu';
 import Cursor from './components/Cursor/Cursor';
 import ErrorBoundary from './components/ErrorBoundary';
+import useMediaQuery from './utils/useMediaQuery';
+
+/* The mobile nav is the only thing on the site that pulls in GSAP (~70 KB).
+   Importing it statically put that on the critical path of every page — and
+   on desktop, where `lg:hidden` means it never even renders. Lazy + a
+   viewport gate keeps it off desktop entirely and off the first paint on
+   mobile. useMediaQuery reads matchMedia synchronously on first render, so
+   the toggle is present immediately rather than popping in. */
+const StaggeredMenu = lazy(() => import('./components/StaggeredMenu/StaggeredMenu'));
 
 // Lazy-loaded Pages
 const Home = lazy(() => import('./pages/Home'));
@@ -60,6 +68,8 @@ export default function App() {
   const onHome = location.pathname === '/';
   // Playground + Drive are their own full-viewport apps — hide the site nav + footer there.
   const isPlayground = ['/playground', '/drive', '/drift'].includes(location.pathname);
+  // Matches Tailwind's `lg` breakpoint, which is what hides the mobile nav in CSS.
+  const isMobileNav = useMediaQuery('(max-width: 1023.98px)');
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 24);
@@ -162,8 +172,8 @@ export default function App() {
       )}
 
       {/* ──────────── NAVIGATION (mobile — StaggeredMenu) ──────────── */}
-      {!isPlayground && (
-        <div className="lg:hidden">
+      {!isPlayground && isMobileNav && (
+        <Suspense fallback={null}>
           <StaggeredMenu
             isFixed
             position="right"
@@ -185,7 +195,7 @@ export default function App() {
             onMenuOpen={() => setIsMenuOpen(true)}
             onMenuClose={() => setIsMenuOpen(false)}
           />
-        </div>
+        </Suspense>
       )}
 
       {/* scroll progress hairline */}

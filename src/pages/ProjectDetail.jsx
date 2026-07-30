@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { selectedWork, getProjectBySlug } from '../data/portfolio';
 import { Reveal } from '../components/Reveal/Reveal';
 import CaseImage from '../components/CaseImage/CaseImage';
+import GalleryImage from '../components/GalleryImage';
 import useSEO from '../utils/useSEO';
 import { SITE_URL } from '../../site.config.mjs';
 
@@ -200,11 +201,12 @@ export default function ProjectDetail() {
                 layoutId={`project-image-${project.slug}`}
                 className="inline-flex max-w-full rounded-xl overflow-hidden border border-border bg-black/20"
               >
-                <img
+                <GalleryImage
                   src={heroImage}
                   alt={`${project.title} — main view`}
                   className="h-[45vh] sm:h-[55vh] md:h-[70vh] w-auto max-w-full object-contain block"
-                  loading="eager"
+                  sizes="(min-width: 1280px) 55vw, 92vw"
+                  priority
                 />
               </motion.div>
             </div>
@@ -319,11 +321,10 @@ export default function ProjectDetail() {
                 className={restImages.length % 2 !== 0 && i === restImages.length - 1 ? 'md:col-span-2' : ''}
               >
                 <div className="rounded-xl overflow-hidden border border-border bg-surface">
-                  <img
+                  <GalleryImage
                     src={src}
                     alt={`${project.title} — screen ${i + 2}`}
                     className="w-full h-auto block"
-                    loading="lazy"
                   />
                 </div>
               </Reveal>

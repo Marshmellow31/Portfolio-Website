@@ -9,14 +9,16 @@ export const SITE_NAME = 'Harshil Patel';
 export const DEFAULT_TITLE = 'Harshil Patel | Software Engineer | IIIT Vadodara';
 export const DEFAULT_DESCRIPTION =
   'Harshil Patel is a software engineer and B.Tech student at IIIT Vadodara who builds production web apps, mobile apps, and AI tools.';
-export const OG_IMAGE = '/og-image.webp';
+/* JPEG on purpose — LinkedIn and several other scrapers won't render a WebP
+   social card. Regenerate with `npm run og` after changing name/tagline. */
+export const OG_IMAGE = '/og-image.jpg';
 export const LOCALE = 'en_US';
 
 export const AUTHOR = {
   name: 'Harshil Patel',
   alternateName: ['guywithblack350', 'guy with black 350', 'the guy with black 350'],
   email: '1080patelharshil@gmail.com',
-  jobTitle: 'Full-Stack Developer',
+  jobTitle: 'Software Engineer',
   alumniOf: 'IIIT Vadodara',
   sameAs: [
     'https://github.com/Marshmellow31',

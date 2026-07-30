@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/webp" href="/favicon.webp" />
-    <link rel="apple-touch-icon" href="/favicon.webp" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="alternate" type="application/rss+xml" title="Harshil Patel's Blog RSS Feed" href="https://www.harshilpatel.co.in/rss.xml" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -27,11 +27,12 @@
     <meta property="og:url" content="https://www.harshilpatel.co.in/" />
     <meta property="og:title" content="Harshil Patel | Software Engineer | IIIT Vadodara" />
     <meta property="og:description" content="Software engineer and IIIT Vadodara student building production web apps, mobile apps, and AI tools." />
-    <meta property="og:image" content="https://www.harshilpatel.co.in/og-image.webp" />
+    <!-- JPEG, not WebP: LinkedIn and several other scrapers won't render a WebP card. -->
+    <meta property="og:image" content="https://www.harshilpatel.co.in/og-image.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Harshil Patel — Full-Stack Developer & Content Creator" />
-    <meta property="og:image:type" content="image/webp" />
+    <meta property="og:image:alt" content="Harshil Patel — Software Engineer, IIIT Vadodara" />
+    <meta property="og:image:type" content="image/jpeg" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -40,7 +41,8 @@
     <meta name="twitter:url" content="https://www.harshilpatel.co.in/" />
     <meta name="twitter:title" content="Harshil Patel | Software Engineer | IIIT Vadodara" />
     <meta name="twitter:description" content="Software engineer and IIIT Vadodara student building production web apps, mobile apps, and AI tools." />
-    <meta name="twitter:image" content="https://www.harshilpatel.co.in/og-image.webp" />
+    <meta name="twitter:image" content="https://www.harshilpatel.co.in/og-image.jpg" />
+    <meta name="twitter:image:alt" content="Harshil Patel — Software Engineer, IIIT Vadodara" />
 
     <!-- Structured data: Person + WebSite + ProfilePage graph -->
     <script type="application/ld+json">
@@ -53,11 +55,21 @@
           "name": "Harshil Patel",
           "alternateName": ["guywithblack350", "guy with black 350", "the guy with black 350"],
           "url": "https://www.harshilpatel.co.in/",
-          "image": "https://www.harshilpatel.co.in/og-image.webp",
-          "jobTitle": "Full-Stack Developer",
-          "alumniOf": {
+          "image": "https://www.harshilpatel.co.in/og-image.jpg",
+          "description": "Harshil Patel is a software engineer and B.Tech computer science student at IIIT Vadodara who ships production web apps, mobile apps, and AI tools for real businesses. He also creates automotive content as @guywithblack350.",
+          "jobTitle": ["Software Engineer", "Full-Stack Developer"],
+          "affiliation": {
             "@type": "CollegeOrUniversity",
-            "name": "IIIT Vadodara"
+            "name": "Indian Institute of Information Technology Vadodara",
+            "alternateName": "IIIT Vadodara",
+            "sameAs": "https://iiitvadodara.ac.in/",
+            "address": { "@type": "PostalAddress", "addressCountry": "IN" }
+          },
+          "hasOccupation": {
+            "@type": "Occupation",
+            "name": "Software Engineer",
+            "occupationalCategory": "15-1252.00",
+            "skills": "React, TypeScript, Node.js, Firebase, Kotlin, Android development, Three.js, AI API integration"
           },
           "email": "mailto:1080patelharshil@gmail.com",
           "sameAs": [
@@ -66,7 +78,8 @@
             "https://www.instagram.com/harshil_3105_/",
             "https://www.instagram.com/guywithblack350/"
           ],
-          "knowsAbout": ["React", "TypeScript", "Node.js", "Firebase", "Kotlin", "Android Development", "AI APIs", "Three.js", "Web Development"]
+          "knowsAbout": ["React", "TypeScript", "Node.js", "Firebase", "Kotlin", "Android Development", "AI APIs", "Three.js", "Web Development"],
+          "mainEntityOfPage": { "@id": "https://www.harshilpatel.co.in/#profile" }
         },
         {
           "@type": "ProfilePage",
@@ -87,16 +100,22 @@
     }
     </script>
 
-    <!-- Fonts -->
+    <!-- Fonts — JetBrains Mono is only used for mono accents, never for body
+         copy, so it must not block the first paint. Loaded async via the
+         media="print" swap; the noscript copy covers JS-off clients. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all';this.onload=null" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" /></noscript>
   </head>
   <body>
     <!-- Skip to main content — a11y + crawlability -->
     <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[9999] focus:bg-white focus:text-black focus:px-4 focus:py-2 focus:rounded">Skip to content</a>
     <div id="root"><h1 class="sr-only">Harshil Patel | Software Engineer | IIIT Vadodara</h1></div>
-    <noscript>
+    <!-- Per-route content is written into this block at build time by
+         scripts/generate-seo.mjs; the id is how it finds it. -->
+    <noscript id="page-content">
       <div style="max-width:720px;margin:80px auto;padding:24px;font-family:system-ui,sans-serif;color:#f2f2f3;background:#0a0a0b">
         <h1>Harshil Patel — Software Engineer at IIIT Vadodara</h1>
         <p>Software engineer and B.Tech student at IIIT Vadodara. Builds production web apps, mobile apps, and AI tools. Content creator <a href="https://www.instagram.com/guywithblack350/" style="color:#ddd">@guywithblack350</a> with 22M+ views.</p>

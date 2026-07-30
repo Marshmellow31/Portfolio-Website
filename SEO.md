@@ -1,74 +1,112 @@
-# SEO — how it works & the domain-launch playbook
+# SEO — how it works & the operating playbook
+
+Live origin: **https://www.harshilpatel.co.in** (set in [site.config.mjs](site.config.mjs) — change
+that one line if the domain ever moves, then rebuild; every canonical, OG tag, sitemap entry,
+JSON-LD block, and `llms.txt` URL follows automatically).
 
 ## What's in place
 
-- **`site.config.mjs`** — single source of truth for the site URL, identity, and socials.
+### Crawlability & indexing
 - **Build-time prerendering** — `scripts/generate-seo.mjs` runs after `vite build` and writes a
-  static `dist/<route>/index.html` for all 24 routes with the correct `<title>`, description,
-  canonical, Open Graph / Twitter tags, and JSON-LD. Vercel serves these files *before* the SPA
-  rewrite, so Google, LinkedIn, WhatsApp, and Discord see correct per-page meta with zero JavaScript.
-- **Auto-generated `sitemap.xml` + `robots.txt` + `rss.xml`** — built from `src/data/portfolio.js` and
-  `src/data/blog.js` every build. Includes Google Image Search extensions (`<image:image>`) for project screenshots and an RSS 2.0 feed for blog readers.
-- **Structured data** — `Person` + `WebSite` + `ProfilePage` graph on homepage, `BlogPosting` on posts (with publish/mod dates and publisher references), `SoftwareApplication` + `BreadcrumbList` on project pages, `CollectionPage` on `/projects`, and `BreadcrumbList` on all subpages.
-- **Generative Engine Optimization (GEO)** — `public/llms.txt` standard file for AI search engines (ChatGPT Search, Perplexity, Claude, Gemini) providing a clean markdown knowledge index of Harshil Patel's bio, projects, blog posts, and verified handles.
-- **Web App Manifest** — `public/site.webmanifest` defining PWA metadata, theme colors (`#0A0A0B`), and maskable icon declarations.
-- **Runtime `useSEO` hook** — keeps title/canonical/OG (`og:type` article vs website)/Twitter
-  creator (`@guywithblack350`)/`og:image:alt`/JSON-LD in sync during client-side navigation, and
-  sets `noindex` on the 404 page.
-- **`<noscript>` fallback** — meaningful HTML content (name, bio, project list, contact links) inside
-  `<noscript>` so crawlers that don't execute JS still index core page content.
-- **Skip-to-content link** — hidden `<a href="#main-content">` for accessibility (a11y signals
-  contribute to search quality).
-- **Font deduplication** — JetBrains Mono loaded once via `<link>` in `index.html`; removed duplicate
-  `@import` from `index.css` to eliminate a render-blocking network request (improves FCP/LCP).
-- **Vercel caching** — `vercel.json` serves SEO assets (`sitemap.xml`, `rss.xml`, `robots.txt`,
-  `llms.txt`, `site.webmanifest`) with `Cache-Control: public, max-age=3600, stale-while-revalidate=86400`.
-- **Google Search Console** — placeholder `<meta name="google-site-verification">` tag is commented
-  in `index.html`; uncomment and replace `YOUR_CODE` after registering the domain in GSC.
+  static `dist/<route>/index.html` for all 26 routes with the correct `<title>`, description,
+  canonical, Open Graph / Twitter tags, and JSON-LD. Vercel's filesystem check runs *before* any
+  rewrite, so Google, LinkedIn, WhatsApp, and Discord get correct per-page meta with zero JavaScript.
+- **Per-route no-JS content** — each prerendered page carries its own `<noscript id="page-content">`
+  body: the real project case study, the full blog post (markdown rendered to HTML), the real
+  contact block. Crawlers that don't execute JS — which is most AI/answer-engine bots — index the
+  actual page instead of 26 copies of the homepage.
+- **Real 404s** — `vercel.json` deliberately has **no catch-all rewrite**. Every route is a real
+  static file, so unknown URLs fall through to `dist/404.html` with a genuine HTTP 404 instead of
+  returning 200 with homepage meta (which Google reports as a soft 404 and wastes crawl budget).
+- **Route-coverage guard** — because there's no catch-all, a route present in `src/App.jsx` but
+  missing from the `routes` table in `generate-seo.mjs` would 404 in production. The build parses
+  `App.jsx` and **fails loudly** rather than shipping a dead page.
+- **Content-derived `lastmod`** — sitemap dates come from the last git commit that touched the files
+  backing each route (blog posts use their own publish date). Stamping every URL with the build date
+  teaches Google to ignore the field entirely.
+- **`trailingSlash: false`** — one canonical URL shape; Vercel 308-redirects the other.
 
-## When you buy the domain (do these in order)
+### Discovery files (all generated — never hand-edit, never recreate in `public/`)
+- **`sitemap.xml`** — 26 URLs with Google Image Search extensions (`<image:image>`).
+- **`robots.txt`** — explicit allow for GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot,
+  Google-Extended, Applebot-Extended, CCBot and friends, plus the sitemap pointer.
+- **`rss.xml`** — RSS 2.0 feed of the blog.
+- **`llms.txt`** — knowledge index for answer engines. The bio/skills prose is curated inside
+  `generate-seo.mjs`; **the project and post lists are generated from the data files** so they can't
+  go stale (they had already drifted by four projects when this was hand-maintained).
 
-1. **Change one line** — `SITE_URL` in [site.config.mjs](site.config.mjs). Rebuild/redeploy.
-   Every canonical, OG tag, sitemap entry, and JSON-LD block updates automatically.
-2. **Add the domain in Vercel** (Project → Settings → Domains). Keep
-   `design-lab-portfolio.vercel.app` attached — Vercel will 308-redirect it to the new domain,
-   which transfers any existing indexing signals instead of losing them.
-3. **Google Search Console** — https://search.google.com/search-console
-   - Add the new domain (Domain property, verified via DNS record).
-   - Submit `https://yourdomain.com/sitemap.xml`.
-   - Use "URL Inspection → Request Indexing" on the homepage to get crawled within hours.
-   - **Uncomment** the `<meta name="google-site-verification">` tag in `index.html` and paste
-     your verification code.
-4. **Bing Webmaster Tools** — https://www.bing.com/webmasters — import from Search Console
-   (one click). Covers Bing, DuckDuckGo, and ChatGPT/Copilot search.
-5. **Validate rich results** — https://search.google.com/test/rich-results on the homepage and
-   one blog post; https://developers.facebook.com/tools/debug/ and
-   https://www.linkedin.com/post-inspector/ for the OG cards.
+### Structured data
+`Person` + `WebSite` + `ProfilePage` graph on the homepage, `BlogPosting` on posts (with
+`wordCount`, `keywords`, `articleSection`, publish/mod dates), `SoftwareApplication` +
+`BreadcrumbList` on project pages, `CollectionPage` on `/projects`, `BreadcrumbList` on all
+subpages. The `Person` node carries `description`, dual `jobTitle`, `affiliation` (IIIT Vadodara,
+with `sameAs`), `hasOccupation`, `knowsAbout`, and `sameAs` for every profile — the entity signals
+that matter for a competitive name query.
+
+### Performance (Core Web Vitals is a ranking signal)
+- **Chunking** — `vite.config.js` uses rolldown's native `codeSplitting` groups. The previous
+  `manualChunks` callback is only a compat shim under Vite 8 and was silently ignored for some
+  modules: `react`, `react/jsx-runtime`, and `scheduler` ended up **inside the 885 KB `vendor-3d`
+  chunk**, so every visitor on every page downloaded all of three.js before React could boot.
+  The critical path is now `vendor-core` + `vendor-animation` only; three.js loads lazily when the
+  drive teaser nears the viewport. **~885 KB raw / ~235 KB gzip off every page load.**
+  If you ever touch the chunk groups, re-check `dist/index.html` — `vendor-3d` must **not** appear
+  in a `<link rel="modulepreload">`.
+- **Fonts** — JetBrains Mono is mono-accent only, never body copy, so it loads async via the
+  `media="print"` swap with a `<noscript>` fallback. It no longer blocks first paint.
+- **Images** — case-study images are WebP with explicit `width`/`height` (no CLS), `loading="lazy"`
+  below the fold, `fetchPriority="high"` on the hero.
+
+### Social & app metadata
+- **OG card** — `public/og-image.jpg`, a real **1200×630** JPEG generated by `npm run og`.
+  It's JPEG on purpose: LinkedIn and several other scrapers won't render a WebP card. (The old card
+  was a 1024×1024 square from the retired hot-pink design, while the tags claimed 1200×630.)
+- **App icons** — `apple-touch-icon.png` (180×180) and PNG 192/512 manifest icons. iOS ignores a
+  WebP apple-touch-icon and the Android install prompt needs PNG.
+- **Web App Manifest** — `public/site.webmanifest` with `id`, `scope`, `lang`, theme colors, and
+  separate `any` / `maskable` icon entries.
+
+### Runtime
+- **`useSEO` hook** — keeps title/canonical/OG/Twitter/JSON-LD in sync during client-side
+  navigation and sets `noindex` on the 404 page.
+- **Skip-to-content link** and a `sr-only` `<h1>` in the shell for a11y and crawlability.
+
+## Still to do (off the site)
+
+1. **Google Search Console** — uncomment the `<meta name="google-site-verification">` tag in
+   [index.html](index.html) and paste your code (or verify by DNS, which is better). Then submit
+   `https://www.harshilpatel.co.in/sitemap.xml` and use URL Inspection → Request Indexing on the
+   homepage. Bing is already verified via `public/BingSiteAuth.xml`.
+2. **After the next deploy, confirm the 404 works** — `curl -I https://www.harshilpatel.co.in/nope`
+   must return `HTTP/2 404`. This is the one change that can't be verified locally, because
+   `vite preview` applies its own SPA fallback that Vercel does not.
+3. **Re-scrape the social cards** — the OG image changed, and both networks cache aggressively:
+   [Facebook debugger](https://developers.facebook.com/tools/debug/) ·
+   [LinkedIn Post Inspector](https://www.linkedin.com/post-inspector/).
+4. **Validate rich results** — [Rich Results Test](https://search.google.com/test/rich-results) on
+   the homepage and one blog post.
 
 ## What actually gets you to #1 for "Harshil Patel"
 
-The on-site work above is done. Ranking for a name is won mostly **off-site** — Google trusts a
-site that other trusted profiles point to:
+The on-site work is done. Ranking for a personal name is won mostly **off-site**:
 
-- **Link the domain from every profile you own**: GitHub profile (website field), LinkedIn
-  (website + featured), Instagram bios (@harshil_3105_ and @guywithblack350), YouTube channel
-  about page if any. These are high-authority backlinks and they're free.
-- **Make the names match**: use "Harshil Patel" consistently as the display name on those
-  profiles so Google connects them to the Person schema (`sameAs` already lists them).
-- **Publish occasionally** — the blog is already wired for BlogPosting rich results; a post
-  every month or two keeps the site "fresh" in Google's eyes and gives people something to link.
-- **Expect a ramp** — a brand-new domain typically takes 2–8 weeks to rank for a name query
-  and settles at the top once the profile backlinks are in place. "Harshil Patel" is a common
-  name (you're competing with cricketers and other developers), so the personalized queries
-  ("harshil patel developer", "harshil patel iiit vadodara", "guywithblack350") will hit #1
-  first, and the bare-name query improves as the domain accrues clicks and links.
+- **Link the domain from every profile you own** — GitHub (website field), LinkedIn (website +
+  featured), both Instagram bios, YouTube about page. High-authority backlinks, free.
+- **Make the names match** — use "Harshil Patel" as the display name everywhere so Google connects
+  the profiles to the `Person` schema (`sameAs` already lists them).
+- **Publish occasionally** — the blog is wired for `BlogPosting` rich results; a post every month or
+  two keeps the site fresh and gives people something to link to.
+- **Expect a ramp** — "Harshil Patel" is a common name (you're competing with cricketers and other
+  developers). The qualified queries ("harshil patel developer", "harshil patel iiit vadodara",
+  "guywithblack350") rank first; the bare-name query improves as the domain accrues links and clicks.
 
 ## Maintenance rules
 
-- Descriptions for static pages live in both the page's `useSEO()` call and
-  [scripts/generate-seo.mjs](scripts/generate-seo.mjs) — if you change one, change the other.
-- Projects/blog posts need no extra work — data files drive everything.
-- Never edit `public/sitemap.xml` or `public/robots.txt` — they don't exist anymore; the build
-  generates them.
-- `public/llms.txt` should be updated when you add new major projects or blog posts so AI
-  search engines surface accurate information.
+- Static-page descriptions live in **both** the page's `useSEO()` call and the `routes` table in
+  [scripts/generate-seo.mjs](scripts/generate-seo.mjs) — change one, change the other.
+- Projects and blog posts need no SEO work: the data files drive routes, sitemap, `llms.txt`, RSS,
+  JSON-LD, and the no-JS content.
+- **Adding a route?** Add it to `src/App.jsx` *and* the `routes` table. The build fails if you don't.
+- Never create `public/sitemap.xml`, `public/robots.txt`, or `public/llms.txt` — all three are
+  generated into `dist/`, and a `public/` copy would silently shadow them.
+- Re-run `npm run og` after changing the name or tagline on the card.

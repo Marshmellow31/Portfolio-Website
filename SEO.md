@@ -73,18 +73,16 @@ that matter for a competitive name query.
 
 ## Still to do (off the site)
 
-1. **Google Search Console** — uncomment the `<meta name="google-site-verification">` tag in
-   [index.html](index.html) and paste your code (or verify by DNS, which is better). Then submit
-   `https://www.harshilpatel.co.in/sitemap.xml` and use URL Inspection → Request Indexing on the
-   homepage. Bing is already verified via `public/BingSiteAuth.xml`.
-2. **After the next deploy, confirm the 404 works** — `curl -I https://www.harshilpatel.co.in/nope`
-   must return `HTTP/2 404`. This is the one change that can't be verified locally, because
-   `vite preview` applies its own SPA fallback that Vercel does not.
-3. **Re-scrape the social cards** — the OG image changed, and both networks cache aggressively:
+Google Search Console and Bing are both verified and the sitemap is submitted; the site entered
+Google's index on **2026-07-21**. Remaining:
+
+1. **Re-scrape the social cards** — the OG image changed, and both networks cache aggressively:
    [Facebook debugger](https://developers.facebook.com/tools/debug/) ·
    [LinkedIn Post Inspector](https://www.linkedin.com/post-inspector/).
-4. **Validate rich results** — [Rich Results Test](https://search.google.com/test/rich-results) on
+2. **Validate rich results** — [Rich Results Test](https://search.google.com/test/rich-results) on
    the homepage and one blog post.
+3. **Resubmit the sitemap** after the 2026-07-30 SEO deploy — `lastmod` values all changed from the
+   build date to real content dates, and 26 pages gained per-route no-JS content.
 
 ## What actually gets you to #1 for "Harshil Patel"
 

@@ -75,10 +75,10 @@ export const items = [
     description: 'Digital QR Menu'
   },
   {
-    image: '/projects/nofly.webp',
+    image: '/projects/gps-spoofing-swarm-defense.webp',
     link: '#projects',
-    title: 'No-Fly Zone Simulator',
-    description: 'Drone airspace validation & GPS spoofing research'
+    title: 'GPS Spoofing Research',
+    description: 'Swarm spoofing detection & safe clearance research'
   }
 ];
 
@@ -101,34 +101,35 @@ export const internshipCredentials = {
    Each entry drives both the /projects list and the /projects/:slug page. */
 const selectedWorkRaw = [
   {
-    slug: 'no-fly-zone-simulator',
+    slug: 'gps-spoofing-research',
     group: 'research',
     weight: 'feature',
-    title: 'No-Fly Zone Simulator',
+    title: 'GPS Spoofing Research',
     year: '2026',
-    role: 'Research · Geospatial Engineering',
+    role: 'Research · UAV Security',
     type: 'Research Project',
-    image: '/projects/nofly.webp',
-    images: ['/projects/nofly.webp'],
-    description: 'Co-authored paper on GPS spoofing–based drone path manipulation, plus the airspace simulator being built alongside it to map restricted zones and validate flight paths against them.',
-    problem: 'Drones that stray into airports, military installations, or government airspace cause real safety, security, and legal fallout. Our research showed the inverse is just as true: a ground spoofer can push a GPS-guided drone out of a protected zone in 15–30 time steps without tripping its own anomaly detection, because the Kalman filter meant to stabilise navigation amplifies the injected bias instead of rejecting it.',
-    approach: 'The paper is finished; the simulator is the tool that makes that airspace layer visible and testable, and it is still in progress. Restricted zones are modelled as circles and polygons with a category and safety level; a user drops a start and a destination, and the tool computes the route and tests it against every zone before launch. Haversine distance, point-in-circle containment, and segment–polygon intersection do the geometry — no black-box routing API — and the paper supplies the threat model the validation is arguing against.',
+    image: '/projects/gps-spoofing-swarm-defense.webp',
+    images: ['/projects/gps-spoofing-swarm-defense.webp'],
+    description: 'Simulation-backed research on formation-preserving GNSS spoofing, randomized anchor audits, swarm protection bounds, and verifiable counter-UAS clearance.',
+    problem: 'A coordinated GNSS spoofing attack can move an entire drone swarm while preserving pairwise distances, so relative range checks still look normal. Even a fixed audited leader can become a blind spot: rotate the formation around that sentinel and the leader remains unchanged while the rest of the swarm drifts toward sensitive airspace.',
+    approach: 'The research now has two reproducible tracks in one GitHub package. RAC-SRPL detects and bounds absolute swarm displacement with sparse randomized authenticated ground-anchor challenges, then only permits recovery when the Swarm Rigid-Transform Protection Level is finite. VERGE-CUAS models the defensive side: bounded control nudges responsive intruders toward verified exits, identifies resistant members, and issues clearance only when the full protected zone is certified under uncertainty and packet loss.',
     features: [
-      ['Kalman filter bias analysis — published', 'Modelled the drone\'s navigation filter in spherical coordinates and showed the steady-state gain (K∞ ≈ 0.27) converts injected spoof offsets straight into position error.'],
-      ['SPRT evasion proof — published', 'Constraining per-step drift below the Sequential Probability Ratio Test threshold gives a formal guarantee the diversion never trips anomaly detection.'],
-      ['Python simulation — published', 'A 1000-sample run confirms full exit from a 50 m geofence within 15–30 time steps of spoofing onset, well before any alarm fires.'],
-      ['Interactive airspace map — built', 'Pan, zoom, and inspect restricted regions rendered as circles and polygons with category and safety level.'],
-      ['Pre-flight route validation — built', 'The full path is tested against every zone before simulation starts — approved, or flagged with the offending segment highlighted.'],
-      ['Live drone simulation — in progress', 'A marker walking the route with distance covered, remaining distance, and continuous proximity checks.'],
-      ['Flight telemetry panel — planned', 'Total distance, estimated flight time, zones crossed, live coordinates, and overall flight status.'],
+      ['Formation-preserving threat model', 'Shows why pairwise inter-UAV ranging cannot observe a common rigid translation or rotation of the swarm.'],
+      ['Fixed-sentinel blind spot', 'Constructs the case where a permanently audited leader stays unchanged while the rest of the formation rotates around it.'],
+      ['Randomized anchor challenges', 'Selects both the audited swarm member and anchor subset unpredictably, then compares GNSS against surveyed-anchor position estimates.'],
+      ['SRPL-gated recovery', 'Computes an absolute Swarm Rigid-Transform Protection Level and treats it as infinite until the audit history makes the transform observable.'],
+      ['Reproducible RAC-SRPL evidence', 'Position-domain Monte Carlo results report random-member auditing detecting rigid attacks that relative-only and fixed-sentinel checks miss.'],
+      ['VERGE-CUAS clearance simulator', 'Models risk-aware eviction of responsive drones from a protected zone while preserving separation and flagging resistant members.'],
+      ['7,100 seeded VERGE-CUAS trials', 'Includes main comparisons, ablations, and sensitivity sweeps; the strongest result is the verification layer, while static route-risk assignment is reported as mixed.'],
+      ['Safety-first validation boundary', 'The package stays in simulation, recorded data, cabled RF, or shielded-test territory and does not provide RF spoofing or jamming instructions.'],
     ],
-    outcome: 'The paper — "GPS Spoofing-Based Drone Path Manipulation Using Kalman Filter Bias and SPRT Evasion" (IIIT Vadodara — International Campus Diu) — is complete and readable below. Its core finding: the Kalman filter designed to make navigation robust is precisely the surface that amplifies a spoofing attack. The simulator is the ongoing applied half.',
-    stack: ['React', 'TypeScript', 'Leaflet', 'Turf.js', 'Python (simulation)'],
+    outcome: 'The latest repository packages two IEEE-style research manuscripts and reproducibility materials. RAC-SRPL contributes a randomized anchor-audit detector and absolute swarm protection bound for formation-preserving GNSS spoofing. VERGE-CUAS contributes a verifiable clearance simulator whose completed computational study covers 7,100 deterministic seeded trials. The repo is explicit that these are position-domain simulations, with hardware-in-the-loop testing, calibrated tracking errors, institutional approval, and independent review still required before publication or deployment claims.',
+    stack: ['Python', 'NumPy', 'pandas', 'Matplotlib', 'LaTeX', 'Monte Carlo simulation'],
     link: null,
-    github: null,
-    paper: '/gps-spoofing-drone-path-manipulation.pdf',
+    github: 'https://github.com/Marshmellow31/gps-spoofing-rac-srpl',
+    paper: '/rac-srpl-gps-spoofing-swarm-defense.pdf',
     live: false,
-    statusLabel: 'IN DEVELOPMENT',
+    statusLabel: 'RESEARCH',
   },
   {
     slug: 'paymatrix',

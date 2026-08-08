@@ -1,15 +1,15 @@
 {
-  "/projects/nofly.webp": {
-    "w": 1024,
-    "h": 546,
+  "/projects/gps-spoofing-swarm-defense.webp": {
+    "w": 1200,
+    "h": 675,
     "srcset": [
       {
         "w": 480,
-        "file": "/projects/nofly-480.webp"
+        "file": "/projects/gps-spoofing-swarm-defense-480.webp"
       },
       {
         "w": 768,
-        "file": "/projects/nofly-768.webp"
+        "file": "/projects/gps-spoofing-swarm-defense-768.webp"
       }
     ]
   },

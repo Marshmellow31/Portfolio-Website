@@ -1,5 +1,6 @@
 import { Link, useParams, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { FiArrowUpRight, FiFileText } from 'react-icons/fi';
 import { selectedWork, getProjectBySlug } from '../data/portfolio';
 import { Reveal } from '../components/Reveal/Reveal';
 import CaseImage from '../components/CaseImage/CaseImage';
@@ -122,7 +123,7 @@ export default function ProjectDetail() {
             ))}
             <div>
               <div className="font-mono text-[10px] tracking-[.2em] text-text-faint mb-2">LINKS</div>
-              <div className="flex gap-5">
+              <div className="flex flex-wrap items-center gap-3">
                 {project.link && (
                   <a href={project.link} target="_blank" rel="noreferrer"
                     className="font-mono text-[12px] tracking-[.08em] text-text no-underline border-b border-white/30 pb-0.5 hover:border-white transition-colors">
@@ -143,8 +144,11 @@ export default function ProjectDetail() {
                 )}
                 {project.paper && (
                   <a href={project.paper} target="_blank" rel="noreferrer"
-                    className="font-mono text-[12px] tracking-[.08em] text-text no-underline border-b border-white/30 pb-0.5 hover:border-white transition-colors">
-                    PAPER ↗
+                    aria-label={`Read the ${project.title} paper`}
+                    className="group inline-flex min-h-9 items-center gap-2 border border-white/80 bg-white px-3 font-mono text-[11px] tracking-[.08em] text-black no-underline transition-colors hover:bg-transparent hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
+                    <FiFileText className="text-[15px]" aria-hidden="true" />
+                    READ PAPER
+                    <FiArrowUpRight className="text-[14px] transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true" />
                   </a>
                 )}
                 {!project.link && !project.github && !project.paper && !project.credentials && (

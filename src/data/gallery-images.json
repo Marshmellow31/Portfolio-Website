@@ -1,15 +1,23 @@
 {
-  "/projects/gps-spoofing-swarm-defense.webp": {
-    "w": 1200,
-    "h": 675,
+  "/projects/counter-uas-research-white.webp": {
+    "w": 1672,
+    "h": 941,
     "srcset": [
       {
         "w": 480,
-        "file": "/projects/gps-spoofing-swarm-defense-480.webp"
+        "file": "/projects/counter-uas-research-white-480.webp"
       },
       {
         "w": 768,
-        "file": "/projects/gps-spoofing-swarm-defense-768.webp"
+        "file": "/projects/counter-uas-research-white-768.webp"
+      },
+      {
+        "w": 1200,
+        "file": "/projects/counter-uas-research-white-1200.webp"
+      },
+      {
+        "w": 1600,
+        "file": "/projects/counter-uas-research-white-1600.webp"
       }
     ]
   },

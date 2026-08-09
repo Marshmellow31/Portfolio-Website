@@ -75,10 +75,10 @@ export const items = [
     description: 'Digital QR Menu'
   },
   {
-    image: '/projects/gps-spoofing-swarm-defense.webp',
+    image: '/projects/counter-uas-research-white.webp',
     link: '#projects',
-    title: 'GPS Spoofing Research',
-    description: 'Swarm spoofing detection & safe clearance research'
+    title: 'Counter-UAS Research',
+    description: 'Verified swarm integrity & clearance research'
   }
 ];
 
@@ -104,13 +104,13 @@ const selectedWorkRaw = [
     slug: 'gps-spoofing-research',
     group: 'research',
     weight: 'feature',
-    title: 'GPS Spoofing Research',
+    title: 'Counter-UAS Research',
     year: '2026',
     role: 'Research · UAV Security',
     type: 'Research Project',
-    image: '/projects/gps-spoofing-swarm-defense.webp',
-    images: ['/projects/gps-spoofing-swarm-defense.webp'],
-    description: 'Simulation-backed research on formation-preserving GNSS spoofing, randomized anchor audits, swarm protection bounds, and verifiable counter-UAS clearance.',
+    image: '/projects/counter-uas-research-white.webp',
+    images: ['/projects/counter-uas-research-white.webp'],
+    description: 'Abstract—This project presents RAC-SRPL for detecting formation-preserving GNSS spoofing through randomized authenticated anchor audits, and VERGE-CUAS for uncertainty-aware, collision-conscious clearance of partially responsive drone swarms. Seeded position-domain simulations provide reproducible evidence; hardware validation remains future work.',
     problem: 'A coordinated GNSS spoofing attack can move an entire drone swarm while preserving pairwise distances, so relative range checks still look normal. Even a fixed audited leader can become a blind spot: rotate the formation around that sentinel and the leader remains unchanged while the rest of the swarm drifts toward sensitive airspace.',
     approach: 'The research now has two reproducible tracks in one GitHub package. RAC-SRPL detects and bounds absolute swarm displacement with sparse randomized authenticated ground-anchor challenges, then only permits recovery when the Swarm Rigid-Transform Protection Level is finite. VERGE-CUAS models the defensive side: bounded control nudges responsive intruders toward verified exits, identifies resistant members, and issues clearance only when the full protected zone is certified under uncertainty and packet loss.',
     features: [
@@ -126,8 +126,8 @@ const selectedWorkRaw = [
     outcome: 'The latest repository packages two IEEE-style research manuscripts and reproducibility materials. RAC-SRPL contributes a randomized anchor-audit detector and absolute swarm protection bound for formation-preserving GNSS spoofing. VERGE-CUAS contributes a verifiable clearance simulator whose completed computational study covers 7,100 deterministic seeded trials. The repo is explicit that these are position-domain simulations, with hardware-in-the-loop testing, calibrated tracking errors, institutional approval, and independent review still required before publication or deployment claims.',
     stack: ['Python', 'NumPy', 'pandas', 'Matplotlib', 'LaTeX', 'Monte Carlo simulation'],
     link: null,
-    github: 'https://github.com/Marshmellow31/gps-spoofing-rac-srpl',
-    paper: '/rac-srpl-gps-spoofing-swarm-defense.pdf',
+    github: 'https://github.com/Marshmellow31/counter-uas-research',
+    paper: '/verge-cuas-ieee-paper.pdf',
     live: false,
     statusLabel: 'RESEARCH',
   },

@@ -1,6 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Reveal } from '../components/Reveal/Reveal';
-import CopyButton from '../components/CopyButton';
 import SocialOrbit3D from '../components/SocialOrbit3D';
 import useSEO from '../utils/useSEO';
 
@@ -9,13 +8,93 @@ const inputCls =
 const labelCls = 'font-mono text-[10px] uppercase tracking-[.16em] text-text-dim';
 
 const WEB3FORMS_ACCESS_KEY = 'e0bef498-6aa0-41c4-915c-b6e640cdec9b';
+const projectTypes = ['Website or product', 'Freelance project', 'Full-time role', 'Something else'];
+
+function ProjectTypeSelect({ value, onChange, invalid }) {
+  const [open, setOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const rootRef = useRef(null);
+
+  useEffect(() => {
+    const close = e => { if (!rootRef.current?.contains(e.target)) setOpen(false); };
+    document.addEventListener('pointerdown', close);
+    return () => document.removeEventListener('pointerdown', close);
+  }, []);
+
+  const choose = index => {
+    onChange(projectTypes[index]);
+    setActiveIndex(index);
+    setOpen(false);
+  };
+
+  const onKeyDown = e => {
+    if (e.key === 'Escape') return setOpen(false);
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      const direction = e.key === 'ArrowDown' ? 1 : -1;
+      setOpen(true);
+      setActiveIndex(index => (index + direction + projectTypes.length) % projectTypes.length);
+    }
+    if ((e.key === 'Enter' || e.key === ' ') && open) {
+      e.preventDefault();
+      choose(activeIndex);
+    }
+  };
+
+  return (
+    <div ref={rootRef} className="relative">
+      <input type="hidden" name="project_type" value={value} />
+      <button
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-invalid={invalid}
+        onClick={() => setOpen(current => !current)}
+        onKeyDown={onKeyDown}
+        className={`w-full h-[50px] flex items-center justify-between gap-4 bg-bg border rounded-[6px] px-4 text-left text-[14px] outline-none transition-colors ${invalid ? 'border-red-400/70' : open ? 'border-white/50' : 'border-border hover:border-white/30'}`}
+      >
+        <span className={value ? 'text-text' : 'text-text-faint'}>{value || 'Select an option'}</span>
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true" className={`shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}>
+          <path d="m3 5 4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+      {open && (
+        <div role="listbox" aria-label="Project type" className="absolute z-30 left-0 right-0 top-[calc(100%+8px)] overflow-hidden rounded-[8px] border border-white/15 bg-[#151518] p-1.5 shadow-[0_18px_50px_rgba(0,0,0,.55)] animate-[fadeUp_.16s_ease_both]">
+          {projectTypes.map((option, index) => {
+            const selected = option === value;
+            const active = index === activeIndex;
+            return (
+              <button
+                key={option}
+                type="button"
+                role="option"
+                aria-selected={selected}
+                onPointerEnter={() => setActiveIndex(index)}
+                onClick={() => choose(index)}
+                className={`w-full min-h-[44px] flex items-center justify-between rounded-[5px] border-0 px-3.5 text-left text-[14px] cursor-pointer transition-colors ${active ? 'bg-white/10 text-text-bright' : 'bg-transparent text-text-muted hover:text-text'} ${selected ? 'font-medium' : ''}`}
+              >
+                <span>{option}</span>
+                {selected && <span className="text-[12px]" aria-hidden="true">✓</span>}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
 
 function ContactForm() {
   const [status, setStatus] = useState('idle'); // idle | sending | sent | error
+  const [projectType, setProjectType] = useState('');
 
   const onSubmit = async (e) => {
     e.preventDefault();
     const form = e.currentTarget;
+    if (!projectType) {
+      setStatus('validation');
+      return;
+    }
     setStatus('sending');
 
     try {
@@ -33,6 +112,7 @@ function ContactForm() {
       if (!res.ok || !result.success) throw new Error(result.message || String(res.status));
 
       setStatus('sent');
+      setProjectType('');
       form.reset();
     } catch {
       setStatus('error');
@@ -63,13 +143,8 @@ function ContactForm() {
       </div>
       <label className="flex flex-col gap-2">
         <span className={labelCls}>I’m reaching out about</span>
-        <select className={inputCls} name="project_type" defaultValue="" required>
-          <option value="" disabled>Select an option</option>
-          <option value="Website or product">Website or product</option>
-          <option value="Freelance project">Freelance project</option>
-          <option value="Full-time role">Full-time role</option>
-          <option value="Something else">Something else</option>
-        </select>
+        <ProjectTypeSelect value={projectType} onChange={value => { setProjectType(value); setStatus('idle'); }} invalid={status === 'validation'} />
+        {status === 'validation' && <span className="font-mono text-[10px] text-red-300/80">Please choose what you’re reaching out about.</span>}
       </label>
       <label className="flex flex-col gap-2">
         <span className={labelCls}>Project details</span>
@@ -121,25 +196,7 @@ export default function Contact() {
             >
               Open to select freelance opportunities, full-time roles, and interesting conversations.
             </p>
-            <div className="mono-label mb-3">Email</div>
-            <div className="flex items-center gap-4 flex-wrap">
-              <a
-                href="mailto:1080patelharshil@gmail.com"
-                className="block text-text-bright no-underline break-words hover:underline"
-                style={{
-                  fontSize: 'clamp(19px,2vw,32px)',
-                  fontWeight: 600,
-                  letterSpacing: '-0.03em',
-                  lineHeight: 1.05,
-                  textDecorationThickness: '2px',
-                  textUnderlineOffset: '8px',
-                }}
-              >
-                1080patelharshil@gmail.com
-              </a>
-              <CopyButton text="1080patelharshil@gmail.com" />
-            </div>
-            <div className="flex flex-wrap gap-x-7 gap-y-4 mt-10 mb-8">
+            <div className="flex flex-wrap gap-x-7 gap-y-4 mb-8">
               <div className="font-mono text-[12px] tracking-[.12em] text-text-faint">
                 BHARUCH, GUJARAT — IN
               </div>

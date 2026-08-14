@@ -41,7 +41,7 @@ function Sky({ theme, detail }) {
   );
 }
 
-/* ── Sun + fill, with the shadow camera chasing the player ─────── */
+/* ── Sun + fill ───────────────────────────────────────────────── */
 export function LightRig({ theme, focus }) {
   const sun = useRef();
   const target = useMemo(() => new THREE.Object3D(), []);
@@ -60,11 +60,7 @@ export function LightRig({ theme, focus }) {
       <ambientLight color={theme.amb} intensity={theme.ambI} />
       <hemisphereLight args={[theme.hemiSky, theme.hemiGround, theme.hemiI]} />
       <directionalLight
-        ref={sun} color={theme.sun} intensity={theme.sunI} castShadow target={target}
-        shadow-mapSize={[1024, 1024]} shadow-bias={-0.0009} shadow-normalBias={0.05}
-        shadow-camera-left={-46} shadow-camera-right={46}
-        shadow-camera-top={46} shadow-camera-bottom={-46}
-        shadow-camera-near={1} shadow-camera-far={220}
+        ref={sun} color={theme.sun} intensity={theme.sunI} target={target}
       />
       <primitive object={target} />
       {/* cool bounce from the opposite side so shadowed bodywork isn't dead */}
@@ -396,9 +392,9 @@ export default function World({ circuit, theme }) {
       {/* road + surroundings */}
       <mesh geometry={geo.skirtL} material={runoffMat} />
       <mesh geometry={geo.skirtR} material={runoffMat} />
-      <mesh geometry={geo.runoffL} material={runoffMat} receiveShadow />
-      <mesh geometry={geo.runoffR} material={runoffMat} receiveShadow />
-      <mesh geometry={geo.road} material={roadMat} receiveShadow />
+      <mesh geometry={geo.runoffL} material={runoffMat} />
+      <mesh geometry={geo.runoffR} material={runoffMat} />
+      <mesh geometry={geo.road} material={roadMat} />
       <mesh geometry={geo.wallL} material={barrierMat} />
       <mesh geometry={geo.wallR} material={barrierMat} />
 

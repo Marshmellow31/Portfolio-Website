@@ -54,7 +54,7 @@ export function raceReference(circuit) {
   for (let i = 0; i < N; i++) {
     const c = Math.abs(lineCurv[i]);
     // banking adds usable lateral grip in the turns
-    const grip = A_LAT * (1 + Math.tan(at(i).bank) * 1.6);
+    const grip = A_LAT * (circuit.def.aiGrip || 1) * (1 + Math.tan(at(i).bank) * 1.6);
     v[i] = c < 1e-5 ? Infinity : Math.sqrt(grip / c);
   }
   for (let pass = 0; pass < 2; pass++) {
@@ -64,7 +64,7 @@ export function raceReference(circuit) {
     }
     for (let i = 0; i < N; i++) {
       const prv = v[(i - 1 + N) % N];
-      v[i] = Math.min(v[i], Math.sqrt(prv * prv + 2 * A_ACCEL * step));
+      v[i] = Math.min(v[i], Math.sqrt(prv * prv + 2 * A_ACCEL * (circuit.def.aiAccel || 1) * step));
     }
   }
 
@@ -88,7 +88,7 @@ export function createField(circuit, count, topSpeed) {
   return Array.from({ length: count }, (_, i) => {
     const row = i + 1;                            // player starts on pole slot 0
     const [color, helmet] = COLORS[i % COLORS.length];
-    return {
+    const ai = {
       id: i,
       name: NAMES[i % NAMES.length],
       color, helmet,
@@ -102,17 +102,31 @@ export function createField(circuit, count, topSpeed) {
       lap: -1,
       lastS: startS - 12 - row * 9,
       // personality
-      pace: 0.955 + (i % 5) * 0.012,              // fraction of the reference speed
+      pace: (0.97 + (i % 5) * 0.014) * (circuit.def.aiPace || 1),
       aggression: 0.35 + ((i * 7) % 10) / 14,
       wobble: 0.5 + ((i * 3) % 7) / 8,
       phase: i * 1.7,
-      top: topSpeed * (0.93 + (i % 4) * 0.022),
+      top: topSpeed * (0.95 + (i % 4) * 0.02) * (circuit.def.aiTop || 1),
+      accel: circuit.def.aiAccel || 1,
       // render state
       x: 0, y: 0, z: 0, ang: 0, roll: 0, pitch: 0, wheelSpin: 0, steer: 0,
       braking: false, drifting: false, slip: 0,
       finished: false, finishTime: 0,
       _ref: ref,
     };
+
+    // The grid is visible during the ready/countdown phases, before stepRival
+    // runs. Seed the complete world transform now so rivals start in their
+    // staggered slots behind the player instead of briefly sitting at origin.
+    const f = circuit.frameAt(ai.s);
+    ai.x = f.x + f.nx * ai.lat;
+    ai.z = f.z + f.nz * ai.lat;
+    ai.y = surfaceY(f, ai.lat);
+    ai.ang = f.ang;
+    ai.roll = Math.atan(f.tilt);
+    ai.pitch = -Math.atan(f.grade);
+
+    return ai;
   });
 }
 
@@ -169,7 +183,7 @@ export function stepRival(ai, circuit, dt, traffic, t) {
   /* ── longitudinal response ── */
   const dv = target - ai.v;
   const rate = dv > 0
-    ? A_ACCEL * (1 - Math.min(0.75, (ai.v / ai.top) ** 2 * 0.75))
+    ? A_ACCEL * ai.accel * (1 - Math.min(0.75, (ai.v / ai.top) ** 2 * 0.75))
     : A_BRAKE * 1.15;
   ai.braking = dv < -1.5;
   ai.v += Math.max(-rate * dt, Math.min(rate * dt, dv));

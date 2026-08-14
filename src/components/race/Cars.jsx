@@ -29,7 +29,7 @@ function Wheel({ r = 0.34, w = 0.34, rim = '#b9bcc4', spin, discRef }) {
   return (
     <group ref={spin}>
       {/* tyre + rim + spokes + caliper, merged into one draw call */}
-      <mesh geometry={geo} castShadow>
+      <mesh geometry={geo}>
         <meshStandardMaterial vertexColors metalness={0.45} roughness={0.55} />
       </mesh>
       {/* brake disc — separate only because it glows under braking */}
@@ -106,18 +106,18 @@ export function PlayerF1({ carRef, accent = '#FF7C00' }) {
   return (
     <group ref={group}>
       <group ref={body}>
-        <mesh geometry={tubGeo} castShadow>
+        <mesh geometry={tubGeo}>
           <meshStandardMaterial color={accent} metalness={0.5} roughness={0.26} />
         </mesh>
         {/* floor plank */}
-        <mesh position={[0, 0.09, -0.1]} receiveShadow>
+        <mesh position={[0, 0.09, -0.1]}>
           <boxGeometry args={[1.55, 0.06, 4.4]} />
           <meshStandardMaterial color={CARBON} roughness={0.9} />
         </mesh>
         {/* sidepods */}
         {[-0.62, 0.62].map((x) => (
           <group key={x} position={[x, 0, -0.25]}>
-            <mesh geometry={podGeo} castShadow>
+            <mesh geometry={podGeo}>
               <meshStandardMaterial color={accent} metalness={0.45} roughness={0.28} />
             </mesh>
             <mesh position={[0, 0.42, 0.72]}>
@@ -131,7 +131,7 @@ export function PlayerF1({ carRef, accent = '#FF7C00' }) {
           <boxGeometry args={[0.48, 0.06, 0.86]} />
           <meshStandardMaterial color="#07080b" roughness={1} />
         </mesh>
-        <mesh position={[0, 0.80, 0.2]} castShadow>
+        <mesh position={[0, 0.80, 0.2]}>
           <sphereGeometry args={[0.16, 10, 8]} />
           <meshStandardMaterial color="#0b6cff" metalness={0.4} roughness={0.2} />
         </mesh>
@@ -144,7 +144,7 @@ export function PlayerF1({ carRef, accent = '#FF7C00' }) {
           <meshStandardMaterial color={CARBON} metalness={0.7} roughness={0.3} />
         </mesh>
         {/* airbox + shark fin */}
-        <mesh position={[0, 0.92, -0.2]} castShadow>
+        <mesh position={[0, 0.92, -0.2]}>
           <cylinderGeometry args={[0.16, 0.2, 0.3, 8]} />
           <meshStandardMaterial color={CARBON} roughness={0.5} />
         </mesh>
@@ -154,7 +154,7 @@ export function PlayerF1({ carRef, accent = '#FF7C00' }) {
         </mesh>
 
         {/* front wing */}
-        <mesh position={[0, 0.14, 2.5]} castShadow>
+        <mesh position={[0, 0.14, 2.5]}>
           <boxGeometry args={[1.95, 0.05, 0.56]} />
           <meshStandardMaterial color={CARBON} roughness={0.5} />
         </mesh>
@@ -163,7 +163,7 @@ export function PlayerF1({ carRef, accent = '#FF7C00' }) {
           <meshStandardMaterial color={accent} roughness={0.35} metalness={0.3} />
         </mesh>
         {[-0.97, 0.97].map((x) => (
-          <mesh key={x} position={[x, 0.27, 2.5]} castShadow>
+          <mesh key={x} position={[x, 0.27, 2.5]}>
             <boxGeometry args={[0.05, 0.32, 0.6]} />
             <meshStandardMaterial color={CARBON} roughness={0.45} />
           </mesh>
@@ -173,7 +173,7 @@ export function PlayerF1({ carRef, accent = '#FF7C00' }) {
           <boxGeometry args={[0.09, 0.55, 0.14]} />
           <meshStandardMaterial color={CARBON} roughness={0.5} />
         </mesh>
-        <mesh position={[0, 0.98, -2.18]} castShadow>
+        <mesh position={[0, 0.98, -2.18]}>
           <boxGeometry args={[1.55, 0.05, 0.44]} />
           <meshStandardMaterial color={CARBON} roughness={0.45} />
         </mesh>
@@ -184,7 +184,7 @@ export function PlayerF1({ carRef, accent = '#FF7C00' }) {
           </mesh>
         </group>
         {[-0.78, 0.78].map((x) => (
-          <mesh key={x} position={[x, 0.96, -2.18]} castShadow>
+          <mesh key={x} position={[x, 0.96, -2.18]}>
             <boxGeometry args={[0.05, 0.48, 0.52]} />
             <meshStandardMaterial color={accent} metalness={0.4} roughness={0.34} />
           </mesh>
@@ -279,7 +279,7 @@ export function PlayerCoupe({ carRef, paint = '#08D9D6', night = false }) {
   return (
     <group ref={group}>
       <group ref={body}>
-        <mesh geometry={shellGeo} castShadow>
+        <mesh geometry={shellGeo}>
           <meshStandardMaterial color={paint} metalness={0.62} roughness={0.18} />
         </mesh>
         {/* plain transparent glass — `transmission` looks marginally better
@@ -318,7 +318,7 @@ export function PlayerCoupe({ carRef, paint = '#08D9D6', night = false }) {
             <meshStandardMaterial color={CARBON} roughness={0.5} />
           </mesh>
         ))}
-        <mesh position={[0, 1.32, -1.95]} rotation={[0.2, 0, 0]} castShadow>
+        <mesh position={[0, 1.32, -1.95]} rotation={[0.2, 0, 0]}>
           <boxGeometry args={[1.86, 0.06, 0.5]} />
           <meshStandardMaterial color={CARBON} roughness={0.4} />
         </mesh>
@@ -422,7 +422,7 @@ export function RivalField({ fieldRef }) {
   return (
     <group>
       {bodies.map((geo, i) => (
-        <mesh key={i} geometry={geo} castShadow
+        <mesh key={i} geometry={geo}
           ref={(el) => { if (el) { el.rotation.order = 'YZX'; bodyRefs.current[i] = el; } }}>
           <meshStandardMaterial vertexColors metalness={0.4} roughness={0.34} />
         </mesh>

@@ -12,7 +12,9 @@ import {
 import { createField, stepRival, standings, raceReference } from '../lib/race-ai';
 import { detectQuality } from '../lib/quality';
 import World, { LightRig } from '../components/race/World';
-import { PlayerF1, PlayerCoupe, RivalField } from '../components/race/Cars';
+import {
+  PlayerF1, PlayerCoupe, RivalField, F1_WHEELS, COUPE_WHEELS,
+} from '../components/race/Cars';
 import { TyreSmoke, SkidMarks, Sparks, DirtKick } from '../components/race/Effects';
 
 /* ════════════════════════════════════════════════════════════════
@@ -96,6 +98,9 @@ function resetGame(g) {
    GameLoop — physics, race control, scoring, particle emission
    ═══════════════════════════════════════════════════════════════ */
 function GameLoop({ game, isMobile, smokeApi, skidApi, sparkApi, dirtApi }) {
+  const contactEuler = useMemo(() => new THREE.Euler(0, 0, 0, 'YZX'), []);
+  const contactOffset = useMemo(() => new THREE.Vector3(), []);
+
   useFrame(({ clock }, rawDt) => {
     const g = game.current;
     const dt = Math.min(rawDt, 0.04);
@@ -233,17 +238,34 @@ function GameLoop({ game, isMobile, smokeApi, skidApi, sparkApi, dirtApi }) {
     /* ── Surface following: height, roll, pitch ── */
     const fx = Math.sin(car.heading), fz = Math.cos(car.heading);
     const lx = Math.cos(car.heading), lz = -Math.sin(car.heading);
-    const targetY = surfaceY(p, dLat);
     // surface gradient = tilt across the track + grade along it
     const gx = p.tilt * p.nx + p.grade * Math.sin(p.ang);
     const gz = p.tilt * p.nz + p.grade * Math.cos(p.ang);
     const targetRoll = Math.atan(gx * lx + gz * lz);
     const targetPitch = -Math.atan(gx * fx + gz * fz);
     const kv = Math.min(1, dt * 14);
-    car.visY += (targetY - car.visY) * kv;
-    if (car.visY < targetY) car.visY = targetY;
     car.visRoll += (targetRoll - car.visRoll) * kv;
     car.visPitch += (targetPitch - car.visPitch) * kv;
+
+    /* Match the road at the four real tyre contact patches. The model uses a
+       YZX Euler order, so rotate each local contact point with that exact same
+       transform instead of approximating its height from pitch/roll. */
+    let targetY = surfaceY(p, dLat);
+    const wheels = g.isDrift ? COUPE_WHEELS : F1_WHEELS;
+    contactEuler.set(car.visPitch, car.heading, car.visRoll, 'YZX');
+    for (const wheel of wheels) {
+      contactOffset.set(wheel.x, 0, wheel.z).applyEuler(contactEuler);
+      const along = contactOffset.x * Math.sin(p.ang) + contactOffset.z * Math.cos(p.ang);
+      const wf = c.frameAt(g.s + along);
+      const worldX = car.x + contactOffset.x;
+      const worldZ = car.z + contactOffset.z;
+      const wheelLat = (worldX - wf.x) * wf.nx + (worldZ - wf.z) * wf.nz;
+      const roadY = surfaceY(wf, wheelLat);
+      targetY = Math.max(targetY, roadY - contactOffset.y + 0.012);
+    }
+    // Height must follow both rises and drops immediately. Smoothing only the
+    // downward movement was the source of the visible hovering after crests.
+    car.visY = targetY;
 
     /* ── Rival collisions ── */
     const cOff = 1.15, cR = 1.2, minD = cR * 2;
@@ -427,13 +449,12 @@ function ChaseCam({ game }) {
 
 /* ═══════════════════════════════════════════════════════════════
    AdaptiveQuality — keeps the frame rate up on whatever hardware is
-   running it. Drops render resolution first, and if that isn't enough
-   turns shadows off entirely rather than letting the game stutter.
+   running it. Drops render resolution when needed.
    ═══════════════════════════════════════════════════════════════ */
 function AdaptiveQuality({ quality }) {
   const { gl } = useThree();
   const maxDpr = quality.maxDpr;
-  const st = useRef({ t: 0, n: 0, dpr: maxDpr, shadows: quality.shadows, bad: 0 });
+  const st = useRef({ t: 0, n: 0, dpr: maxDpr });
 
   useFrame((_, dt) => {
     const s = st.current;
@@ -447,14 +468,8 @@ function AdaptiveQuality({ quality }) {
       if (s.dpr > quality.minDpr) {
         s.dpr = Math.max(quality.minDpr, s.dpr - 0.2);
         gl.setPixelRatio(Math.min(window.devicePixelRatio, s.dpr));
-      } else if (s.shadows && ++s.bad >= 2) {
-        // last resort: shadows are the single most expensive thing left
-        s.shadows = false;
-        gl.shadowMap.enabled = false;
-        gl.shadowMap.needsUpdate = true;
       }
     } else if (fps > 58 && s.dpr < maxDpr) {
-      s.bad = 0;
       s.dpr = Math.min(maxDpr, s.dpr + 0.1);
       gl.setPixelRatio(Math.min(window.devicePixelRatio, s.dpr));
     }
@@ -469,7 +484,6 @@ function Rig({ theme }) {
     if (import.meta.env.DEV) Object.assign(window, { __hpScene: scene, __hpGL: gl, __hpCam: camera });
     gl.toneMapping = THREE.ACESFilmicToneMapping;
     gl.toneMappingExposure = theme.exposure;
-    gl.shadowMap.type = THREE.PCFSoftShadowMap;
     const far = camera.far;
     scene.fog = new THREE.Fog(
       theme.fog,
@@ -570,10 +584,9 @@ export default function Drift() {
     path: '/drift',
   });
 
-  /* Nothing 3D exists until a circuit is picked: no spline is built, no
-     ribbons or scenery are generated, and the WebGL canvas isn't even
-     mounted. Opening the page costs a menu, not a track. */
-  const [circuitId, setCircuitId] = useState(null);
+  /* Playground opens directly on the race preview. The game remains in its
+     ready phase until the visitor explicitly accepts the play prompt. */
+  const [circuitId, setCircuitId] = useState('ridge');
   const circuit = useMemo(
     () => (circuitId ? buildCircuit(circuitById(circuitId)) : null),
     [circuitId],
@@ -785,7 +798,7 @@ export default function Drift() {
       {circuit && (
       <Canvas
         key={circuit.id}
-        shadows={quality.shadows}
+        shadows={false}
         camera={{ position: [0, 6, 40], fov: 55, near: 0.4, far: quality.far }}
         dpr={[quality.minDpr, quality.maxDpr]}
         gl={{ antialias: quality.antialias, powerPreference: 'high-performance', stencil: false }}
@@ -938,12 +951,16 @@ export default function Drift() {
         <div className="absolute inset-0 flex items-center justify-center z-20 px-4">
           <div className="text-center bg-black/55 backdrop-blur-xl border border-white/15 rounded-2xl px-8 py-7 shadow-2xl max-w-[460px] pointer-events-auto">
             <div className="font-mono text-[10px] tracking-[.3em] text-white/50 uppercase mb-3">
-              {isDrift ? 'Playground / Drift' : 'Playground / Race'}
+              Playground / {isDrift ? 'Drift' : 'Race'}
             </div>
-            <div className="text-white font-bold text-[26px] leading-tight mb-2" style={{ letterSpacing: '-0.02em' }}>
-              {circuit.name}
+            <div className="text-white font-bold text-[clamp(26px,4vw,38px)] leading-tight mb-3" style={{ letterSpacing: '-0.035em' }}>
+              Do you want to play this?
             </div>
-            <div className="font-mono text-[11px] text-white/60 mb-5">{circuit.def.blurb}</div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 mb-3">
+              <span className="h-1.5 w-1.5 rounded-full" style={{ background: isDrift ? DRIFT_PAINT : ACCENT }} />
+              <span className="font-mono text-[10px] tracking-[.14em] uppercase text-white/80">{circuit.name}</span>
+            </div>
+            <div className="font-mono text-[11px] text-white/55 mb-5 leading-relaxed">{circuit.def.blurb}</div>
             <div className="font-mono text-[11px] tracking-[.1em] text-white/70 leading-[2]">
               {touch
                 ? 'TAP ◀ ▶ TO STEER · AUTO THROTTLE'
@@ -957,7 +974,7 @@ export default function Drift() {
               className="mt-6 pointer-events-auto font-mono text-[12px] tracking-[.16em] uppercase font-bold border-none cursor-pointer px-8 py-3 rounded-full"
               style={{ background: isDrift ? DRIFT_PAINT : ACCENT, color: 'black' }}
             >
-              {isDrift ? 'Start session' : 'Start race'}
+              {isDrift ? 'Yes, start session' : 'Yes, start race'}
             </button>
             <button
               onClick={() => setPicker(true)}

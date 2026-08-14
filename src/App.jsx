@@ -150,7 +150,7 @@ export default function App() {
             )}
             <div className="flex items-center gap-3">
               <Link
-                to="/playground"
+                to="/drift"
                 className="group flex items-center gap-2 font-mono text-[11px] tracking-[.1em] uppercase text-white/70 hover:text-white no-underline bg-white/5 hover:bg-white/10 border border-white/10 rounded-full px-4 py-1.5 transition-all duration-300 backdrop-blur-md"
               >
                 <FaCamera className="text-[13px] opacity-80 group-hover:opacity-100 transition-opacity" />
@@ -179,7 +179,7 @@ export default function App() {
             position="right"
             items={[
               ...navLinks.map(item => ({ label: item.name, link: item.href || item.to || sectionHref(item.hash), download: item.download })),
-              { label: 'Playground', link: '/playground' },
+              { label: 'Playground', link: '/drift' },
             ]}
             colors={['#111114', '#1a1a1e']}
             displaySocials={false}

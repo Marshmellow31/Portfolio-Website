@@ -17,7 +17,10 @@
 
 import * as THREE from 'three';
 
-export const SEG = 4;               // target spacing between centreline points
+// One-metre samples keep the rendered triangles close enough to the same
+// continuous surface used by vehicle contact. The old four-metre ribbon could
+// visibly cut across a wheelbase on Ridge's short crest near the starting grid.
+export const SEG = 1;
 export const CURB = 1.5;            // curb width outside the white line
 export const RUNOFF = 9;            // grass/asphalt runoff before the barrier
 
@@ -42,29 +45,6 @@ function polarPoints(spec) {
   return spec.map(([deg, r, y = 0]) => new THREE.Vector3(
     Math.cos(deg * DEG) * r, y, Math.sin(deg * DEG) * r,
   ));
-}
-
-/* A true stadium oval (two straights + two 180° arcs), sampled dense
-   enough that the spline runs through it essentially exactly. */
-function ovalPoints(straight, radius, bankY = 0) {
-  const pts = [];
-  const push = (x, z, y = 0) => pts.push(new THREE.Vector3(x, y, z));
-  const arcSteps = 26, straightSteps = 10;
-  // right straight (heading +z)
-  for (let i = 0; i < straightSteps; i++) push(radius, (i / straightSteps) * straight);
-  // far turn
-  for (let i = 0; i <= arcSteps; i++) {
-    const a = (i / arcSteps) * Math.PI;
-    push(Math.cos(a) * radius, straight + Math.sin(a) * radius, Math.sin(a) * bankY);
-  }
-  // left straight (heading −z)
-  for (let i = 0; i < straightSteps; i++) push(-radius, straight - (i / straightSteps) * straight);
-  // near turn
-  for (let i = 0; i <= arcSteps; i++) {
-    const a = (i / arcSteps) * Math.PI;
-    push(-Math.cos(a) * radius, -Math.sin(a) * radius, Math.sin(a) * bankY);
-  }
-  return pts;
 }
 
 /* ── Circuit builder ───────────────────────────────────────────── */
@@ -266,23 +246,6 @@ export const THEMES = {
 
 export const CIRCUITS = [
   {
-    id: 'speedway',
-    name: 'Meridian Speedway',
-    blurb: 'Banked stadium oval · flat out · slipstream battles',
-    kind: 'race',
-    theme: 'sunset',
-    car: 'f1',
-    width: 30,
-    maxBank: 17,
-    bankK: 2600,
-    widen: 0,
-    laps: 4,
-    grid: 7,
-    startAt: 0.03,
-    scenery: { stands: true, towers: true, trees: 18, infieldPad: true, city: false },
-    points: () => ovalPoints(300, 130, 0),
-  },
-  {
     id: 'ridge',
     name: 'Ridge Grand Prix',
     blurb: 'Hillside road course · elevation, esses, two hairpins',
@@ -292,6 +255,10 @@ export const CIRCUITS = [
     width: 24,
     maxBank: 6,
     bankK: 700,
+    aiGrip: 1.22,
+    aiAccel: 1.2,
+    aiPace: 1.06,
+    aiTop: 1.04,
     laps: 3,
     grid: 7,
     startAt: 0.0,
@@ -304,30 +271,6 @@ export const CIRCUITS = [
       [198, 202, 10], [210, 162, 8], [224, 212, 5], [238, 300, 2],
       [252, 380, 0], [266, 420, -2], [280, 432, -3], [294, 380, -2],
       [308, 302, 0], [320, 242, 2], [332, 302, 3], [344, 402, 1],
-    ],
-  },
-  {
-    id: 'neon',
-    name: 'Neon Bay',
-    blurb: 'Night street circuit · walls close, no margin',
-    kind: 'race',
-    theme: 'night',
-    car: 'f1',
-    width: 20,
-    maxBank: 4,
-    bankK: 420,
-    laps: 3,
-    grid: 7,
-    startAt: 0.5,
-    scenery: { stands: false, towers: false, trees: 0, city: true, lamps: true },
-    polar: [
-      [0, 300, 0], [14, 296, 0], [28, 250, 1], [40, 170, 2],
-      [52, 142, 2], [66, 178, 1], [80, 244, 0], [94, 288, 0],
-      [108, 262, -1], [120, 186, -2], [132, 150, -2], [146, 190, -1],
-      [160, 258, 0], [174, 300, 1], [188, 286, 2], [202, 214, 3],
-      [214, 158, 4], [226, 148, 3], [240, 196, 2], [254, 268, 1],
-      [268, 302, 0], [282, 284, 0], [296, 214, 1], [308, 156, 2],
-      [320, 168, 1], [332, 232, 0], [346, 288, 0],
     ],
   },
   {

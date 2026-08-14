@@ -177,13 +177,13 @@ export default function Contact() {
         className="w-full"
         style={{ padding: 'clamp(32px,4vw,64px) clamp(20px,6vw,96px) clamp(64px,8vw,120px)' }}
       >
-        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.05fr)_minmax(420px,.95fr)] gap-14 xl:gap-24 items-start max-w-[1680px] mx-auto">
-          <Reveal>
-            <div className="mono-label mb-7">Contact</div>
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.05fr)_minmax(420px,.95fr)] gap-10 xl:gap-16 items-stretch max-w-[1680px] mx-auto">
+          <Reveal className="h-full flex flex-col">
+            <div className="mono-label mb-5">Contact</div>
             <h1
-              className="m-0 mb-6 font-bold text-text-bright"
+              className="m-0 mb-4 font-bold text-text-bright"
               style={{
-                fontSize: 'clamp(48px,6vw,100px)',
+                fontSize: 'clamp(44px,4.4vw,82px)',
                 letterSpacing: '-0.045em',
                 lineHeight: 0.92,
               }}
@@ -191,21 +191,21 @@ export default function Contact() {
               LET'S BUILD<br />SOMETHING
             </h1>
             <p
-              className="m-0 text-text-muted max-w-lg mb-14"
+              className="m-0 text-text-muted max-w-lg mb-6"
               style={{ fontSize: 'clamp(16px,1.4vw,20px)', lineHeight: 1.6 }}
             >
               Open to select freelance opportunities, full-time roles, and interesting conversations.
             </p>
-            <div className="flex flex-wrap gap-x-7 gap-y-4 mb-8">
+            <div className="flex flex-wrap gap-x-7 gap-y-4 mb-5">
               <div className="font-mono text-[12px] tracking-[.12em] text-text-faint">
                 BHARUCH, GUJARAT — IN
               </div>
             </div>
-            <SocialOrbit3D />
+            <SocialOrbit3D className="flex-1" />
           </Reveal>
 
-          <Reveal>
-            <div className="border border-border bg-surface/70 rounded-xl p-6 sm:p-8 lg:p-10">
+          <Reveal className="h-full">
+            <div className="h-full border border-border bg-surface/70 rounded-xl p-6 sm:p-8 lg:p-[clamp(28px,2.5vw,40px)]">
               <div className="mono-label mb-4">Start a conversation</div>
               <h2 className="m-0 mb-3 text-text-bright text-[clamp(24px,2vw,34px)] font-semibold tracking-[-.03em]">Tell me what you have in mind.</h2>
               <p className="m-0 mb-8 text-text-muted text-[14px] leading-6">Share a few details and I’ll get back to you with a clear next step.</p>

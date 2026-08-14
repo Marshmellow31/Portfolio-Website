@@ -1,54 +1,37 @@
 import { useState } from 'react';
 import { Reveal } from '../components/Reveal/Reveal';
-import Folder from '../components/Folder/Folder';
 import CopyButton from '../components/CopyButton';
-import { FaGithub, FaLinkedin, FaInstagram } from 'react-icons/fa';
+import SocialOrbit3D from '../components/SocialOrbit3D';
 import useSEO from '../utils/useSEO';
 
-const socialLinks = [
-  { icon: <FaGithub size={22} color="#111" />, href: 'https://github.com/Marshmellow31', label: 'GitHub' },
-  { icon: <FaLinkedin size={22} color="#111" />, href: 'https://linkedin.com/in/harshil-patel-5a7373333', label: 'LinkedIn' },
-  { icon: <FaInstagram size={22} color="#111" />, href: 'https://www.instagram.com/harshil_3105_/', label: 'Instagram' },
-];
-
-const paperItems = socialLinks.map(s => (
-  <a
-    key={s.label}
-    href={s.href}
-    target="_blank"
-    rel="noreferrer"
-    aria-label={s.label}
-    onClick={e => e.stopPropagation()}
-    style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}
-  >
-    {s.icon}
-  </a>
-));
-
 const inputCls =
-  'w-full bg-surface border border-border rounded-[6px] px-4 py-3 text-[14px] text-text placeholder:text-text-faint outline-none focus:border-white/40 transition-colors font-sans';
+  'w-full bg-bg border border-border rounded-[6px] px-4 py-3.5 text-[14px] text-text placeholder:text-text-faint outline-none focus:border-white/50 transition-colors font-sans';
+const labelCls = 'font-mono text-[10px] uppercase tracking-[.16em] text-text-dim';
+
+const WEB3FORMS_ACCESS_KEY = 'e0bef498-6aa0-41c4-915c-b6e640cdec9b';
 
 function ContactForm() {
   const [status, setStatus] = useState('idle'); // idle | sending | sent | error
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    const form = e.target;
-    if (form._honey.value) return; // bot
+    const form = e.currentTarget;
     setStatus('sending');
+
     try {
-      const res = await fetch('https://formsubmit.co/ajax/1080patelharshil@gmail.com', {
+      const formData = new FormData(form);
+      formData.append('access_key', WEB3FORMS_ACCESS_KEY);
+      formData.append('subject', `Portfolio inquiry from ${formData.get('name')}`);
+      formData.append('from_name', 'Harshil Patel Portfolio');
+
+      const res = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          name: form.name.value,
-          email: form.email.value,
-          message: form.message.value,
-          _subject: `Portfolio inquiry from ${form.name.value}`,
-          _captcha: 'false',
-        }),
+        body: formData,
       });
-      if (!res.ok) throw new Error(String(res.status));
+
+      const result = await res.json();
+      if (!res.ok || !result.success) throw new Error(result.message || String(res.status));
+
       setStatus('sent');
       form.reset();
     } catch {
@@ -66,21 +49,41 @@ function ContactForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-4">
-      <input type="text" name="_honey" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
+    <form onSubmit={onSubmit} className="flex flex-col gap-5">
+      <input type="checkbox" name="botcheck" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
       <div className="grid sm:grid-cols-2 gap-4">
-        <input className={inputCls} name="name" type="text" placeholder="Your name" required maxLength={120} />
-        <input className={inputCls} name="email" type="email" placeholder="Your email" required maxLength={200} />
+        <label className="flex flex-col gap-2">
+          <span className={labelCls}>Name</span>
+          <input className={inputCls} name="name" type="text" placeholder="Your name" required maxLength={120} autoComplete="name" />
+        </label>
+        <label className="flex flex-col gap-2">
+          <span className={labelCls}>Email</span>
+          <input className={inputCls} name="email" type="email" placeholder="you@example.com" required maxLength={200} autoComplete="email" />
+        </label>
       </div>
-      <textarea className={inputCls} name="message" rows={5} placeholder="What are we building?" required maxLength={4000} style={{ resize: 'vertical' }} />
-      <div className="flex items-center gap-4 flex-wrap">
+      <label className="flex flex-col gap-2">
+        <span className={labelCls}>I’m reaching out about</span>
+        <select className={inputCls} name="project_type" defaultValue="" required>
+          <option value="" disabled>Select an option</option>
+          <option value="Website or product">Website or product</option>
+          <option value="Freelance project">Freelance project</option>
+          <option value="Full-time role">Full-time role</option>
+          <option value="Something else">Something else</option>
+        </select>
+      </label>
+      <label className="flex flex-col gap-2">
+        <span className={labelCls}>Project details</span>
+        <textarea className={inputCls} name="message" rows={6} placeholder="Tell me about the idea, timeline, and what success looks like." required maxLength={4000} style={{ resize: 'vertical' }} />
+      </label>
+      <div className="flex items-center justify-between gap-4 flex-wrap pt-1">
         <button
           type="submit"
           disabled={status === 'sending'}
-          className="inline-flex items-center justify-center bg-text text-bg border-none text-[13px] font-semibold px-[26px] h-[46px] rounded-[4px] cursor-pointer transition-colors hover:bg-white disabled:opacity-50 disabled:cursor-wait"
+          className="inline-flex items-center justify-center bg-text text-bg border-none text-[13px] font-semibold px-[26px] h-[48px] rounded-[4px] cursor-pointer transition-colors hover:bg-white disabled:opacity-50 disabled:cursor-wait"
         >
-          {status === 'sending' ? 'Sending…' : 'Send message'}
+          {status === 'sending' ? 'Sending…' : 'Send inquiry →'}
         </button>
+        {status !== 'error' && <span className="font-mono text-[10px] uppercase tracking-[.12em] text-text-faint">Usually replies within 24 hours</span>}
         {status === 'error' && (
           <span className="font-mono text-[11px] text-text-dim">
             Couldn't send — email me directly instead.
@@ -97,14 +100,9 @@ export default function Contact() {
     <div className="min-h-screen flex flex-col justify-center pt-20">
       <section
         className="w-full"
-        /* pt-20 on the wrapper already clears the fixed header — keep the
-           section's own top padding light so the centered block sits centered */
         style={{ padding: 'clamp(32px,4vw,64px) clamp(20px,6vw,96px) clamp(64px,8vw,120px)' }}
       >
-        {/* Two-column grid — collapses to single column below lg */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-
-          {/* ── Left: text content ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.05fr)_minmax(420px,.95fr)] gap-14 xl:gap-24 items-start max-w-[1680px] mx-auto">
           <Reveal>
             <div className="mono-label mb-7">Contact</div>
             <h1
@@ -118,19 +116,20 @@ export default function Contact() {
               LET'S BUILD<br />SOMETHING
             </h1>
             <p
-              className="m-0 text-text-muted max-w-lg mb-12"
+              className="m-0 text-text-muted max-w-lg mb-14"
               style={{ fontSize: 'clamp(16px,1.4vw,20px)', lineHeight: 1.6 }}
             >
               Open to select freelance opportunities, full-time roles, and interesting conversations.
             </p>
-            <div className="flex items-center gap-4 sm:gap-6 flex-wrap">
+            <div className="mono-label mb-3">Email</div>
+            <div className="flex items-center gap-4 flex-wrap">
               <a
                 href="mailto:1080patelharshil@gmail.com"
                 className="block text-text-bright no-underline break-words hover:underline"
                 style={{
-                  fontSize: 'clamp(20px,3vw,52px)',
-                  fontWeight: 700,
-                  letterSpacing: '-0.04em',
+                  fontSize: 'clamp(19px,2vw,32px)',
+                  fontWeight: 600,
+                  letterSpacing: '-0.03em',
                   lineHeight: 1.05,
                   textDecorationThickness: '2px',
                   textUnderlineOffset: '8px',
@@ -140,41 +139,21 @@ export default function Contact() {
               </a>
               <CopyButton text="1080patelharshil@gmail.com" />
             </div>
-            <div className="flex flex-wrap gap-7 mt-12">
-              <a href="https://github.com/Marshmellow31" target="_blank" rel="noreferrer"
-                className="font-mono text-[12px] tracking-[.12em] text-text-dim no-underline hover:text-text transition-colors">
-                GITHUB ↗
-              </a>
-              <a href="https://linkedin.com/in/harshil-patel-5a7373333" target="_blank" rel="noreferrer"
-                className="font-mono text-[12px] tracking-[.12em] text-text-dim no-underline hover:text-text transition-colors">
-                LINKEDIN ↗
-              </a>
-              <a href="https://www.instagram.com/harshil_3105_/" target="_blank" rel="noreferrer"
-                className="font-mono text-[12px] tracking-[.12em] text-text-dim no-underline hover:text-text transition-colors">
-                INSTAGRAM ↗
-              </a>
+            <div className="flex flex-wrap gap-x-7 gap-y-4 mt-10 mb-8">
               <div className="font-mono text-[12px] tracking-[.12em] text-text-faint">
                 BHARUCH, GUJARAT — IN
               </div>
             </div>
+            <SocialOrbit3D />
           </Reveal>
 
-          {/* ── Right: folder easter egg ── */}
-          <div className="hidden lg:flex items-end justify-center" style={{ minHeight: '260px', overflow: 'visible' }}>
-            <Folder
-              color="#d0d0d0"
-              size={2}
-              items={paperItems}
-            />
-          </div>
-
-        </div>
-
-        {/* ── Form: below text and folder ── */}
-        <div className="mt-16 max-w-2xl">
           <Reveal>
-            <div className="mono-label mb-5">Or write it here</div>
-            <ContactForm />
+            <div className="border border-border bg-surface/70 rounded-xl p-6 sm:p-8 lg:p-10">
+              <div className="mono-label mb-4">Start a conversation</div>
+              <h2 className="m-0 mb-3 text-text-bright text-[clamp(24px,2vw,34px)] font-semibold tracking-[-.03em]">Tell me what you have in mind.</h2>
+              <p className="m-0 mb-8 text-text-muted text-[14px] leading-6">Share a few details and I’ll get back to you with a clear next step.</p>
+              <ContactForm />
+            </div>
           </Reveal>
         </div>
       </section>

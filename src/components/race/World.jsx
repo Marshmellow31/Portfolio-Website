@@ -303,12 +303,19 @@ export default function World({ circuit, theme }) {
         towers.push({ p: [x, y, z] });
       }
     }
-    const lamps = [];
+    const lampPoles = [], lampArms = [], lampBulbs = [];
     if (sc.lamps) {
       for (let s = 0; s < lapLength; s += 46) {
         for (const side of [1, -1]) {
           const [x, y, z] = outsideAt(s, side * (pts[0].half + CURB + RUNOFF + 1.6), 0);
-          lamps.push({ p: [x, y, z], r: [0, angAt(s), 0], side });
+          const yaw = angAt(s);
+          const offset = (distance, height) => {
+            const localX = -side * distance;
+            return [x + Math.cos(yaw) * localX, y + height, z - Math.sin(yaw) * localX];
+          };
+          lampPoles.push({ p: [x, y + 3.4, z], r: [0, yaw, 0], s: [0.26, 6.8, 0.26] });
+          lampArms.push({ p: offset(1.1, 6.7), r: [0, yaw, 0], s: [2.4, 0.16, 0.3] });
+          lampBulbs.push({ p: offset(2.1, 6.5), r: [0, yaw, 0], s: [0.7, 0.16, 0.4] });
         }
       }
     }
@@ -358,7 +365,7 @@ export default function World({ circuit, theme }) {
       half: line.half + CURB + 1,
     };
 
-    return { stands, crowd, trees, markers, towers, lamps, city, containers, gantry };
+    return { stands, crowd, trees, markers, towers, lampPoles, lampArms, lampBulbs, city, containers, gantry };
   }, [circuit, def, sc, pts, N, lapLength, bounds, q.scenery]);
 
   const treeGeo = useMemo(() => (sc.trees ? buildTree() : null), [sc.trees]);
@@ -371,6 +378,12 @@ export default function World({ circuit, theme }) {
   const markerMat = useMemo(() => new THREE.MeshStandardMaterial({ roughness: 0.7 }), []);
   const treeMat = useMemo(() => new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.95, flatShading: true }), []);
   const containerMat = useMemo(() => new THREE.MeshStandardMaterial({ roughness: 0.85, metalness: 0.2 }), []);
+  const lampMat = useMemo(() => new THREE.MeshStandardMaterial({ color: '#3b3f47', roughness: 0.6, metalness: 0.45 }), []);
+  const lampBulbMat = useMemo(() => new THREE.MeshStandardMaterial({
+    color: '#fff0c0', emissive: '#ffdf9a', emissiveIntensity: theme.night ? 5 : 0.8,
+  }), [theme.night]);
+  useEffect(() => () => lampMat.dispose(), [lampMat]);
+  useEffect(() => () => lampBulbMat.dispose(), [lampBulbMat]);
   const cityMat = useMemo(() => (cityTex ? new THREE.MeshStandardMaterial({
     color: '#2a3140', roughness: 0.85,
     map: cityTex, emissiveMap: cityTex,
@@ -424,6 +437,9 @@ export default function World({ circuit, theme }) {
       {treeGeo && <Instances geometry={treeGeo} material={treeMat} items={scene.trees} />}
       {cityMat && <Instances geometry={boxGeo} material={cityMat} items={scene.city} />}
       <Instances geometry={boxGeo} material={containerMat} items={scene.containers} />
+      <Instances geometry={boxGeo} material={lampMat} items={scene.lampPoles} />
+      <Instances geometry={boxGeo} material={lampMat} items={scene.lampArms} />
+      <Instances geometry={boxGeo} material={lampBulbMat} items={scene.lampBulbs} />
 
       {/* light towers */}
       {scene.towers.map((t, i) => (
@@ -440,31 +456,6 @@ export default function World({ circuit, theme }) {
         </group>
       ))}
 
-      {/* street lamps */}
-      {scene.lamps.map((l, i) => (
-        <group key={i} position={l.p} rotation={[0, l.r[1], 0]}>
-          <mesh position={[0, 3.4, 0]}>
-            <cylinderGeometry args={[0.12, 0.16, 6.8, 6]} />
-            <meshStandardMaterial color="#3b3f47" roughness={0.6} metalness={0.5} />
-          </mesh>
-          <mesh position={[-l.side * 1.1, 6.7, 0]}>
-            <boxGeometry args={[2.4, 0.16, 0.3]} />
-            <meshStandardMaterial color="#3b3f47" roughness={0.6} />
-          </mesh>
-          <mesh position={[-l.side * 2.1, 6.5, 0]}>
-            <boxGeometry args={[0.7, 0.16, 0.4]} />
-            <meshStandardMaterial color="#fff0c0" emissive="#ffdf9a"
-              emissiveIntensity={theme.night ? 5 : 0.8} />
-          </mesh>
-          {theme.night && q.detail > 0 && (
-            <mesh position={[-l.side * 2.1, 3.4, 0]} rotation={[Math.PI, 0, 0]}>
-              <coneGeometry args={[3.2, 6.4, 10, 1, true]} />
-              <meshBasicMaterial color="#ffe6ad" transparent opacity={0.045}
-                depthWrite={false} side={THREE.DoubleSide} />
-            </mesh>
-          )}
-        </group>
-      ))}
     </group>
   );
 }

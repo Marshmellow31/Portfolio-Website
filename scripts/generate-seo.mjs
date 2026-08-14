@@ -381,49 +381,13 @@ const routes = [
     },
   },
   {
-    path: '/playground', priority: 0.5,
-    title: 'Playground',
-    description: 'Webcam hand-tracking physics playground — pinch, grab, and throw objects with your hands.',
-    lastmod: lastmodOf('src/pages/Playground.jsx'),
-    body: simpleBody(
-      'Playground — webcam hand-tracking physics',
-      'Webcam hand-tracking physics playground — pinch, grab, and throw objects with your hands. Runs entirely in the browser with MediaPipe; no video ever leaves your device.',
-    ),
-    jsonLd: {
-      '@context': 'https://schema.org',
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
-        { '@type': 'ListItem', position: 2, name: 'Playground', item: `${SITE_URL}/playground` },
-      ],
-    },
-  },
-  {
-    path: '/drive', priority: 0.5,
-    title: 'Drive',
-    description: 'A playable arcade racer hidden in the portfolio. The world is gray until you drive.',
-    lastmod: lastmodOf('src/pages/Drive.jsx'),
-    body: simpleBody(
-      'Drive — an arcade racer hidden in the portfolio',
-      'A playable arcade racer hidden in the portfolio. The world is gray until you drive. Built with React Three Fiber.',
-    ),
-    jsonLd: {
-      '@context': 'https://schema.org',
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
-        { '@type': 'ListItem', position: 2, name: 'Drive', item: `${SITE_URL}/drive` },
-      ],
-    },
-  },
-  {
     path: '/drift', priority: 0.5,
     title: 'Race',
     description: 'A pocket F1 car flat-out on a banked superspeedway oval. Chase lap times, kiss the wall, light up the tyres.',
-    lastmod: lastmodOf('src/pages/Drift.jsx', 'src/lib/drift-track.js'),
+    lastmod: lastmodOf('src/pages/Drift.jsx'),
     body: simpleBody(
       'Race — a pocket F1 car on a banked superspeedway',
-      'A pocket F1 car flat-out on a banked superspeedway oval. Chase lap times, kiss the wall, light up the tyres. Built with React Three Fiber and Rapier physics.',
+      'A pocket F1 car flat-out on a banked superspeedway oval. Chase lap times, kiss the wall, light up the tyres. Built with React Three Fiber.',
     ),
     jsonLd: {
       '@context': 'https://schema.org',

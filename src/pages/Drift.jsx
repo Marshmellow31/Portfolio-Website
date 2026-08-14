@@ -301,9 +301,13 @@ function GameLoop({ game, isMobile, smokeApi, skidApi, sparkApi, dirtApi }) {
 
     /* ── Standings ── */
     if (!g.isDrift) {
-      const rows = standings(c, { lap: g.lap, s: g.s }, g.field);
-      g.position = rows.findIndex((r) => r.player) + 1;
-      g.rows = rows;
+      g._standTimer = (g._standTimer || 0) + dt;
+      if (g._standTimer >= 0.1 || !g.rows) {
+        g._standTimer = 0;
+        const rows = standings(c, { lap: g.lap, s: g.s }, g.field);
+        g.position = rows.findIndex((r) => r.player) + 1;
+        g.rows = rows;
+      }
     }
 
     /* ── Drift scoring ── */
@@ -356,7 +360,10 @@ function GameLoop({ game, isMobile, smokeApi, skidApi, sparkApi, dirtApi }) {
 
     const surfAt = (ox, oz) => surfaceY(p, dLat + p.nx * ox + p.nz * oz);
     const rx = -fz, rz = fx;
-    if (car.drifting && onRoad) {
+    g._trailTimer = (g._trailTimer || 0) + dt;
+    const emitTrail = g._trailTimer >= 1 / 30;
+    if (emitTrail) g._trailTimer %= 1 / 30;
+    if (emitTrail && car.drifting && onRoad) {
       const amt = Math.max(car.slip, input.brake ? 0.25 : 0);
       for (const side of [-0.85, 0.85]) {
         const ox = -fx * 1.4 + rx * side, oz = -fz * 1.4 + rz * side;
@@ -368,7 +375,7 @@ function GameLoop({ game, isMobile, smokeApi, skidApi, sparkApi, dirtApi }) {
     if (!g.isDrift && car.speed > MAX_SPEED * 0.78 && Math.random() > 0.72) {
       sparkApi.current?.emit(car.x - fx * 1.9, surfAt(-fx * 1.9, -fz * 1.9) + 0.08, car.z - fz * 1.9, car.vx, car.vz, 2);
     }
-    if (!onRoad && car.speed > 5) {
+    if (emitTrail && !onRoad && car.speed > 5) {
       dirtApi.current?.emit(car.x - fx * 0.6, surfAt(-fx * 0.6, -fz * 0.6), car.z - fz * 0.6);
     }
   }, -3);
@@ -760,7 +767,7 @@ export default function Drift() {
         setPopup(dp);
         setTimeout(() => setPopup((q) => (q && q.id === dp.id ? null : q)), 2000);
       }
-    }, 70);
+    }, 100);
     return () => clearInterval(id);
   }, []);
 

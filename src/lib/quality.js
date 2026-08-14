@@ -32,7 +32,9 @@ export function detectQuality() {
 
   const software = SOFTWARE.test(renderer);
   const coarse = typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches;
-  const weak = (navigator.hardwareConcurrency || 4) <= 4;
+  const lowMemory = navigator.deviceMemory && navigator.deviceMemory <= 4;
+  const saveData = navigator.connection?.saveData === true;
+  const weak = (navigator.hardwareConcurrency || 4) <= 4 || lowMemory || saveData;
 
   cached = software
     ? {
@@ -46,12 +48,12 @@ export function detectQuality() {
     }
     : {
       tier: coarse || weak ? 'medium' : 'high', renderer, software,
-      maxDpr: coarse ? 1 : (weak ? 1.15 : 1.35), minDpr: 0.6,
-      shadows: true, antialias: !coarse,
+      maxDpr: coarse ? 0.9 : (weak ? 1 : 1.25), minDpr: 0.55,
+      shadows: true, antialias: !coarse && !weak,
       detail: 1,
       particles: coarse ? 0.6 : 1,
       scenery: coarse ? 0.6 : 1,
-      far: coarse ? 1100 : 1600,
+      far: coarse || weak ? 1000 : 1400,
     };
   return cached;
 }

@@ -8,7 +8,7 @@ import { workHistory, getProjectBySlug } from '../data/portfolio';
 import { testimonials } from '../data/testimonials';
 import useMediaQuery from '../utils/useMediaQuery';
 import useSEO from '../utils/useSEO';
-import { FaCamera, FaJava, FaDatabase, FaGithub, FaLinkedin } from 'react-icons/fa';
+import { FaJava, FaDatabase, FaGithub, FaLinkedin } from 'react-icons/fa';
 import { FaInstagram } from 'react-icons/fa6';
 import {
   SiTypescript, SiJavascript, SiPython, SiCplusplus, SiKotlin,
@@ -48,9 +48,8 @@ const stackIcons = [
   { Icon: SiEslint, color: '#4B32C3', name: 'ESLint' }
 ];
 
-// Desktop-only: keeps three.js + physics (the heaviest chunk) off phones
+// Desktop-only: keeps the animated background off phones.
 const StrandsBG = lazy(() => import('../components/StrandsBG/StrandsBG'));
-// 3D car teaser for /drive — lazy so three.js loads only when scrolled near
 const DriveTeaser = lazy(() => import('../components/DriveTeaser/DriveTeaser'));
 
 /* Per-letter stagger reveal for the hero name */
@@ -78,10 +77,8 @@ export default function Home() {
   const [openAccordion, setOpenAccordion] = useState(null);
   const reducedMotion = useReducedMotion();
   useSEO({ description: 'Full-stack developer at IIIT Vadodara shipping production web, mobile, and AI products for real businesses.', path: '/' });
-  // Defer the three.js chunk until the teaser is near the viewport
   const teaserRef = useRef(null);
   const teaserNear = useInView(teaserRef, { margin: '600px 0px', once: true });
-
   return (
     <div>
       {/* ──────────── HERO ──────────── */}
@@ -146,12 +143,6 @@ export default function Home() {
               className="inline-flex items-center justify-center bg-text text-bg no-underline text-[13px] font-semibold px-[26px] h-[46px] rounded-[4px] transition-colors hover:bg-white"
             >
               See projects
-            </a>
-            <a
-              href="/playground"
-              className="inline-flex items-center justify-center gap-2 text-text no-underline text-[13px] font-medium px-[26px] h-[46px] rounded-[4px] border border-border-strong transition-colors hover:border-white/50"
-            >
-              <FaCamera className="text-[15px]" /> Playground
             </a>
             <button
               onClick={() => window.dispatchEvent(new CustomEvent('hp-terminal-toggle'))}
@@ -450,7 +441,7 @@ export default function Home() {
         </Reveal>
       </section>
 
-      {/* ──────────── DRIVE TEASER ──────────── */}
+      {/* ──────────── F1 RACING TEASER ──────────── */}
       <section id="drive" className="section-pad border-b border-border">
         <Reveal className="mb-[clamp(32px,4vw,56px)]">
           <div className="mono-label mb-4">05 — Off the clock</div>

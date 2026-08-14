@@ -18,9 +18,13 @@ export function TyreSmoke({ api }) {
     x: 0, y: -999, z: 0, vx: 0, vy: 0, vz: 0, life: 0, max: 1, s: 0, rot: 0, spin: 0,
   })), []);
   const cursor = useRef(0);
+  // Run once on mount to move the pooled instances away from the origin,
+  // then sleep completely until the first emission.
+  const active = useRef(true);
 
   api.current = {
     emit(x, y, z, amt) {
+      active.current = true;
       const p = pool[cursor.current];
       cursor.current = (cursor.current + 1) % PUFF;
       p.x = x + (Math.random() - 0.5) * 0.6;
@@ -37,7 +41,7 @@ export function TyreSmoke({ api }) {
   };
 
   useFrame((_, dt) => {
-    if (!ref.current) return;
+    if (!ref.current || !active.current) return;
     let alive = 0;
     for (let i = 0; i < PUFF; i++) {
       const p = pool[i];
@@ -58,6 +62,7 @@ export function TyreSmoke({ api }) {
       ref.current.setMatrixAt(i, dummy.matrix);
     }
     ref.current.instanceMatrix.needsUpdate = true;
+    active.current = alive > 0;
     // fade the whole system out when only a few stale puffs remain
     if (mat.current) mat.current.opacity = 0.3 * Math.min(1, 0.35 + alive / 40);
   });
@@ -84,6 +89,7 @@ export function SkidMarks({ api }) {
     x: 0, y: -999, z: 0, heading: 0, roll: 0, life: 0, w: 0.15,
   })), []);
   const cursor = useRef(0);
+  const tick = useRef(0.1);
 
   api.current = {
     emit(x, y, z, heading, roll, heat = 1) {
@@ -99,6 +105,10 @@ export function SkidMarks({ api }) {
 
   useFrame((_, dt) => {
     if (!ref.current) return;
+    tick.current += dt;
+    if (tick.current < 0.1) return;
+    dt = tick.current;
+    tick.current = 0;
     for (let i = 0; i < SKID; i++) {
       const p = pool[i];
       if (p.life > 0) p.life -= dt;
@@ -129,9 +139,11 @@ export function Sparks({ api }) {
     x: 0, y: -999, z: 0, gy: 0, vx: 0, vy: 0, vz: 0, life: 0,
   })), []);
   const cursor = useRef(0);
+  const active = useRef(true);
 
   api.current = {
     emit(x, y, z, cvx, cvz, n = 3) {
+      active.current = true;
       for (let k = 0; k < n; k++) {
         const p = pool[cursor.current];
         cursor.current = (cursor.current + 1) % SPARK;
@@ -148,10 +160,12 @@ export function Sparks({ api }) {
   };
 
   useFrame((_, dt) => {
-    if (!ref.current) return;
+    if (!ref.current || !active.current) return;
+    let alive = 0;
     for (let i = 0; i < SPARK; i++) {
       const p = pool[i];
       if (p.life > 0) {
+        alive++;
         p.life -= dt;
         p.vy -= 15 * dt;
         p.x += p.vx * dt; p.y += p.vy * dt; p.z += p.vz * dt;
@@ -166,6 +180,7 @@ export function Sparks({ api }) {
       ref.current.setMatrixAt(i, dummy.matrix);
     }
     ref.current.instanceMatrix.needsUpdate = true;
+    active.current = alive > 0;
   });
 
   return (
@@ -185,9 +200,11 @@ export function DirtKick({ api, color = '#5a7d3a' }) {
     x: 0, y: -999, z: 0, gy: 0, vx: 0, vy: 0, vz: 0, life: 0, s: 0,
   })), []);
   const cursor = useRef(0);
+  const active = useRef(true);
 
   api.current = {
     emit(x, y, z) {
+      active.current = true;
       for (let k = 0; k < 2; k++) {
         const p = pool[cursor.current];
         cursor.current = (cursor.current + 1) % DIRT;
@@ -204,10 +221,12 @@ export function DirtKick({ api, color = '#5a7d3a' }) {
   };
 
   useFrame((_, dt) => {
-    if (!ref.current) return;
+    if (!ref.current || !active.current) return;
+    let alive = 0;
     for (let i = 0; i < DIRT; i++) {
       const p = pool[i];
       if (p.life > 0) {
+        alive++;
         p.life -= dt;
         p.vy -= 9.8 * dt;
         p.x += p.vx * dt; p.y += p.vy * dt; p.z += p.vz * dt;
@@ -220,6 +239,7 @@ export function DirtKick({ api, color = '#5a7d3a' }) {
       ref.current.setMatrixAt(i, dummy.matrix);
     }
     ref.current.instanceMatrix.needsUpdate = true;
+    active.current = alive > 0;
   });
 
   return (

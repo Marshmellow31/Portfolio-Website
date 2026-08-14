@@ -27,8 +27,6 @@ const Creative = lazy(() => import('./pages/Creative'));
 const Blog = lazy(() => import('./pages/Blog'));
 const BlogPost = lazy(() => import('./pages/BlogPost'));
 const NotFound = lazy(() => import('./pages/NotFound'));
-const Playground = lazy(() => import('./pages/Playground'));
-const Drive = lazy(() => import('./pages/Drive'));
 const Drift = lazy(() => import('./pages/Drift'));
 
 // Nav items — route links to pages + in-page anchors (Home sections)
@@ -66,8 +64,7 @@ export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const onHome = location.pathname === '/';
-  // Playground + Drive are their own full-viewport apps — hide the site nav + footer there.
-  const isPlayground = ['/playground', '/drive', '/drift'].includes(location.pathname);
+  const isRace = location.pathname === '/drift';
   // Matches Tailwind's `lg` breakpoint, which is what hides the mobile nav in CSS.
   const isMobileNav = useMediaQuery('(max-width: 1023.98px)');
 
@@ -102,8 +99,7 @@ export default function App() {
   return (
     <div className="min-h-screen text-text font-sans antialiased relative">
       {/* ──────────── NAVIGATION (desktop) ──────────── */}
-      {!isPlayground && (
-        <nav
+      {!isRace && <nav
           className="hidden lg:flex fixed top-0 left-0 right-0 z-[200] h-16 items-center justify-between px-[clamp(20px,4vw,48px)] transition-[background,border-color] duration-300"
           style={{
             background: isScrolled ? 'rgba(10,10,11,.72)' : 'rgba(10,10,11,0)',
@@ -168,11 +164,10 @@ export default function App() {
               </button>
             </div>
           </div>
-        </nav>
-      )}
+      </nav>}
 
       {/* ──────────── NAVIGATION (mobile — StaggeredMenu) ──────────── */}
-      {!isPlayground && isMobileNav && (
+      {!isRace && isMobileNav && (
         <Suspense fallback={null}>
           <StaggeredMenu
             isFixed
@@ -199,12 +194,10 @@ export default function App() {
       )}
 
       {/* scroll progress hairline */}
-      {!isPlayground && (
-        <motion.div
+      {!isRace && <motion.div
           className="fixed top-0 left-0 right-0 h-[2px] bg-white/60 z-[210] origin-left"
           style={{ scaleX: progress }}
-        />
-      )}
+      />}
 
       {/* ──────────── Page Content (fade-rise on route change) ──────────── */}
       <main id="main-content">
@@ -224,8 +217,6 @@ export default function App() {
               <Route path="/blog" element={<Blog />} />
               <Route path="/blog/:slug" element={<BlogPost />} />
               <Route path="/contact" element={<Contact />} />
-              <Route path="/playground" element={<Playground />} />
-              <Route path="/drive" element={<Drive />} />
               <Route path="/drift" element={<Drift />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
@@ -242,8 +233,7 @@ export default function App() {
       <FloatingTerminal />
 
       {/* ──────────── Footer ──────────── */}
-      {!isPlayground && (
-        <footer className="flex flex-wrap gap-y-3 gap-x-8 items-center justify-between px-[clamp(20px,6vw,96px)] py-7 border-t border-border">
+      {!isRace && <footer className="flex flex-wrap gap-y-3 gap-x-8 items-center justify-between px-[clamp(20px,6vw,96px)] py-7 border-t border-border">
           <div className="font-mono text-[11px] tracking-[.08em] text-text-faint">
             © 2026 Harshil Patel — built with React, coffee &amp; questionable sleep
           </div>
@@ -260,8 +250,7 @@ export default function App() {
           >
             BACK TO TOP ↑
           </a>
-        </footer>
-      )}
+      </footer>}
     </div>
   );
 }

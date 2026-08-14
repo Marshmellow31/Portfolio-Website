@@ -12,7 +12,6 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-import { detectQuality } from '../../lib/quality';
 import {
   extrudeProfile, buildRivalBody, buildRivalWheel, buildWheel,
   F1_PROFILE, COUPE_PROFILE, SIDEPOD_PROFILE, COUPE_GLASS_PROFILE,
@@ -240,7 +239,6 @@ export function PlayerF1({ carRef, accent = '#FF7C00' }) {
    Player drift coupe
    ═══════════════════════════════════════════════════════════════ */
 export function PlayerCoupe({ carRef, paint = '#08D9D6', night = false }) {
-  const q = detectQuality();
   const group = useRef();
   const body = useRef();
   const steer = [useRef(), useRef()];
@@ -289,13 +287,6 @@ export function PlayerCoupe({ carRef, paint = '#08D9D6', night = false }) {
           <meshStandardMaterial color="#0a1418" metalness={0.6} roughness={0.08}
             transparent opacity={0.72} />
         </mesh>
-        {/* arches over each wheel */}
-        {COUPE_WHEELS.map((w, i) => (
-          <mesh key={i} position={[w.x * 1.02, 0.66, w.z]} rotation={[0, 0, Math.PI / 2]}>
-            <torusGeometry args={[0.46, 0.07, 5, 9, Math.PI]} />
-            <meshStandardMaterial color="#0d0e12" roughness={0.75} />
-          </mesh>
-        ))}
         {/* splitter + diffuser + side skirts */}
         <mesh position={[0, 0.2, 2.06]}>
           <boxGeometry args={[1.76, 0.08, 0.42]} />
@@ -332,15 +323,6 @@ export function PlayerCoupe({ carRef, paint = '#08D9D6', night = false }) {
             <boxGeometry args={[0.44, 0.14, 0.06]} />
             <meshStandardMaterial color="#fdf6e0" emissive="#fff3d0"
               emissiveIntensity={night ? 4 : 0.6} />
-          </mesh>
-        ))}
-        {/* headlight beams — cheap cones rather than real spotlights, which
-            would need a target object parented into the moving car */}
-        {night && q.detail > 0 && [-0.56, 0.56].map((x) => (
-          <mesh key={x} position={[x, 0.6, 5.6]} rotation={[Math.PI / 2, 0, 0]}>
-            <coneGeometry args={[1.6, 7, 8, 1, true]} />
-            <meshBasicMaterial color="#fff0c8" transparent opacity={0.055}
-              depthWrite={false} side={THREE.DoubleSide} />
           </mesh>
         ))}
         {night && (

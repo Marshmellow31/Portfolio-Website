@@ -52,7 +52,7 @@ function SectionBlock({ group, index, first, inBand, alignEnd }) {
 export default function Projects() {
   useSEO({
     title: 'Projects',
-    description: `${selectedWork.length} projects across research, personal products, internships, and client work — payments, bookings, PWAs, native Android, embedded hardware, and AI tools, each with a full case study.`,
+    description: `${selectedWork.length} projects across personal products, academic work, research, internships, and client work — payments, databases, simulations, PWAs, native Android, embedded hardware, and AI tools, each with a full case study.`,
     path: '/projects',
   });
 
@@ -123,8 +123,8 @@ export default function Projects() {
 
         <div className="mt-[clamp(14px,2.2vh,24px)] flex flex-wrap items-end justify-between gap-x-12 gap-y-5">
           <p className="m-0 max-w-[52ch] text-text-dim text-[13.5px] md:text-[15px] leading-relaxed">
-            Published research, products I built because I wanted them to exist, internship work,
-            and paid client builds — every one of them opens into a full case study.
+            Products I built because I wanted them to exist, academic systems, published research,
+            internship work, and paid client builds — every one opens into a full case study.
           </p>
           <div className="flex gap-[clamp(24px,3vw,48px)]">
             {stats.map(([value, label]) => (

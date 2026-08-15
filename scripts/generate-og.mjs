@@ -52,6 +52,32 @@ const buf = Buffer.from(svg);
 await sharp(buf).jpeg({ quality: 92, chromaSubsampling: '4:4:4' }).toFile(path.join(ROOT, 'public/og-image.jpg'));
 await sharp(buf).webp({ quality: 92 }).toFile(path.join(ROOT, 'public/og-image.webp'));
 
+/* Route-specific creator card. It uses a real frame from the highest-viewed
+   reel, so the Creative page does not fall back to the generic engineering card. */
+const creativeOverlay = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">
+  <defs>
+    <linearGradient id="shade" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#000" stop-opacity="0.94"/>
+      <stop offset="0.64" stop-color="#000" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0.2"/>
+    </linearGradient>
+  </defs>
+  <rect width="${W}" height="${H}" fill="url(#shade)"/>
+  ${grid()}
+  <g font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+    <text x="72" y="210" fill="${MUTED}" font-size="27" font-weight="600" letter-spacing="4">AUTOMOTIVE CONTENT CREATOR</text>
+    <text x="68" y="332" fill="${FG}" font-size="96" font-weight="700" letter-spacing="-5">GUYWITHBLACK350</text>
+    <text x="72" y="434" fill="${FG}" font-size="58" font-weight="700" letter-spacing="-2">≈68M PUBLIC REEL VIEWS</text>
+    <text x="72" y="536" fill="${MUTED}" font-size="24" font-weight="500">Harshil Patel · @guywithblack350</text>
+  </g>
+</svg>`;
+
+await sharp(path.join(ROOT, 'public/instagram/three-generations-xuv.png'))
+  .resize(W, H, { fit: 'cover', position: 'centre' })
+  .composite([{ input: Buffer.from(creativeOverlay) }])
+  .jpeg({ quality: 92, chromaSubsampling: '4:4:4' })
+  .toFile(path.join(ROOT, 'public/creative-og.jpg'));
+
 /* App icons. iOS ignores a WebP apple-touch-icon and the manifest needs PNG
    for the Android install prompt, so cut both from the existing favicon. */
 const favicon = path.join(ROOT, 'public/favicon.webp');
@@ -62,4 +88,4 @@ await sharp(favicon).resize(180, 180).png(png).toFile(path.join(ROOT, 'public/ap
 await sharp(favicon).resize(192, 192).png(png).toFile(path.join(ROOT, 'public/icon-192.png'));
 await sharp(favicon).resize(512, 512).png(png).toFile(path.join(ROOT, 'public/icon-512.png'));
 
-console.log('OG: og-image.jpg + og-image.webp (1200×630), apple-touch-icon + icon-192 + icon-512 written');
+console.log('OG: site + Creative social cards (1200×630), apple-touch-icon + icon-192 + icon-512 written');

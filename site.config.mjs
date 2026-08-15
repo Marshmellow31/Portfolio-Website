@@ -35,5 +35,6 @@ export const AUTHOR = {
   knowsAbout: [
     'React', 'TypeScript', 'Node.js', 'Firebase', 'Kotlin',
     'Android Development', 'AI APIs', 'Three.js', 'Web Development',
+    'Automotive Content Creation', 'Social Media Strategy',
   ],
 };

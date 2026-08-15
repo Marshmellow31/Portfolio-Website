@@ -1,0 +1,95 @@
+{
+  "capturedAt": "2026-08-15",
+  "source": "Public Instagram Reels grid viewed from the authenticated account owner session",
+  "methodology": "Approximate total calculated from the rounded public view count shown for each accessible reel URL. Private reach, impressions, and plays are not included.",
+  "profile": {
+    "handle": "@guywithblack350",
+    "followers": 4314,
+    "publishedPosts": 485,
+    "accessibleReelUrls": 540
+  },
+  "aggregate": {
+    "totalViewsEstimate": 67683149,
+    "lowerEstimate": 66156599,
+    "upperEstimate": 69209699,
+    "averageViewsPerAccessibleReel": 125339,
+    "millionViewReels": 11,
+    "hundredThousandViewReels": 117,
+    "tenThousandViewReels": 372,
+    "topSixViews": 18000000
+  },
+  "viewBands": [
+    { "label": "1M+", "count": 11, "percentage": 2.0 },
+    { "label": "100K–999K", "count": 106, "percentage": 19.6 },
+    { "label": "10K–99K", "count": 255, "percentage": 47.2 },
+    { "label": "Under 10K", "count": 168, "percentage": 31.1 }
+  ],
+  "topReels": [
+    {
+      "rank": 1,
+      "title": "Three Generations of XUV",
+      "caption": "Three generations. Three different definitions of an XUV.",
+      "date": "8 Feb 2026",
+      "views": "4.7M views",
+      "viewCount": 4700000,
+      "image": "/instagram/three-generations-xuv.png",
+      "alt": "View from inside a Mahindra XUV illustrating three generations of XUV ownership",
+      "url": "https://www.instagram.com/guywithblack350/reel/DUgBbcRkuE5/"
+    },
+    {
+      "rank": 2,
+      "title": "Race Mode",
+      "caption": "Reverse gear or race mode?",
+      "date": "12 Sep 2025",
+      "views": "3.1M views",
+      "viewCount": 3100000,
+      "image": "/instagram/race-mode.png",
+      "alt": "Mahindra XUV interior reel asking viewers to choose reverse gear or race mode",
+      "url": "https://www.instagram.com/guywithblack350/reel/DOgdc2iDTry/"
+    },
+    {
+      "rank": 3,
+      "title": "IIT Bombay Setup",
+      "caption": "Shot at IIT Bombay with a full-power gaming setup.",
+      "date": "5 Nov 2025",
+      "views": "3M views",
+      "viewCount": 3000000,
+      "image": "/instagram/iit-bombay-gaming-setup.png",
+      "alt": "Gaming laptop setup filmed at IIT Bombay for a three million view Instagram reel",
+      "url": "https://www.instagram.com/guywithblack350/reel/DQqwjUQjQgL/"
+    },
+    {
+      "rank": 4,
+      "title": "XUV 700 Farewell",
+      "caption": "Isn't it beautiful?",
+      "date": "5 Jan 2026",
+      "views": "2.9M views",
+      "viewCount": 2900000,
+      "image": "/instagram/xuv-700-farewell.png",
+      "alt": "Black Mahindra XUV 700 featured in a farewell automotive reel",
+      "url": "https://www.instagram.com/guywithblack350/reel/DTHmeckjSyF/"
+    },
+    {
+      "rank": 5,
+      "title": "Defender 130",
+      "caption": "Until you notice it.",
+      "date": "27 Apr 2026",
+      "views": "2.3M views",
+      "viewCount": 2300000,
+      "image": "/instagram/defender-130.png",
+      "alt": "Land Rover Defender 130 parked outdoors in a viral automotive reel",
+      "url": "https://www.instagram.com/guywithblack350/reel/DXoKuTHj_fu/"
+    },
+    {
+      "rank": 6,
+      "title": "Seven Lives",
+      "caption": "Driving like physics is optional.",
+      "date": "8 Nov 2025",
+      "views": "2M views",
+      "viewCount": 2000000,
+      "image": "/instagram/seven-lives-driving.png",
+      "alt": "Night driving scene from the Seven Lives automotive reel",
+      "url": "https://www.instagram.com/guywithblack350/reel/DQzFq2yjdbF/"
+    }
+  ]
+}

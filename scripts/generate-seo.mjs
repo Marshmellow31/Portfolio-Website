@@ -22,6 +22,9 @@ import { blogPosts } from '../src/data/blog.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
+const INSTAGRAM_SNAPSHOT = JSON.parse(
+  await readFile(path.join(ROOT, 'src/data/instagram-snapshot.json'), 'utf8'),
+);
 // Origin hard-coded in index.html; rewritten to SITE_URL in every emitted file.
 const PLACEHOLDER_ORIGIN = 'https://www.harshilpatel.co.in';
 const BUILD_DATE = new Date().toISOString().slice(0, 10);
@@ -107,7 +110,7 @@ const CONTACT_BLOCK = `<h2>Contact</h2>
 
 function homeBody() {
   return `<h1>Harshil Patel — Software Engineer at IIIT Vadodara</h1>
-<p>Software engineer and B.Tech student at IIIT Vadodara. Builds production web apps, mobile apps, and AI tools. Automotive content creator <a href="https://www.instagram.com/guywithblack350/">@guywithblack350</a> with 22M+ views.</p>
+<p>Software engineer and B.Tech student at IIIT Vadodara. Builds production web apps, mobile apps, and AI tools. Automotive content creator <a href="https://www.instagram.com/guywithblack350/">@guywithblack350</a> with approximately 68M public reel views.</p>
 <h2>Selected Work</h2>
 <ul>${selectedWork
     .map(
@@ -138,6 +141,25 @@ function projectsBody() {
         )}) — ${esc(p.description)}<br />Stack: ${esc(p.stack.join(', '))}</li>`,
     )
     .join('')}</ul>`;
+}
+
+function creativeBody() {
+  const total = '68';
+  return `<h1>Guy With Black 350 — Automotive Content Creator</h1>
+<p>Harshil Patel creates automotive content as <a href="https://www.instagram.com/guywithblack350/">@guywithblack350</a>. His accessible public Instagram reels have approximately ${total} million combined views.</p>
+<h2>Creator impact</h2>
+<ul>
+  <li>Approximately ${total}M public reel views</li>
+  <li>${INSTAGRAM_SNAPSHOT.profile.publishedPosts} published posts</li>
+  <li>4,300+ followers at the ${esc(INSTAGRAM_SNAPSHOT.capturedAt)} snapshot</li>
+  <li>${INSTAGRAM_SNAPSHOT.aggregate.millionViewReels} reels with at least one million views</li>
+</ul>
+<p>The lifetime view total is an estimate calculated from rounded public reel counts. Private reach, impressions, and plays are excluded.</p>
+<h2>Top Instagram reels</h2>
+<ol>${INSTAGRAM_SNAPSHOT.topReels.map((reel) => `<li><a href="${esc(reel.url)}"><strong>${esc(reel.title)}</strong></a> — ${esc(reel.views)} · ${esc(reel.date)}</li>`).join('')}</ol>
+<h2>Brand collaborations</h2>
+<p>Tirrent Global · Club Quickly</p>
+<p><a href="mailto:${AUTHOR.email}?subject=Creator%20collaboration">Discuss a creator collaboration</a></p>`;
 }
 
 function projectBody(p) {
@@ -343,21 +365,48 @@ const routes = [
     },
   })),
   {
-    path: '/creative', priority: 0.7,
-    title: 'Guy With Black 350',
-    description: 'The automotive content side of Harshil Patel — the guy with black 350. Reels, brand collaborations, and 22M+ views as @guywithblack350 on Instagram.',
-    lastmod: lastmodOf('src/pages/Creative.jsx'),
-    body: simpleBody(
-      'Guy With Black 350 — the creator side of Harshil Patel',
-      'The automotive content side of Harshil Patel — the guy with black 350. Reels, brand collaborations, and 22M+ views as @guywithblack350 on Instagram.',
-      `<p>Follow: <a href="https://www.instagram.com/guywithblack350/">@guywithblack350 on Instagram</a></p>`,
-    ),
+    path: '/creative', priority: 0.8,
+    title: 'Automotive Content Creator | Guy With Black 350',
+    description: 'Harshil Patel’s automotive creator portfolio as @guywithblack350: approximately 68M public Instagram reel views, top-performing reels, and brand collaborations.',
+    image: '/creative-og.jpg',
+    images: INSTAGRAM_SNAPSHOT.topReels.map((reel) => ({ src: reel.image, title: `${reel.title} — ${reel.views}` })),
+    lastmod: lastmodOf('src/pages/Creative.jsx', 'src/data/instagram-snapshot.json', 'src/components/Creative/CreativeHero.jsx', 'src/components/Creative/CreatorImpact.jsx', 'src/components/Creative/TopReels.jsx'),
+    body: creativeBody(),
     jsonLd: {
       '@context': 'https://schema.org',
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
-        { '@type': 'ListItem', position: 2, name: 'Guy With Black 350', item: `${SITE_URL}/creative` },
+      '@graph': [
+        {
+          '@type': 'ProfilePage',
+          '@id': `${SITE_URL}/creative#profile`,
+          url: `${SITE_URL}/creative`,
+          name: 'Guy With Black 350 — Automotive Content Creator',
+          description: 'Harshil Patel’s automotive creator portfolio as @guywithblack350, with approximately 68M public Instagram reel views.',
+          dateModified: INSTAGRAM_SNAPSHOT.capturedAt,
+          primaryImageOfPage: { '@type': 'ImageObject', url: `${SITE_URL}/creative-og.jpg`, width: 1200, height: 630 },
+          mainEntity: { '@id': `${SITE_URL}/creative#creator` },
+        },
+        {
+          '@type': 'Person',
+          '@id': `${SITE_URL}/creative#creator`,
+          name: 'Harshil Patel',
+          alternateName: ['Guy With Black 350', 'guywithblack350', '@guywithblack350'],
+          url: `${SITE_URL}/creative`,
+          image: `${SITE_URL}/creative-og.jpg`,
+          description: 'Automotive content creator behind @guywithblack350, with approximately 68 million public Instagram reel views.',
+          sameAs: AUTHOR.sameAs,
+          interactionStatistic: {
+            '@type': 'InteractionCounter',
+            interactionType: { '@type': 'WatchAction' },
+            userInteractionCount: INSTAGRAM_SNAPSHOT.aggregate.totalViewsEstimate,
+          },
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
+            { '@type': 'ListItem', position: 2, name: 'Guy With Black 350', item: `${SITE_URL}/creative` },
+          ],
+        },
       ],
     },
   },
@@ -544,15 +593,15 @@ const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 ${routes
   .map((r) => {
-    const imgUrl = `${SITE_URL}${r.image || OG_IMAGE}`;
+    const routeImages = r.images?.length ? r.images : [{ src: r.image || OG_IMAGE, title: r.title }];
     return `  <url>
     <loc>${SITE_URL}${r.path}</loc>
     <lastmod>${r.lastmod || BUILD_DATE}</lastmod>
     <priority>${r.priority.toFixed(1)}</priority>
-    <image:image>
-      <image:loc>${imgUrl}</image:loc>
-      <image:title>${esc(r.title)}</image:title>
-    </image:image>
+${routeImages.map((img) => `    <image:image>
+      <image:loc>${SITE_URL}${img.src}</image:loc>
+      <image:title>${esc(img.title || r.title)}</image:title>
+    </image:image>`).join('\n')}
   </url>`;
   })
   .join('\n')}
@@ -599,7 +648,7 @@ const LLMS_PREAMBLE = `# ${SITE_NAME}
 ## Bio & Overview
 Harshil Patel is a software engineer and computer science student at IIIT Vadodara (Indian Institute of Information Technology, Vadodara). He specializes in React, TypeScript, Node.js, Firebase, Svelte 5, Android (Kotlin), PWA, and AI API integrations (Gemini, Claude, Ollama).
 
-Alongside software engineering, Harshil is an automotive content creator operating under the handle **@guywithblack350** across Instagram and YouTube, generating 22M+ views and collaborating with automotive and lifestyle brands.
+Alongside software engineering, Harshil is an automotive content creator operating under the handle **@guywithblack350**, with approximately 68M public Instagram reel views and collaborations with automotive and lifestyle brands.
 
 - **Website**: ${SITE_URL}/
 - **GitHub**: https://github.com/Marshmellow31

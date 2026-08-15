@@ -425,6 +425,60 @@
     "w": 403,
     "h": 908
   },
+  "/projects/academic/blockchain-audit.png": {
+    "w": 1272,
+    "h": 716,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/academic/blockchain-audit-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/academic/blockchain-audit-768.webp"
+      },
+      {
+        "w": 1200,
+        "file": "/projects/academic/blockchain-audit-1200.webp"
+      }
+    ]
+  },
+  "/projects/academic/airline-boarding.png": {
+    "w": 1265,
+    "h": 712,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/academic/airline-boarding-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/academic/airline-boarding-768.webp"
+      },
+      {
+        "w": 1200,
+        "file": "/projects/academic/airline-boarding-1200.webp"
+      }
+    ]
+  },
+  "/projects/academic/drone-no-fly-zone.png": {
+    "w": 1280,
+    "h": 720,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/academic/drone-no-fly-zone-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/academic/drone-no-fly-zone-768.webp"
+      },
+      {
+        "w": 1200,
+        "file": "/projects/academic/drone-no-fly-zone-1200.webp"
+      }
+    ]
+  },
   "/projects/harekrishna.webp": {
     "w": 1902,
     "h": 910,

@@ -197,6 +197,7 @@ const selectedWorkRaw = [
     stack: ['React 19', 'Firebase', 'Tailwind', 'Gemini API'],
     link: 'https://pay-matrix.vercel.app/',
     github: 'https://github.com/Marshmellow31/PayMatrix',
+    releaseRepo: 'Marshmellow31/PayMatrix',
     instagram: 'https://www.instagram.com/paymatrixapp/',
     live: true,
   },

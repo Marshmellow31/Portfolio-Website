@@ -5,6 +5,7 @@ import { selectedWork, getProjectBySlug } from '../data/portfolio';
 import { Reveal } from '../components/Reveal/Reveal';
 import CaseImage from '../components/CaseImage/CaseImage';
 import GalleryImage from '../components/GalleryImage';
+import PayMatrixDownloads from '../components/PayMatrixDownloads';
 import useSEO from '../utils/useSEO';
 import { SITE_URL } from '../../site.config.mjs';
 
@@ -136,6 +137,12 @@ export default function ProjectDetail() {
                     CODE ↗
                   </a>
                 )}
+                {project.releaseRepo && (
+                  <a href="#paymatrix-downloads"
+                    className="font-mono text-[12px] tracking-[.08em] text-text no-underline border-b border-white/30 pb-0.5 hover:border-white transition-colors">
+                    DOWNLOAD APK ↓
+                  </a>
+                )}
                 {project.instagram && (
                   <a href={project.instagram} target="_blank" rel="noreferrer"
                     className="font-mono text-[12px] tracking-[.08em] text-text no-underline border-b border-white/30 pb-0.5 hover:border-white transition-colors">
@@ -262,6 +269,8 @@ export default function ProjectDetail() {
           </>
         )}
       </section>
+
+      {project.releaseRepo && <PayMatrixDownloads repo={project.releaseRepo} />}
 
       {/* ── Features ── */}
       <section className="px-[clamp(20px,6vw,96px)] pb-[clamp(48px,6vw,88px)]">

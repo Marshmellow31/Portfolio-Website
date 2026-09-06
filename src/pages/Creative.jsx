@@ -81,45 +81,77 @@ export default function Creative() {
       <TopReels reels={snapshot?.topReels} instagramUrl={instagramUrl} syncedAt={instagramLastSynced} />
 
       <section className="section-pad border-b border-border" aria-labelledby="partnerships-title">
-        <Reveal className="mb-[clamp(32px,5vw,56px)]">
-          <div className="mono-label mb-4"><FaHandshake className="mr-2 inline" aria-hidden="true" /> 03 — Partnerships</div>
-          <h2 id="partnerships-title" className="m-0 text-[clamp(38px,5.5vw,76px)] font-bold leading-[0.95] tracking-[-0.05em]">
+        <Reveal className="mb-[clamp(36px,5.5vw,64px)]">
+          <div className="mono-label mb-4"><FaHandshake className="mr-2 inline" aria-hidden="true" /> 03 — Brand Collaborations</div>
+          <h2 id="partnerships-title" className="m-0 text-[clamp(36px,5.2vw,74px)] font-bold leading-[0.98] tracking-[-0.05em]">
             Audience into action.
           </h2>
-          <p className="mt-5 max-w-2xl text-sm leading-relaxed text-text-muted md:text-base">
-            Automotive storytelling built for attention, recall, and genuine community response.
+          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-text-muted md:text-base">
+            Automotive storytelling engineered for organic recall, algorithmic attention, and genuine enthusiast engagement.
           </p>
         </Reveal>
 
-        <div className="grid gap-px bg-border md:grid-cols-2">
-          {brandCollabs.map((collab) => (
+        <div className="grid gap-px border border-border bg-border md:grid-cols-2">
+          {brandCollabs.map((collab, index) => (
             <Reveal key={collab.name}>
               <a
                 href={collab.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex min-h-36 items-center justify-between gap-5 bg-bg p-7 no-underline transition-colors hover:bg-white/[0.025] md:p-9"
+                className="group flex min-h-40 flex-col justify-between bg-bg p-8 no-underline transition-colors hover:bg-white/[0.03] md:p-10"
               >
-                <h3 className="m-0 text-2xl font-bold text-text transition-colors group-hover:text-text-bright md:text-3xl">{collab.name}</h3>
-                <FaExternalLinkAlt className="shrink-0 text-xs text-text-faint transition-colors group-hover:text-text" aria-hidden="true" />
+                <div className="flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.2em] text-text-dim">
+                  <span>Collab 0{index + 1}</span>
+                  <FaExternalLinkAlt className="text-xs text-text-faint transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-text-bright" aria-hidden="true" />
+                </div>
+                <div className="mt-6">
+                  <h3 className="m-0 text-2xl font-bold tracking-tight text-text transition-colors group-hover:text-text-bright md:text-3xl">
+                    {collab.name}
+                  </h3>
+                  <span className="mt-2 block font-mono text-[9px] uppercase tracking-[0.14em] text-text-muted">
+                    Automotive Partnership · Campaign Production
+                  </span>
+                </div>
               </a>
             </Reveal>
           ))}
         </div>
       </section>
 
-      <section className="section-pad text-center" aria-labelledby="creative-cta-title">
+      {/* Editorial Collaboration CTA */}
+      <section className="section-pad" aria-labelledby="creative-cta-title">
         <Reveal>
-          <FaInstagram className="mx-auto mb-5 text-xl text-text-dim" aria-hidden="true" />
-          <h2 id="creative-cta-title" className="mx-auto my-0 max-w-4xl text-[clamp(42px,7vw,96px)] font-bold leading-[0.92] tracking-[-0.055em]">
-            Build something people stop scrolling for.
-          </h2>
-          <a
-            href="mailto:1080patelharshil@gmail.com?subject=Creator%20collaboration"
-            className="mt-10 inline-flex min-h-11 items-center rounded-full border border-white/15 bg-white px-6 py-3 font-mono text-[10px] uppercase tracking-[0.16em] text-black no-underline transition-colors hover:bg-white/90"
-          >
-            Discuss a collaboration
-          </a>
+          <div className="relative mx-auto max-w-5xl overflow-hidden rounded-2xl border border-border bg-gradient-to-b from-surface/60 to-surface/20 p-[clamp(32px,6vw,84px)] text-center">
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.06),transparent_65%)]" />
+            <div className="relative z-10">
+              <div className="mx-auto mb-6 inline-flex size-12 items-center justify-center rounded-full border border-white/20 bg-white/5 text-xl text-text-bright">
+                <FaInstagram aria-hidden="true" />
+              </div>
+              <h2 id="creative-cta-title" className="mx-auto my-0 max-w-3xl text-[clamp(36px,6vw,84px)] font-bold leading-[0.95] tracking-[-0.05em]">
+                Build something people stop scrolling for.
+              </h2>
+              <p className="mx-auto mt-6 max-w-xl text-sm leading-relaxed text-text-muted md:text-base">
+                Whether it's a vehicle launch, aftermarket series, or bespoke road documentary—let's create automotive cinema that cuts through the feed.
+              </p>
+              <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+                <a
+                  href="mailto:1080patelharshil@gmail.com?subject=Creator%20collaboration"
+                  className="inline-flex min-h-12 items-center rounded-full bg-white px-7 py-3.5 font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-black no-underline shadow-xl transition-all hover:scale-[1.02] hover:bg-white/90 active:scale-[0.98]"
+                >
+                  Discuss a collaboration
+                </a>
+                <a
+                  href={instagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-12 items-center gap-2 rounded-full border border-border bg-surface/50 px-6 py-3.5 font-mono text-[10px] uppercase tracking-[0.14em] text-text no-underline transition-colors hover:border-white/40 hover:text-white"
+                >
+                  <FaInstagram className="text-xs" aria-hidden="true" />
+                  <span>{instagramHandle}</span>
+                </a>
+              </div>
+            </div>
+          </div>
         </Reveal>
       </section>
     </div>

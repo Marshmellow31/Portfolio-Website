@@ -22,20 +22,62 @@ const fail = message => {
   statusElement.textContent = message;
 };
 window.addEventListener('error', () => fail('The 3D scene could not load. Check your connection and reload the page.'));
-function resetView() {
+function resetView(keepRotation = false) {
   // Hide the showroom hierarchy while retaining its environment lighting.
   scene.instanceSet('P3F4_Room_3D_0001', 'visible', 0);
   scene.setBackgroundTransparent(true);
   scene._nav._navDXAng = 0;
   scene._nav._navDYAng = 0;
-  const mobile = innerWidth < 600;
-  Object.assign(scene._nav, {_navGotoPosActive:false, _navXAng:restTilt, _navYAng:5.71, _navDolly:mobile ? -74 : 0, _navDDolly:0, _navPan:mobile ? [0,0] : [-11,6], _navDPan:[0,0], _navTarget:engineOrbitTarget.slice(), _navChange:true});
+
+  const w = innerWidth;
+  const isMobile = w < 768;
+
+  // In InfinityRT, POSITIVE dolly increases camera distance (zooms out).
+  // On mobile portrait, the narrow aspect ratio compresses horizontal FOV.
+  // Using positive dolly (+120 to +135) pulls the camera back so that the full
+  // 2.2m motorcycle (both wheels, handlebars, exhaust tip) fits comfortably
+  // with generous 15-20% clearance even when rotated 100% sideways.
+  let mobileDolly = 120;
+  if (w < 400) {
+    mobileDolly = 135;
+  } else if (w < 600) {
+    mobileDolly = 120;
+  } else if (w < 768) {
+    mobileDolly = 80;
+  }
+
+  const targetDolly = isMobile ? mobileDolly : 0;
+  // Desktop: [-28, 12] positions model in bottom-right quadrant to balance left text
+  // Mobile: [0, 2.2] centers model above bottom controls
+  const targetPan = isMobile ? [0, 2.2] : [-28, 12];
+
+  scene._nav._panMin = [-200.0, -200.0];
+  scene._nav._panMax = [200.0, 200.0];
+  scene._nav._navMaxDolly = 500.0;
+  scene._nav._navMaxDollyOriginal = 500.0;
+  scene._nav._navMinDolly = -120.0;
+  scene._nav._navMinDollyOriginal = -120.0;
+
+  Object.assign(scene._nav, {
+    _navGotoPosActive: false,
+    _navXAng: restTilt,
+    _navYAng: (keepRotation && scene._nav) ? scene._nav._navYAng : 5.71,
+    _navDolly: targetDolly,
+    _navDDolly: 0,
+    _navPan: targetPan,
+    _navDPan: [0, 0],
+    _navTarget: engineOrbitTarget.slice(),
+    _navChange: true
+  });
   scene.clearRefine();
 }
 function finish(name) {
   scene.groupApplyState(`color_vis:${name}`, undefined, resetView);
   goldButton.setAttribute('aria-pressed', String(name === 'premium'));
   standardButton.setAttribute('aria-pressed', String(name === 'black'));
+  if (parent !== window) {
+    parent.postMessage({ type: 'bullet-finish-changed', finish: name }, location.origin);
+  }
 }
 try {
   const gl = infinityrt_getwebglcontext(canvas);
@@ -43,10 +85,27 @@ try {
   canvas.width = innerWidth;
   canvas.height = innerHeight;
   canvas.tabIndex = 0;
-  canvas.setAttribute('aria-label', 'Bullet 350. Drag or use arrow keys to orbit; scroll, pinch, plus or minus to zoom.');
+  canvas.setAttribute('aria-label', 'Bullet 350. Drag to orbit 360°; scroll to zoom; Ctrl + drag to pan anchor.');
   scene = new infinityrt_scene({rtgl:gl,useDraco:false,forcewebp:true}, 'https://reconfiguratorprod.royalenfield.com/models/J1B10SEP2024/bullet350/Web/model_gl/', canvas.width, canvas.height);
+  scene._flipFoVonAspectSwap = true;
   scene._nav = new infinityrt_navigation(scene, canvas.width, canvas.height);
+  scene._nav._panMin = [-200.0, -200.0];
+  scene._nav._panMax = [200.0, 200.0];
+  scene._nav._navMaxDolly = 500.0;
+  scene._nav._navMaxDollyOriginal = 500.0;
+  scene._nav._navMinDolly = -120.0;
+  scene._nav._navMinDollyOriginal = -120.0;
   scene._nav._navRotationSpeed = .003;
+
+  // Protect _navMaxDolly against internal reset back down to 1.0
+  const originalGetZoomFactor = scene._nav.getZoomFactor.bind(scene._nav);
+  scene._nav.getZoomFactor = function() {
+    if (this._navMaxDolly < 400) {
+      this._navMaxDolly = 500.0;
+      this._navMaxDollyOriginal = 500.0;
+    }
+    return originalGetZoomFactor();
+  };
   scene.start();
   function render(time) {
     if (stopped || failed) return;
@@ -69,7 +128,14 @@ try {
     if (scene.draw()) {
       statusElement.style.opacity = '0';
       statusElement.style.pointerEvents = 'none';
-      if (!ready) { ready = true; buttons.forEach(b => b.disabled = false); finish('premium'); }
+      if (!ready) {
+        ready = true;
+        buttons.forEach(b => b.disabled = false);
+        finish('premium');
+        if (parent !== window) {
+          parent.postMessage({ type: 'bullet-ready', finish: 'premium' }, location.origin);
+        }
+      }
     } else if (!ready) {
       progressElement.textContent = `Loading machine · ${Math.min(99, Math.max(0, Math.round((1 - scene._outstandingjobs / scene._totaljobs) * 100)))}%`;
     }
@@ -80,49 +146,127 @@ try {
     canvas.width = innerWidth; canvas.height = innerHeight;
     scene.resize(canvas.width, canvas.height);
     scene._nav._midx = canvas.width / 2; scene._nav._midy = canvas.height / 2;
-    scene.clearRefine();
+    resetView(true);
   });
   let pinchDistance = null;
-  canvas.addEventListener('pointerdown', e => { if (!ready) return; pauseRotationUntil = performance.now() + 5000; pointers.set(e.pointerId, [e.clientX,e.clientY]); canvas.setPointerCapture(e.pointerId); canvas.focus({preventScroll:true}); });
+  let isPanning = false;
+
+  canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+  canvas.addEventListener('pointerdown', e => {
+    if (!ready) return;
+    pauseRotationUntil = performance.now() + 8000;
+    pointers.set(e.pointerId, [e.clientX, e.clientY]);
+    canvas.setPointerCapture(e.pointerId);
+    canvas.focus({preventScroll:true});
+    isPanning = Boolean(e.ctrlKey || e.metaKey || e.button === 2 || e.button === 1);
+    canvas.style.cursor = isPanning ? 'move' : 'grabbing';
+  });
+
   canvas.addEventListener('pointermove', e => {
-    if (!pointers.has(e.pointerId)) return;
-    const last = pointers.get(e.pointerId); pointers.set(e.pointerId, [e.clientX,e.clientY]);
-    const deltaX = e.clientX-last[0], deltaY = e.clientY-last[1];
+    if (!pointers.has(e.pointerId)) {
+      if (innerWidth >= 768) {
+        canvas.style.cursor = (e.ctrlKey || e.metaKey) ? 'move' : 'grab';
+      }
+      return;
+    }
+    const last = pointers.get(e.pointerId);
+    pointers.set(e.pointerId, [e.clientX, e.clientY]);
+    const deltaX = e.clientX - last[0], deltaY = e.clientY - last[1];
+
     if (e.pointerType === 'touch' && pointers.size === 1 && Math.abs(deltaY) > Math.abs(deltaX)) {
       parent.postMessage({type:'bullet-scroll', deltaY:-deltaY}, location.origin);
       return;
     }
+
     if (pointers.size === 2) {
-      const [a,b] = [...pointers.values()], distance = Math.hypot(a[0]-b[0],a[1]-b[1]);
-      if (pinchDistance !== null) scene._nav.NavChangeDolly((pinchDistance-distance)*.4);
+      const [a, b] = [...pointers.values()], distance = Math.hypot(a[0] - b[0], a[1] - b[1]);
+      if (pinchDistance !== null) scene._nav.NavChangeDolly((pinchDistance - distance) * 0.4);
       pinchDistance = distance;
     } else {
-      scene._nav.NavRotation([e.clientX,e.clientY], [deltaX,deltaY]);
-      scene._nav._navXAng = Math.max(.08, Math.min(.38, scene._nav._navXAng));
+      const panActive = e.ctrlKey || e.metaKey || isPanning || e.buttons === 2 || e.buttons === 4;
+      if (panActive) {
+        // Move the anchor (camera pan)
+        scene._nav.NavPan([deltaX, deltaY]);
+      } else {
+        // Orbit in 360 degrees
+        scene._nav.NavRotation([e.clientX, e.clientY], [deltaX, deltaY]);
+        scene._nav._navXAng = Math.max(-0.2, Math.min(0.55, scene._nav._navXAng));
+      }
     }
     scene.clearRefine();
   });
-  for (const event of ['pointerup','pointercancel','lostpointercapture']) canvas.addEventListener(event, e => { pointers.delete(e.pointerId); pinchDistance = null; });
+
+  for (const event of ['pointerup', 'pointercancel', 'lostpointercapture']) {
+    canvas.addEventListener(event, e => {
+      pointers.delete(e.pointerId);
+      pinchDistance = null;
+      isPanning = false;
+      canvas.style.cursor = (e.ctrlKey || e.metaKey) ? 'move' : 'grab';
+    });
+  }
+
   canvas.addEventListener('wheel', e => {
     e.preventDefault();
-    if (parent !== window) parent.postMessage({type:'bullet-scroll', deltaY:e.deltaY}, location.origin);
-    else if (ready) { pauseRotationUntil = performance.now() + 5000; scene._nav.NavChangeDolly(e.deltaY*.1); scene.clearRefine(); }
+    const isMobileDevice = innerWidth < 768 || matchMedia('(pointer: coarse)').matches;
+    if (isMobileDevice) {
+      if (parent !== window) parent.postMessage({type:'bullet-scroll', deltaY:e.deltaY}, location.origin);
+    } else if (ready) {
+      // Desktop view only: zoom in and out with mouse wheel
+      pauseRotationUntil = performance.now() + 6000;
+      scene._nav.NavChangeDolly(e.deltaY * 0.15);
+      scene.clearRefine();
+    }
   }, {passive:false});
-  canvas.addEventListener('keydown', e => {
+
+  window.addEventListener('keydown', e => {
+    if ((e.key === 'Control' || e.key === 'Meta') && innerWidth >= 768) {
+      canvas.style.cursor = 'move';
+    }
     if (!ready) return;
     const directions = {ArrowLeft:[-8,0],ArrowRight:[8,0],ArrowUp:[0,-8],ArrowDown:[0,8]};
-    if (directions[e.key]) { e.preventDefault(); scene._nav.NavRotation([0,0], directions[e.key]); }
-    else if (['+','=','-'].includes(e.key)) { e.preventDefault(); scene._nav.NavChangeDolly(e.key === '-' ? 10 : -10); }
-    else return;
+    if (directions[e.key]) {
+      e.preventDefault();
+      if (e.ctrlKey || e.metaKey) {
+        scene._nav.NavPan([directions[e.key][0] * 2, directions[e.key][1] * 2]);
+      } else {
+        scene._nav.NavRotation([0,0], directions[e.key]);
+      }
+    } else if (['+','=','-'].includes(e.key)) {
+      e.preventDefault();
+      scene._nav.NavChangeDolly(e.key === '-' ? 15 : -15);
+    } else return;
     scene.clearRefine();
+  });
+
+  window.addEventListener('keyup', e => {
+    if ((e.key === 'Control' || e.key === 'Meta') && innerWidth >= 768) {
+      canvas.style.cursor = 'grab';
+    }
   });
   goldButton.onclick = () => { pauseRotationUntil = performance.now() + 3000; finish('premium'); };
   standardButton.onclick = () => { pauseRotationUntil = performance.now() + 3000; finish('black'); };
   canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); fail('The graphics context was interrupted. Reload to reopen the model.'); });
   window.addEventListener('message', e => {
-    if (e.origin !== location.origin || e.data?.type !== 'bullet-visibility') return;
-    heroVisible = Boolean(e.data.visible);
-    previousTime = performance.now();
+    if (e.origin !== location.origin) return;
+    if (e.data?.type === 'bullet-visibility') {
+      heroVisible = Boolean(e.data.visible);
+      previousTime = performance.now();
+    } else if (e.data?.type === 'set-finish') {
+      if (ready && (e.data.finish === 'premium' || e.data.finish === 'black')) {
+        pauseRotationUntil = performance.now() + 4000;
+        finish(e.data.finish);
+      }
+    } else if (e.data?.type === 'bullet-drag') {
+      if (ready) {
+        pauseRotationUntil = performance.now() + 4000;
+        const deltaX = Number(e.data.deltaX) || 0;
+        const deltaY = Number(e.data.deltaY) || 0;
+        scene._nav.NavRotation([0, 0], [deltaX, deltaY]);
+        scene._nav._navXAng = Math.max(.08, Math.min(.38, scene._nav._navXAng));
+        scene.clearRefine();
+      }
+    }
   });
   window.addEventListener('pagehide', () => { stopped = true; cancelAnimationFrame(frame); scene.stop(); });
 } catch { fail('The 3D viewer needs WebGL and an internet connection. Enable hardware acceleration and reload.'); }

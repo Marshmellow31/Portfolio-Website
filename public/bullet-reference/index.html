@@ -18,7 +18,14 @@
     @media(max-width:600px){#finishes{bottom:max(82px,calc(env(safe-area-inset-bottom) + 62px))}#hint{right:16px;bottom:max(37px,calc(env(safe-area-inset-bottom) + 13px))}}
     @media(prefers-reduced-motion:reduce){#status,button{transition:none}}
     @media(prefers-reduced-transparency:reduce){button{background:#111;backdrop-filter:none}}
+    html.is-embedded #finishes, html.is-embedded #hint { display: none !important; }
+    html.is-embedded #status { background: rgba(5,5,5,0.75); backdrop-filter: blur(12px); }
   </style>
+  <script>
+    if (window.parent !== window || window.location.search.includes('embedded=1')) {
+      document.documentElement.classList.add('is-embedded');
+    }
+  </script>
 </head>
 <body>
   <canvas id="viewer"></canvas>

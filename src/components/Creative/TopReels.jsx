@@ -16,18 +16,24 @@ export default function TopReels({ reels, instagramUrl, syncedAt }) {
     <section id="top-reels" className="section-pad border-b border-border" aria-labelledby="reels-title">
       <div className="mb-[clamp(36px,6vw,72px)] flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
         <div>
-          <div className="mono-label mb-4">02 — Ranked by views</div>
-          <h2 id="reels-title" className="m-0 text-[clamp(40px,6vw,82px)] font-bold leading-[0.95] tracking-[-0.05em]">The reels that travelled.</h2>
+          <div className="mono-label mb-4">02 — Ranked by Views</div>
+          <h2 id="reels-title" className="m-0 text-[clamp(38px,5.5vw,78px)] font-bold leading-[0.96] tracking-[-0.05em]">
+            The reels that travelled.
+          </h2>
+          <p className="mt-4 max-w-xl text-sm leading-relaxed text-text-muted md:text-base">
+            Short-form automotive cinema that resonated across Instagram's algorithm. Tap any card to watch directly on Instagram.
+          </p>
         </div>
-        <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.16em] text-text-faint">
-          <span className="size-1.5 rounded-full bg-white/60" aria-hidden="true" /> Synced {syncedAt}
+        <div className="flex items-center gap-2.5 rounded-full border border-border bg-surface/50 px-3.5 py-1.5 font-mono text-[9px] uppercase tracking-[0.16em] text-text-dim">
+          <span className="size-1.5 rounded-full bg-emerald-400" aria-hidden="true" />
+          <span>Synced {syncedAt}</span>
         </div>
       </div>
 
       {!reels && <ReelSkeletons />}
 
       {reels && (
-        <div className="grid grid-cols-2 gap-3 md:gap-5 lg:grid-cols-3">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 lg:grid-cols-3">
           {reels.map((reel, index) => (
             <motion.a
               key={reel.url}
@@ -35,13 +41,16 @@ export default function TopReels({ reels, instagramUrl, syncedAt }) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`Watch ${reel.title}, ${reel.views}, on Instagram`}
-              initial={reducedMotion ? false : { opacity: 0, y: 22 }}
+              initial={reducedMotion ? false : { opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.15 }}
-              transition={{ type: 'spring', bounce: 0, duration: 0.45, delay: Math.min(index * 0.045, 0.2) }}
-              whileTap={reducedMotion ? undefined : { scale: 0.985 }}
-              className={`group relative block aspect-[4/5] overflow-hidden bg-surface no-underline ${index === 0 ? 'border border-white/25' : 'border border-border'}`}
+              transition={{ type: 'spring', bounce: 0, duration: 0.5, delay: Math.min(index * 0.05, 0.25) }}
+              whileTap={reducedMotion ? undefined : { scale: 0.98 }}
+              className={`group relative flex aspect-[4/5] flex-col justify-between overflow-hidden rounded-lg bg-surface no-underline transition-all duration-300 hover:shadow-2xl ${
+                index === 0 ? 'border border-white/30' : 'border border-border hover:border-white/20'
+              }`}
             >
+              {/* Background Thumbnail Image */}
               <img
                 src={reel.image}
                 alt={reel.alt}
@@ -49,32 +58,64 @@ export default function TopReels({ reels, instagramUrl, syncedAt }) {
                 height="599"
                 loading="lazy"
                 decoding="async"
-                className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.035]"
+                className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/15 to-black/10" />
-              <div className="absolute left-3 top-3 font-heading text-[clamp(32px,5vw,68px)] font-bold leading-none tracking-[-0.06em] text-white/45 md:left-5 md:top-5">
-                {String(reel.rank).padStart(2, '0')}
+              
+              {/* Dark Gradient Wash */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-black/20 transition-opacity duration-300 group-hover:via-black/40" />
+
+              {/* Top Meta Bar */}
+              <div className="relative z-10 flex items-start justify-between p-3.5 md:p-5">
+                <span className="font-heading text-[clamp(28px,4.5vw,56px)] font-bold leading-none tracking-[-0.06em] text-white/40 group-hover:text-white/70 transition-colors">
+                  {String(reel.rank).padStart(2, '0')}
+                </span>
+
+                <div className="flex items-center gap-2">
+                  {index === 0 && (
+                    <span className="hidden rounded-full border border-amber-400/40 bg-amber-400/15 px-2.5 py-1 font-mono text-[8px] font-semibold uppercase tracking-[0.16em] text-amber-300 sm:inline-block">
+                      Flagship
+                    </span>
+                  )}
+                  <div className="grid size-8 place-items-center rounded-full border border-white/25 bg-black/50 text-white backdrop-blur-md transition-transform duration-300 group-hover:scale-110 md:size-9">
+                    <FaPlay className="ml-0.5 text-[9px] text-white/90" aria-hidden="true" />
+                  </div>
+                </div>
               </div>
-              <div className="absolute right-3 top-3 grid size-9 place-items-center rounded-full border border-white/25 bg-black/35 text-white backdrop-blur-sm md:right-5 md:top-5">
-                <FaPlay className="ml-0.5 text-[10px]" aria-hidden="true" />
-              </div>
-              <div className="absolute inset-x-0 bottom-0 p-4 md:p-6">
-                <div className="mb-2 flex flex-wrap gap-x-2 font-mono text-[9px] uppercase tracking-[0.13em] md:text-[10px]">
-                  <span className="text-white">{reel.views}</span>
-                  <span className="text-white/35" aria-hidden="true">•</span>
+
+              {/* Bottom Content Bar */}
+              <div className="relative z-10 p-3.5 md:p-5">
+                <div className="mb-2 flex flex-wrap items-center gap-2 font-mono text-[9px] uppercase tracking-[0.14em] md:text-[10px]">
+                  <span className="font-semibold text-white">{reel.views}</span>
+                  <span className="text-white/30" aria-hidden="true">•</span>
                   <span className="text-white/60">{reel.date}</span>
                 </div>
-                <h3 className="m-0 text-base font-bold leading-tight text-white md:text-2xl">{reel.title}</h3>
-                <p className="mt-2 hidden text-sm leading-snug text-white/65 sm:line-clamp-2">{reel.caption}</p>
+                <h3 className="m-0 text-sm font-bold leading-snug text-white transition-colors group-hover:text-white sm:text-base md:text-xl">
+                  {reel.title}
+                </h3>
+                <p className="mt-1.5 hidden text-xs leading-relaxed text-white/65 sm:line-clamp-2 md:text-sm">
+                  {reel.caption}
+                </p>
+                
+                {/* Watch Indicator */}
+                <div className="mt-3 flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.16em] text-white/40 transition-colors group-hover:text-white">
+                  <span>Watch on Instagram</span>
+                  <span className="transition-transform group-hover:translate-x-0.5" aria-hidden="true">↗</span>
+                </div>
               </div>
             </motion.a>
           ))}
         </div>
       )}
 
-      <div className="mt-10 flex justify-center">
-        <a href={instagramUrl} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2 rounded-full border border-border px-5 py-2.5 font-mono text-[10px] uppercase tracking-[0.16em] text-text-dim no-underline transition-colors hover:border-border-strong hover:text-text">
-          <FaInstagram aria-hidden="true" /> Explore the full archive
+      <div className="mt-12 flex justify-center">
+        <a
+          href={instagramUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex min-h-11 items-center gap-2.5 rounded-full border border-border bg-surface/30 px-6 py-2.5 font-mono text-[10px] uppercase tracking-[0.16em] text-text-dim no-underline transition-all hover:border-white/40 hover:bg-surface hover:text-white"
+        >
+          <FaInstagram aria-hidden="true" />
+          <span>Explore full Instagram archive</span>
         </a>
       </div>
     </section>

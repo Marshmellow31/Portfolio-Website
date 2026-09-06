@@ -8,6 +8,8 @@ export default function CreativeHero({ instagramHandle, instagramUrl }) {
   const [isTouchDevice, setIsTouchDevice] = useState(false);
   const [isFull3DActive, setIsFull3DActive] = useState(false);
 
+  const [has3DFallback, setHas3DFallback] = useState(false);
+
   const lastTouchX = useRef(0);
   const touchActive = useRef(false);
 
@@ -23,6 +25,8 @@ export default function CreativeHero({ instagramHandle, instagramUrl }) {
         window.scrollBy({ top: event.data.deltaY, behavior: 'auto' });
       } else if (event.data?.type === 'bullet-ready' || event.data?.type === 'bullet-finish-changed') {
         if (event.data.finish) setActiveFinish(event.data.finish);
+      } else if (event.data?.type === 'bullet-unsupported') {
+        setHas3DFallback(true);
       }
     };
 
@@ -102,10 +106,22 @@ export default function CreativeHero({ instagramHandle, instagramUrl }) {
           src="/bullet-reference/index.html?embedded=1"
           title="Interactive Royal Enfield Bullet 350 3D Model"
           className={`h-full w-full border-0 transition-opacity duration-300 ${
-            isTouchDevice && !isFull3DActive ? 'pointer-events-none' : 'pointer-events-auto'
+            has3DFallback ? 'opacity-0 pointer-events-none' : isTouchDevice && !isFull3DActive ? 'pointer-events-none' : 'pointer-events-auto'
           }`}
         />
       </div>
+
+      {/* Fallback Static Visual if 3D context is completely unavailable */}
+      {has3DFallback && (
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+          <img
+            src="/creative-og.jpg"
+            alt="Royal Enfield Bullet 350"
+            className="h-full w-full object-cover object-center opacity-40 mix-blend-luminosity filter blur-[1px] md:blur-none"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+        </div>
+      )}
 
       {/* Scroll-Safe Touch Interceptor for Mobile (allows native vertical scroll, relays horizontal drag) */}
       {isTouchDevice && !isFull3DActive && (
@@ -189,32 +205,34 @@ export default function CreativeHero({ instagramHandle, instagramUrl }) {
             {/* Controls Row: Finish Switcher + Instagram CTA */}
             <div className="flex w-full flex-wrap items-center justify-between gap-2.5 sm:w-auto sm:justify-end">
               {/* Finish Switcher Dock */}
-              <div className="pointer-events-auto inline-flex items-center rounded-full border border-white/15 bg-black/80 p-0.5 sm:p-1 backdrop-blur-xl shadow-lg">
-                <button
-                  type="button"
-                  onClick={() => handleSelectFinish('premium')}
-                  aria-pressed={activeFinish === 'premium'}
-                  className={`inline-flex min-h-6 sm:min-h-7 items-center rounded-full px-2.5 py-0.5 sm:px-3 sm:py-1 font-mono text-[8px] sm:text-[9px] uppercase tracking-[0.14em] cursor-pointer transition-all ${
-                    activeFinish === 'premium'
-                      ? 'bg-white text-black font-semibold shadow-sm'
-                      : 'bg-transparent text-white/55 hover:text-white hover:bg-white/10'
-                  }`}
-                >
-                  Black Gold
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleSelectFinish('black')}
-                  aria-pressed={activeFinish === 'black'}
-                  className={`inline-flex min-h-6 sm:min-h-7 items-center rounded-full px-2.5 py-0.5 sm:px-3 sm:py-1 font-mono text-[8px] sm:text-[9px] uppercase tracking-[0.14em] cursor-pointer transition-all ${
-                    activeFinish === 'black'
-                      ? 'bg-white text-black font-semibold shadow-sm'
-                      : 'bg-transparent text-white/55 hover:text-white hover:bg-white/10'
-                  }`}
-                >
-                  Standard Black
-                </button>
-              </div>
+              {!has3DFallback && (
+                <div className="pointer-events-auto inline-flex items-center rounded-full border border-white/15 bg-black/80 p-0.5 sm:p-1 backdrop-blur-xl shadow-lg">
+                  <button
+                    type="button"
+                    onClick={() => handleSelectFinish('premium')}
+                    aria-pressed={activeFinish === 'premium'}
+                    className={`inline-flex min-h-6 sm:min-h-7 items-center rounded-full px-2.5 py-0.5 sm:px-3 sm:py-1 font-mono text-[8px] sm:text-[9px] uppercase tracking-[0.14em] cursor-pointer transition-all ${
+                      activeFinish === 'premium'
+                        ? 'bg-white text-black font-semibold shadow-sm'
+                        : 'bg-transparent text-white/55 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    Black Gold
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSelectFinish('black')}
+                    aria-pressed={activeFinish === 'black'}
+                    className={`inline-flex min-h-6 sm:min-h-7 items-center rounded-full px-2.5 py-0.5 sm:px-3 sm:py-1 font-mono text-[8px] sm:text-[9px] uppercase tracking-[0.14em] cursor-pointer transition-all ${
+                      activeFinish === 'black'
+                        ? 'bg-white text-black font-semibold shadow-sm'
+                        : 'bg-transparent text-white/55 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    Standard Black
+                  </button>
+                </div>
+              )}
 
               {/* Instagram CTA */}
               <a
@@ -229,9 +247,11 @@ export default function CreativeHero({ instagramHandle, instagramUrl }) {
             </div>
 
             {/* Interaction hint */}
-            <span className="font-mono text-[8.5px] uppercase tracking-[0.14em] text-white/40 md:text-[9px]">
-              {isTouchDevice ? 'Swipe ↔ to orbit · ↕ to scroll' : 'Drag to orbit 360° · Scroll to zoom · Ctrl + drag to pan'}
-            </span>
+            {!has3DFallback && (
+              <span className="font-mono text-[8.5px] uppercase tracking-[0.14em] text-white/40 md:text-[9px]">
+                {isTouchDevice ? 'Swipe ↔ to orbit · ↕ to scroll' : 'Drag to orbit 360° · Scroll to zoom · Ctrl + drag to pan'}
+              </span>
+            )}
           </div>
         </div>
       </div>

@@ -18,8 +18,16 @@ const engineOrbitTarget = [0, 0, 5];
 const fail = message => {
   failed = true;
   cancelAnimationFrame(frame);
-  statusElement.style.display = 'grid';
-  statusElement.textContent = message;
+  if (parent !== window) {
+    parent.postMessage({ type: 'bullet-unsupported' }, location.origin);
+  }
+  statusElement.style.opacity = '0';
+  statusElement.style.pointerEvents = 'none';
+  if (parent === window) {
+    statusElement.style.display = 'grid';
+    statusElement.style.opacity = '1';
+    statusElement.textContent = message;
+  }
 };
 window.addEventListener('error', e => {
   console.warn('[Bullet Reference Error]:', e.message || e);

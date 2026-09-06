@@ -1,102 +1,55 @@
-import { useRef } from 'react';
-import {
-  motion,
-  useReducedMotion,
-  useScroll,
-  useSpring,
-  useTransform,
-} from 'framer-motion';
+import { useEffect, useRef } from 'react';
 import { FaInstagram } from 'react-icons/fa';
 
-const WORDMARK = 'guywithblack350';
-
-const wordmarkVariants = {
-  hidden: {},
-  visible: {
-    transition: { staggerChildren: 0.035, delayChildren: 0.08 },
-  },
-};
-
-const letterVariants = {
-  hidden: { opacity: 0, y: '105%' },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { type: 'spring', bounce: 0, duration: 0.42 },
-  },
-};
-
 export default function CreativeHero({ instagramHandle, instagramUrl }) {
-  const sectionRef = useRef(null);
-  const reducedMotion = useReducedMotion();
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ['start start', 'end start'],
-  });
-  const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 30, mass: 0.25 });
-  const scale = useTransform(progress, [0, 0.82], [1, 0.68]);
-  const y = useTransform(progress, [0, 0.82], [0, -88]);
-  const opacity = useTransform(progress, [0, 0.72, 1], [1, 0.9, 0.08]);
-  const detailOpacity = useTransform(progress, [0, 0.36], [1, 0]);
+  const heroRef = useRef(null);
+  const viewerRef = useRef(null);
+
+  useEffect(() => {
+    const handleViewerScroll = (event) => {
+      if (event.source !== viewerRef.current?.contentWindow || event.data?.type !== 'bullet-scroll') return;
+      window.scrollBy({ top: event.data.deltaY, behavior: 'auto' });
+    };
+
+    const observer = new IntersectionObserver(([entry]) => {
+      viewerRef.current?.contentWindow?.postMessage({
+        type: 'bullet-visibility',
+        visible: entry.isIntersecting,
+      }, window.location.origin);
+    }, { threshold: 0.02 });
+    window.addEventListener('message', handleViewerScroll);
+    if (heroRef.current) observer.observe(heroRef.current);
+    return () => {
+      window.removeEventListener('message', handleViewerScroll);
+      observer.disconnect();
+    };
+  }, []);
 
   return (
-    <section ref={sectionRef} className="relative h-[155svh] border-b border-border" aria-labelledby="creative-title">
-      <div className="sticky top-0 flex h-[100svh] min-h-[620px] items-center overflow-hidden px-[clamp(20px,6vw,96px)] pt-16">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_70%_45%,rgba(255,255,255,0.08),transparent_42%)]" />
-        <div className="relative w-full">
-          <motion.div
-            style={reducedMotion ? undefined : { scale, y, opacity }}
-            className="origin-left will-change-transform"
-          >
-            <div className="mb-6 flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.28em] text-text-dim md:text-[11px]">
-              <FaInstagram aria-hidden="true" />
-              <span>Automotive creator portfolio</span>
-            </div>
-
-            <motion.h1
-              id="creative-title"
-              aria-label="Guy With Black 350 — automotive content creator"
-              variants={wordmarkVariants}
-              initial={reducedMotion ? false : 'hidden'}
-              animate="visible"
-              className="m-0 flex whitespace-nowrap font-heading font-bold lowercase leading-[0.82] tracking-[-0.065em]"
-              style={{ fontSize: 'clamp(2.35rem, 10vw, 9.5rem)' }}
-            >
-              {WORDMARK.split('').map((letter, index) => (
-                <span key={`${letter}-${index}`} className="inline-block overflow-hidden" aria-hidden="true">
-                  <motion.span
-                    variants={letterVariants}
-                    className={`inline-block ${index >= 12 ? 'text-text-bright' : 'text-text-muted'}`}
-                  >
-                    {letter}
-                  </motion.span>
-                </span>
-              ))}
-            </motion.h1>
-          </motion.div>
-
-          <motion.div
-            style={reducedMotion ? undefined : { opacity: detailOpacity }}
-            className="mt-9 flex flex-col items-start justify-between gap-7 md:flex-row md:items-end"
-          >
-            <p className="m-0 max-w-xl text-[clamp(14px,1.3vw,19px)] leading-relaxed text-text-muted">
-              Automotive stories, audience insight, and the reels that turned an XUV into a creator identity.
-            </p>
-            <div className="flex items-center gap-4">
-              <motion.a
-                href={instagramUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                whileTap={reducedMotion ? undefined : { scale: 0.97 }}
-                className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/15 bg-white px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.12em] text-black no-underline transition-colors hover:bg-white/90"
-              >
-                <FaInstagram aria-hidden="true" /> Follow {instagramHandle}
-              </motion.a>
-              <a href="#impact" className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-dim no-underline hover:text-text">
-                Scroll to the numbers ↓
-              </a>
-            </div>
-          </motion.div>
+    <section ref={heroRef} id="top" className="relative min-h-[100svh] overflow-hidden border-b border-white/10 bg-black" aria-labelledby="creative-title">
+      <div className="absolute inset-0 pt-14 md:pt-0">
+        <iframe ref={viewerRef} src="/bullet-reference/index.html" title="Interactive Royal Enfield Bullet 350" className="h-full w-full border-0" />
+      </div>
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,.7)_0%,transparent_27%,transparent_61%,rgba(0,0,0,.94)_100%)]" />
+      <div className="pointer-events-none relative z-[1] flex min-h-[100svh] flex-col px-[clamp(18px,5vw,72px)] pb-[max(22px,env(safe-area-inset-bottom))] pt-[clamp(86px,11vh,122px)]">
+        <div>
+          <p className="m-0 font-mono text-[10px] uppercase tracking-[0.3em] text-white/60">Automotive creator</p>
+          <h1 id="creative-title" className="mt-2 font-heading text-[clamp(2.7rem,10.5vw,10rem)] font-bold lowercase leading-[0.78] tracking-[-0.075em] text-white">
+            guywithblack350
+          </h1>
+        </div>
+        <div className="mt-auto flex items-end justify-between gap-5 pt-10">
+          <div className="max-w-[19rem] pb-[8.5rem] sm:pb-[8.75rem] md:max-w-[25rem] md:pb-[4.5rem]">
+            <p className="m-0 text-[clamp(1rem,1.5vw,1.25rem)] font-medium leading-snug tracking-[-0.02em] text-white/90">I document machines, roads and the stories around them.</p>
+            <p className="mb-0 mt-2 font-mono text-[9px] uppercase leading-relaxed tracking-[0.14em] text-white/45 md:text-[10px]">Automotive photography · films · stories</p>
+            <a href="#top-reels" className="pointer-events-auto mt-5 inline-flex min-h-11 items-center border-b border-white/40 font-mono text-[10px] uppercase tracking-[0.18em] text-white no-underline transition-colors hover:border-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">Explore stories ↗</a>
+          </div>
+          <div className="flex shrink-0 flex-col items-end gap-3">
+            <p className="m-0 hidden max-w-[18rem] text-right font-mono text-[9px] uppercase tracking-[0.14em] text-white/40 lg:block">Built around machines. Driven by stories.</p>
+            <a href={instagramUrl} target="_blank" rel="noopener noreferrer" className="pointer-events-auto inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-4 py-2.5 font-mono text-[10px] uppercase tracking-[0.12em] text-black no-underline transition-transform hover:scale-[1.02] active:scale-[.97] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
+              <FaInstagram aria-hidden="true" /> {instagramHandle}
+            </a>
+          </div>
         </div>
       </div>
     </section>

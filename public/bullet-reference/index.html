@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Bullet 350 interactive model</title>
+  <style>
+    *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent;font-family:Arial,sans-serif;color:#fff}
+    canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}canvas:active{cursor:grabbing}
+    #status{position:absolute;inset:0;display:grid;place-content:center;text-align:center;background:#050505;z-index:3;font:10px/1.8 monospace;letter-spacing:.18em;text-transform:uppercase;color:#aaa;transition:opacity .25s ease}
+    #status strong{display:block;font:600 clamp(20px,3vw,34px)/1 Arial,sans-serif;letter-spacing:-.04em;color:#fff}
+    #status span{display:block;margin-top:12px;color:#777}
+    #finishes{position:absolute;left:clamp(16px,4vw,48px);bottom:max(24px,env(safe-area-inset-bottom));display:flex;gap:6px;z-index:2}
+    button{min-height:44px;border:0;border-radius:999px;background:rgba(12,12,12,.7);backdrop-filter:blur(16px);color:#aaa;padding:0 17px;font:9px monospace;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:color .2s,background .2s,transform .1s}
+    button:active{transform:scale(.97)}button[aria-pressed="true"]{background:#fff;color:#050505}button:disabled{opacity:.35;cursor:wait}button:focus-visible{outline:2px solid #fff;outline-offset:3px}
+    #hint{position:absolute;right:clamp(16px,4vw,48px);bottom:max(39px,calc(env(safe-area-inset-bottom) + 15px));margin:0;font:9px monospace;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.42);pointer-events:none}
+    @media(max-width:600px){#finishes{bottom:max(82px,calc(env(safe-area-inset-bottom) + 62px))}#hint{right:16px;bottom:max(37px,calc(env(safe-area-inset-bottom) + 13px))}}
+    @media(prefers-reduced-motion:reduce){#status,button{transition:none}}
+    @media(prefers-reduced-transparency:reduce){button{background:#111;backdrop-filter:none}}
+  </style>
+</head>
+<body>
+  <canvas id="viewer"></canvas>
+  <div id="status"><strong>BLACK 350</strong><span id="progress">Loading machine · 0%</span></div>
+  <div id="finishes"><button id="gold" aria-pressed="true" disabled>Black Gold</button><button id="standard" aria-pressed="false" disabled>Standard Black</button></div>
+  <p id="hint">Drag to explore</p>
+  <script src="https://reconfiguratorprod.royalenfield.com/models/J1B10SEP2024/bullet350/Web/model_gl/SSE.js"></script>
+  <script src="https://reconfiguratorprod.royalenfield.com/models/J1B10SEP2024/bullet350/Web/model_gl/ctm.js"></script>
+  <script src="https://reconfiguratorprod.royalenfield.com/models/J1B10SEP2024/bullet350/Web/model_gl/lzma.js"></script>
+  <script src="https://reconfiguratorprod.royalenfield.com/models/J1B10SEP2024/bullet350/Web/model_gl/libvector3.js"></script>
+  <script src="https://reconfiguratorprod.royalenfield.com/models/J1B10SEP2024/bullet350/Web/InfinityRT_Navigation.js"></script>
+  <script src="https://reconfiguratorprod.royalenfield.com/models/J1B10SEP2024/Common/globals.js"></script>
+  <script src="/bullet-reference/viewer.js"></script>
+</body>
+</html>

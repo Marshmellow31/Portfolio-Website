@@ -21,7 +21,9 @@ const fail = message => {
   statusElement.style.display = 'grid';
   statusElement.textContent = message;
 };
-window.addEventListener('error', () => fail('The 3D scene could not load. Check your connection and reload the page.'));
+window.addEventListener('error', e => {
+  console.warn('[Bullet Reference Error]:', e.message || e);
+});
 function resetView(keepRotation = false) {
   // Hide the showroom hierarchy while retaining its environment lighting.
   scene.instanceSet('P3F4_Room_3D_0001', 'visible', 0);
@@ -79,9 +81,72 @@ function finish(name) {
     parent.postMessage({ type: 'bullet-finish-changed', finish: name }, location.origin);
   }
 }
+
+// Ensure GetUnmaskedRenderer never returns software strings that cause InfinityRT to abort
+if (typeof window.GetUnmaskedRenderer === 'function') {
+  const _origGetUnmasked = window.GetUnmaskedRenderer;
+  window.GetUnmaskedRenderer = function(ctx) {
+    try {
+      const name = _origGetUnmasked(ctx);
+      if (typeof name === 'string' && name) {
+        return name.replace(/SwiftShader|Microsoft Basic Render Driver|llvmpipe/gi, 'Generic GPU');
+      }
+    } catch {}
+    return 'Generic GPU';
+  };
+}
+
+// Ensure infinityrt_webgl2avail never crashes on null context or disabled hardware acceleration
+window.infinityrt_webgl2avail = function() {
+  try {
+    const testCanvas = document.createElement('canvas');
+    return Boolean(window.WebGL2RenderingContext && testCanvas.getContext('webgl2', { failIfMajorPerformanceCaveat: false }));
+  } catch {
+    return false;
+  }
+};
+
+// Robust WebGL context getter that allows software rasterization and devices without dedicated hardware acceleration
+function obtainWebGLContext(targetCanvas) {
+  const contextTypes = ['webgl2', 'webgl', 'experimental-webgl'];
+  const optionProfiles = [
+    { antialias: false, depth: true, alpha: true, failIfMajorPerformanceCaveat: false, powerPreference: 'default' },
+    { depth: true, alpha: true, failIfMajorPerformanceCaveat: false },
+    { failIfMajorPerformanceCaveat: false },
+    { antialias: false, depth: true },
+    {}
+  ];
+
+  for (const type of contextTypes) {
+    for (const opts of optionProfiles) {
+      try {
+        const gl = targetCanvas.getContext(type, opts);
+        if (gl) return gl;
+      } catch {}
+    }
+  }
+
+  try {
+    if (typeof infinityrt_getwebglcontext === 'function') {
+      const gl = infinityrt_getwebglcontext(targetCanvas, { failIfMajorPerformanceCaveat: false, antialias: false });
+      if (gl) return gl;
+    }
+  } catch {}
+
+  return null;
+}
+
 try {
-  const gl = infinityrt_getwebglcontext(canvas);
-  if (!gl) throw new Error('WebGL unavailable');
+  const gl = obtainWebGLContext(canvas);
+  if (!gl) {
+    console.warn('WebGL context unavailable on this device/browser');
+    if (parent !== window) {
+      parent.postMessage({ type: 'bullet-unsupported' }, location.origin);
+    }
+    statusElement.style.opacity = '0';
+    statusElement.style.pointerEvents = 'none';
+    throw new Error('WebGL unavailable');
+  }
   canvas.width = innerWidth;
   canvas.height = innerHeight;
   canvas.tabIndex = 0;
@@ -268,5 +333,11 @@ try {
       }
     }
   });
-  window.addEventListener('pagehide', () => { stopped = true; cancelAnimationFrame(frame); scene.stop(); });
-} catch { fail('The 3D viewer needs WebGL and an internet connection. Enable hardware acceleration and reload.'); }
+} catch (err) {
+  console.warn('[Bullet 3D Init]:', err);
+  if (parent !== window) {
+    parent.postMessage({ type: 'bullet-unsupported' }, location.origin);
+  }
+  statusElement.style.opacity = '0';
+  statusElement.style.pointerEvents = 'none';
+}

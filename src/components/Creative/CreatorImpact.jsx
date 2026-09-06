@@ -74,16 +74,16 @@ export default function CreatorImpact({ sectionRef, snapshot, status }) {
                 </div>
                 <div
                   className="mt-8 inline-flex items-baseline whitespace-nowrap font-heading text-[clamp(68px,12vw,175px)] font-bold leading-[0.8] text-text-bright"
-                  aria-label="Approximately 68 million public reel views"
+                  aria-label="Approximately 70 million+ public reel views"
                 >
                   <span aria-hidden="true" className="mr-[0.04em] font-normal text-text-muted">≈</span>
-                  <span aria-hidden="true" className="tracking-[-0.075em]"><AnimatedValue target={68} suffix="M" /></span>
+                  <span aria-hidden="true" className="tracking-[-0.075em]"><AnimatedValue target={70} suffix="M+" /></span>
                 </div>
               </div>
 
               <div className="mt-10 border-t border-white/10 pt-6">
                 <p className="m-0 max-w-xl text-sm leading-relaxed text-text-muted md:text-base">
-                  Calculated from every accessible public reel count. Instagram reports rounded compact figures, yielding a defensible window of <strong className="font-semibold text-text">66.2M – 69.2M</strong> total impressions.
+                  Calculated from every accessible public reel count. Instagram reports rounded compact figures, yielding a defensible window of <strong className="font-semibold text-text">68M – 72M+</strong> total impressions.
                 </p>
               </div>
             </div>

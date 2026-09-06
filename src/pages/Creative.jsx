@@ -12,7 +12,7 @@ import {
 } from '../data/instagram';
 import useSEO from '../utils/useSEO';
 
-const creativeDescription = 'Harshil Patel’s automotive creator portfolio as @guywithblack350: approximately 68M public Instagram reel views, top-performing reels, and brand collaborations.';
+const creativeDescription = 'Harshil Patel’s automotive creator portfolio as @guywithblack350: approximately 70M+ public Instagram reel views, top-performing reels, and brand collaborations.';
 
 const creativeJsonLd = {
   '@context': 'https://schema.org',
@@ -39,7 +39,7 @@ const creativeJsonLd = {
       alternateName: ['Guy With Black 350', 'guywithblack350', '@guywithblack350'],
       url: 'https://www.harshilpatel.co.in/creative',
       image: 'https://www.harshilpatel.co.in/creative-og.jpg',
-      description: 'Automotive content creator behind @guywithblack350, with approximately 68 million public Instagram reel views.',
+      description: 'Automotive content creator behind @guywithblack350, with approximately 70 million+ public Instagram reel views.',
       sameAs: [
         'https://www.instagram.com/guywithblack350/',
         'https://www.instagram.com/harshil_3105_/',

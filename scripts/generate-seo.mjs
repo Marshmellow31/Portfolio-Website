@@ -110,7 +110,7 @@ const CONTACT_BLOCK = `<h2>Contact</h2>
 
 function homeBody() {
   return `<h1>Harshil Patel — Software Engineer at IIIT Vadodara</h1>
-<p>Software engineer and B.Tech student at IIIT Vadodara. Builds production web apps, mobile apps, and AI tools. Automotive content creator <a href="https://www.instagram.com/guywithblack350/">@guywithblack350</a> with approximately 68M public reel views.</p>
+<p>Software engineer and B.Tech student at IIIT Vadodara. Builds production web apps, mobile apps, and AI tools. Automotive content creator <a href="https://www.instagram.com/guywithblack350/">@guywithblack350</a> with approximately 70M+ public reel views.</p>
 <h2>Selected Work</h2>
 <ul>${selectedWork
     .map(
@@ -367,7 +367,7 @@ const routes = [
   {
     path: '/creative', priority: 0.8,
     title: 'Automotive Content Creator | Guy With Black 350',
-    description: 'Harshil Patel’s automotive creator portfolio as @guywithblack350: approximately 68M public Instagram reel views, top-performing reels, and brand collaborations.',
+    description: 'Harshil Patel’s automotive creator portfolio as @guywithblack350: approximately 70M+ public Instagram reel views, top-performing reels, and brand collaborations.',
     image: '/creative-og.jpg',
     images: INSTAGRAM_SNAPSHOT.topReels.map((reel) => ({ src: reel.image, title: `${reel.title} — ${reel.views}` })),
     lastmod: lastmodOf('src/pages/Creative.jsx', 'src/data/instagram-snapshot.json', 'src/components/Creative/CreativeHero.jsx', 'src/components/Creative/CreatorImpact.jsx', 'src/components/Creative/TopReels.jsx'),
@@ -380,7 +380,7 @@ const routes = [
           '@id': `${SITE_URL}/creative#profile`,
           url: `${SITE_URL}/creative`,
           name: 'Guy With Black 350 — Automotive Content Creator',
-          description: 'Harshil Patel’s automotive creator portfolio as @guywithblack350, with approximately 68M public Instagram reel views.',
+          description: 'Harshil Patel’s automotive creator portfolio as @guywithblack350, with approximately 70M+ public Instagram reel views.',
           dateModified: INSTAGRAM_SNAPSHOT.capturedAt,
           primaryImageOfPage: { '@type': 'ImageObject', url: `${SITE_URL}/creative-og.jpg`, width: 1200, height: 630 },
           mainEntity: { '@id': `${SITE_URL}/creative#creator` },
@@ -392,7 +392,7 @@ const routes = [
           alternateName: ['Guy With Black 350', 'guywithblack350', '@guywithblack350'],
           url: `${SITE_URL}/creative`,
           image: `${SITE_URL}/creative-og.jpg`,
-          description: 'Automotive content creator behind @guywithblack350, with approximately 68 million public Instagram reel views.',
+          description: 'Automotive content creator behind @guywithblack350, with approximately 70 million+ public Instagram reel views.',
           sameAs: AUTHOR.sameAs,
           interactionStatistic: {
             '@type': 'InteractionCounter',
@@ -648,7 +648,7 @@ const LLMS_PREAMBLE = `# ${SITE_NAME}
 ## Bio & Overview
 Harshil Patel is a software engineer and computer science student at IIIT Vadodara (Indian Institute of Information Technology, Vadodara). He specializes in React, TypeScript, Node.js, Firebase, Svelte 5, Android (Kotlin), PWA, and AI API integrations (Gemini, Claude, Ollama).
 
-Alongside software engineering, Harshil is an automotive content creator operating under the handle **@guywithblack350**, with approximately 68M public Instagram reel views and collaborations with automotive and lifestyle brands.
+Alongside software engineering, Harshil is an automotive content creator operating under the handle **@guywithblack350**, with approximately 70M+ public Instagram reel views and collaborations with automotive and lifestyle brands.
 
 - **Website**: ${SITE_URL}/
 - **GitHub**: https://github.com/Marshmellow31

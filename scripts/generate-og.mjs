@@ -67,7 +67,7 @@ const creativeOverlay = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" he
   <g font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
     <text x="72" y="210" fill="${MUTED}" font-size="27" font-weight="600" letter-spacing="4">AUTOMOTIVE CONTENT CREATOR</text>
     <text x="68" y="332" fill="${FG}" font-size="96" font-weight="700" letter-spacing="-5">GUYWITHBLACK350</text>
-    <text x="72" y="434" fill="${FG}" font-size="58" font-weight="700" letter-spacing="-2">≈68M PUBLIC REEL VIEWS</text>
+    <text x="72" y="434" fill="${FG}" font-size="58" font-weight="700" letter-spacing="-2">≈70M+ PUBLIC REEL VIEWS</text>
     <text x="72" y="536" fill="${MUTED}" font-size="24" font-weight="500">Harshil Patel · @guywithblack350</text>
   </g>
 </svg>`;

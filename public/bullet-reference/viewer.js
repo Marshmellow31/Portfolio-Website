@@ -114,11 +114,16 @@ window.infinityrt_webgl2avail = function() {
   }
 };
 
+function getDpr() {
+  return Math.min(window.devicePixelRatio || 1, 2);
+}
+
 // Robust WebGL context getter that allows software rasterization and devices without dedicated hardware acceleration
 function obtainWebGLContext(targetCanvas) {
   const contextTypes = ['webgl2', 'webgl', 'experimental-webgl'];
   const optionProfiles = [
-    { antialias: false, depth: true, alpha: true, failIfMajorPerformanceCaveat: false, powerPreference: 'default' },
+    { antialias: true, depth: true, alpha: true, failIfMajorPerformanceCaveat: false, powerPreference: 'high-performance' },
+    { antialias: true, depth: true, alpha: true, failIfMajorPerformanceCaveat: false },
     { depth: true, alpha: true, failIfMajorPerformanceCaveat: false },
     { failIfMajorPerformanceCaveat: false },
     { antialias: false, depth: true },
@@ -136,7 +141,7 @@ function obtainWebGLContext(targetCanvas) {
 
   try {
     if (typeof infinityrt_getwebglcontext === 'function') {
-      const gl = infinityrt_getwebglcontext(targetCanvas, { failIfMajorPerformanceCaveat: false, antialias: false });
+      const gl = infinityrt_getwebglcontext(targetCanvas, { failIfMajorPerformanceCaveat: false, antialias: true });
       if (gl) return gl;
     }
   } catch {}
@@ -155,8 +160,11 @@ try {
     statusElement.style.pointerEvents = 'none';
     throw new Error('WebGL unavailable');
   }
-  canvas.width = innerWidth;
-  canvas.height = innerHeight;
+  const dpr = getDpr();
+  canvas.width = Math.round(innerWidth * dpr);
+  canvas.height = Math.round(innerHeight * dpr);
+  canvas.style.width = '100%';
+  canvas.style.height = '100%';
   canvas.tabIndex = 0;
   canvas.setAttribute('aria-label', 'Bullet 350. Drag to orbit 360°; scroll to zoom; Ctrl + drag to pan anchor.');
   scene = new infinityrt_scene({rtgl:gl,useDraco:false,forcewebp:true}, 'https://reconfiguratorprod.royalenfield.com/models/J1B10SEP2024/bullet350/Web/model_gl/', canvas.width, canvas.height);
@@ -216,9 +224,20 @@ try {
   render();
   setTimeout(() => { if (!ready && !stopped) fail('Loading is taking longer than expected. Check your connection and reload to retry.'); }, 180000);
   window.addEventListener('resize', () => {
-    canvas.width = innerWidth; canvas.height = innerHeight;
-    scene.resize(canvas.width, canvas.height);
-    scene._nav._midx = canvas.width / 2; scene._nav._midy = canvas.height / 2;
+    const dpr = getDpr();
+    const w = Math.round(innerWidth * dpr);
+    const h = Math.round(innerHeight * dpr);
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width = w;
+      canvas.height = h;
+      canvas.style.width = '100%';
+      canvas.style.height = '100%';
+      scene.resize(w, h);
+      if (scene._nav) {
+        scene._nav._midx = w / 2;
+        scene._nav._midy = h / 2;
+      }
+    }
     resetView(true);
   });
   let pinchDistance = null;
@@ -336,8 +355,28 @@ try {
         const deltaX = Number(e.data.deltaX) || 0;
         const deltaY = Number(e.data.deltaY) || 0;
         scene._nav.NavRotation([0, 0], [deltaX, deltaY]);
-        scene._nav._navXAng = Math.max(.08, Math.min(.38, scene._nav._navXAng));
+        scene._nav._navXAng = Math.max(.05, Math.min(.45, scene._nav._navXAng));
         scene.clearRefine();
+      }
+    } else if (e.data?.type === 'bullet-zoom') {
+      if (ready) {
+        pauseRotationUntil = performance.now() + 5000;
+        const delta = Number(e.data.delta) || 0;
+        scene._nav.NavChangeDolly(delta);
+        scene.clearRefine();
+      }
+    } else if (e.data?.type === 'bullet-pan') {
+      if (ready) {
+        pauseRotationUntil = performance.now() + 5000;
+        const deltaX = Number(e.data.deltaX) || 0;
+        const deltaY = Number(e.data.deltaY) || 0;
+        scene._nav.NavPan([deltaX, deltaY]);
+        scene.clearRefine();
+      }
+    } else if (e.data?.type === 'bullet-reset') {
+      if (ready) {
+        pauseRotationUntil = performance.now() + 4000;
+        resetView(false);
       }
     }
   });

@@ -6,12 +6,16 @@ export default function CreativeHero({ instagramHandle, instagramUrl }) {
   const viewerRef = useRef(null);
   const [activeFinish, setActiveFinish] = useState('premium');
   const [isTouchDevice, setIsTouchDevice] = useState(false);
-  const [isFull3DActive, setIsFull3DActive] = useState(false);
-
   const [has3DFallback, setHas3DFallback] = useState(false);
 
-  const lastTouchX = useRef(0);
-  const touchActive = useRef(false);
+  // Mobile dedicated 3D interactive stage state
+  const [interactiveMode, setInteractiveMode] = useState('orbit'); // 'orbit' | 'move'
+  const [touchFeedback, setTouchFeedback] = useState(null);
+
+  const activeTouches = useRef(new Map());
+  const initialPinchDist = useRef(null);
+  const prevMidpoint = useRef(null);
+  const lastSingleTouch = useRef(null);
 
   useEffect(() => {
     setIsTouchDevice(
@@ -63,33 +67,105 @@ export default function CreativeHero({ instagramHandle, instagramUrl }) {
     );
   };
 
-  // Scroll-safe mobile touch handlers: allow vertical native scroll while swiping horizontally rotates the model
-  const handleTouchStart = (e) => {
-    if (e.touches.length === 1) {
-      lastTouchX.current = e.touches[0].clientX;
-      touchActive.current = true;
+  // Dedicated Interactive 3D Stage Touch Handlers (pinch to zoom, 1-finger orbit, 1-finger or 2-finger pan)
+  const handleStageTouchStart = (e) => {
+    for (let i = 0; i < e.changedTouches.length; i++) {
+      const t = e.changedTouches[i];
+      activeTouches.current.set(t.identifier, { x: t.clientX, y: t.clientY });
+    }
+
+    if (activeTouches.current.size === 1) {
+      const [t] = activeTouches.current.values();
+      lastSingleTouch.current = { x: t.x, y: t.y };
+      setTouchFeedback(interactiveMode === 'move' ? 'Moving anchor' : 'Rotating 360°');
+    } else if (activeTouches.current.size >= 2) {
+      const [t1, t2] = [...activeTouches.current.values()];
+      initialPinchDist.current = Math.hypot(t1.x - t2.x, t1.y - t2.y);
+      prevMidpoint.current = { x: (t1.x + t2.x) / 2, y: (t1.y + t2.y) / 2 };
+      setTouchFeedback('Pinch to zoom · 2-finger move');
     }
   };
 
-  const handleTouchMove = (e) => {
-    if (!touchActive.current || e.touches.length !== 1) return;
-    const currentX = e.touches[0].clientX;
-    const deltaX = currentX - lastTouchX.current;
-    lastTouchX.current = currentX;
+  const handleStageTouchMove = (e) => {
+    for (let i = 0; i < e.changedTouches.length; i++) {
+      const t = e.changedTouches[i];
+      if (activeTouches.current.has(t.identifier)) {
+        activeTouches.current.set(t.identifier, { x: t.clientX, y: t.clientY });
+      }
+    }
 
-    if (Math.abs(deltaX) > 0.5) {
-      viewerRef.current?.contentWindow?.postMessage(
-        {
-          type: 'bullet-drag',
-          deltaX: deltaX * 1.5,
-        },
-        window.location.origin
-      );
+    if (activeTouches.current.size === 1 && lastSingleTouch.current) {
+      const [t] = activeTouches.current.values();
+      const deltaX = t.x - lastSingleTouch.current.x;
+      const deltaY = t.y - lastSingleTouch.current.y;
+      lastSingleTouch.current = { x: t.x, y: t.y };
+
+      if (interactiveMode === 'move') {
+        viewerRef.current?.contentWindow?.postMessage(
+          { type: 'bullet-pan', deltaX: deltaX * 1.4, deltaY: deltaY * 1.4 },
+          window.location.origin
+        );
+      } else {
+        viewerRef.current?.contentWindow?.postMessage(
+          { type: 'bullet-drag', deltaX: deltaX * 1.8, deltaY: deltaY * 0.8 },
+          window.location.origin
+        );
+      }
+    } else if (activeTouches.current.size >= 2) {
+      const [t1, t2] = [...activeTouches.current.values()];
+      const currentDist = Math.hypot(t1.x - t2.x, t1.y - t2.y);
+      const currentMid = { x: (t1.x + t2.x) / 2, y: (t1.y + t2.y) / 2 };
+
+      // Pinch to zoom
+      if (initialPinchDist.current !== null) {
+        const distDelta = initialPinchDist.current - currentDist;
+        if (Math.abs(distDelta) > 0.5) {
+          viewerRef.current?.contentWindow?.postMessage(
+            { type: 'bullet-zoom', delta: distDelta * 0.5 },
+            window.location.origin
+          );
+          initialPinchDist.current = currentDist;
+        }
+      }
+
+      // Two-finger pan
+      if (prevMidpoint.current) {
+        const panDeltaX = currentMid.x - prevMidpoint.current.x;
+        const panDeltaY = currentMid.y - prevMidpoint.current.y;
+        if (Math.hypot(panDeltaX, panDeltaY) > 1) {
+          viewerRef.current?.contentWindow?.postMessage(
+            { type: 'bullet-pan', deltaX: panDeltaX * 1.4, deltaY: panDeltaY * 1.4 },
+            window.location.origin
+          );
+          prevMidpoint.current = currentMid;
+        }
+      }
     }
   };
 
-  const handleTouchEnd = () => {
-    touchActive.current = false;
+  const handleStageTouchEnd = (e) => {
+    for (let i = 0; i < e.changedTouches.length; i++) {
+      activeTouches.current.delete(e.changedTouches[i].identifier);
+    }
+    if (activeTouches.current.size === 0) {
+      initialPinchDist.current = null;
+      prevMidpoint.current = null;
+      lastSingleTouch.current = null;
+      setTouchFeedback(null);
+    } else if (activeTouches.current.size === 1) {
+      const [t] = activeTouches.current.values();
+      lastSingleTouch.current = { x: t.x, y: t.y };
+      initialPinchDist.current = null;
+      prevMidpoint.current = null;
+      setTouchFeedback(interactiveMode === 'move' ? 'Moving anchor' : 'Rotating 360°');
+    }
+  };
+
+  const handleResetView = () => {
+    viewerRef.current?.contentWindow?.postMessage(
+      { type: 'bullet-reset' },
+      window.location.origin
+    );
   };
 
   return (
@@ -106,7 +182,7 @@ export default function CreativeHero({ instagramHandle, instagramUrl }) {
           src="/bullet-reference/index.html?embedded=1"
           title="Interactive Royal Enfield Bullet 350 3D Model"
           className={`h-full w-full border-0 transition-opacity duration-300 ${
-            has3DFallback ? 'opacity-0 pointer-events-none' : isTouchDevice && !isFull3DActive ? 'pointer-events-none' : 'pointer-events-auto'
+            has3DFallback ? 'opacity-0 pointer-events-none' : isTouchDevice ? 'pointer-events-none' : 'pointer-events-auto'
           }`}
         />
       </div>
@@ -123,16 +199,72 @@ export default function CreativeHero({ instagramHandle, instagramUrl }) {
         </div>
       )}
 
-      {/* Scroll-Safe Touch Interceptor for Mobile (allows native vertical scroll, relays horizontal drag) */}
-      {isTouchDevice && !isFull3DActive && (
+      {/* Dedicated Interactive 3D Stage on Mobile: pinch to zoom, move & orbit without scroll interference */}
+      {isTouchDevice && !has3DFallback && (
         <div
-          className="absolute inset-0 z-[2] touch-pan-y"
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-          onTouchCancel={handleTouchEnd}
-          aria-hidden="true"
-        />
+          className="absolute inset-x-3 top-[20%] bottom-[32%] z-[2] mx-auto max-w-lg touch-none select-none rounded-2xl border border-white/10 bg-transparent transition-colors sm:inset-x-6"
+          onTouchStart={handleStageTouchStart}
+          onTouchMove={handleStageTouchMove}
+          onTouchEnd={handleStageTouchEnd}
+          onTouchCancel={handleStageTouchEnd}
+          role="region"
+          aria-label="3D Model Interactive Stage. Drag to rotate or move; pinch to zoom."
+        >
+          {/* Corner Framing Brackets */}
+          <span className="pointer-events-none absolute left-2 top-2 size-3 border-l border-t border-white/40" />
+          <span className="pointer-events-none absolute right-2 top-2 size-3 border-r border-t border-white/40" />
+          <span className="pointer-events-none absolute bottom-2 left-2 size-3 border-b border-l border-white/40" />
+          <span className="pointer-events-none absolute bottom-2 right-2 size-3 border-b border-r border-white/40" />
+
+          {/* Top Control Bar of Interactive Stage */}
+          <div className="pointer-events-auto absolute left-2.5 right-2.5 top-2.5 flex items-center justify-between gap-2">
+            {/* Mode Switcher */}
+            <div className="inline-flex items-center rounded-full border border-white/15 bg-black/85 p-0.5 shadow-lg backdrop-blur-md">
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); setInteractiveMode('orbit'); }}
+                aria-pressed={interactiveMode === 'orbit'}
+                className={`rounded-full px-2.5 py-0.5 font-mono text-[8px] uppercase tracking-[0.14em] transition-all cursor-pointer ${
+                  interactiveMode === 'orbit'
+                    ? 'bg-white font-semibold text-black shadow-sm'
+                    : 'bg-transparent text-white/55 hover:text-white'
+                }`}
+              >
+                Orbit 360°
+              </button>
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); setInteractiveMode('move'); }}
+                aria-pressed={interactiveMode === 'move'}
+                className={`rounded-full px-2.5 py-0.5 font-mono text-[8px] uppercase tracking-[0.14em] transition-all cursor-pointer ${
+                  interactiveMode === 'move'
+                    ? 'bg-white font-semibold text-black shadow-sm'
+                    : 'bg-transparent text-white/55 hover:text-white'
+                }`}
+              >
+                Move
+              </button>
+            </div>
+
+            {/* Reset Button */}
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); handleResetView(); }}
+              className="inline-flex items-center gap-1 rounded-full border border-white/15 bg-black/85 px-2.5 py-1 font-mono text-[8px] font-medium uppercase tracking-[0.14em] text-white/70 shadow-lg backdrop-blur-md transition-all hover:border-white/30 hover:text-white active:scale-95 cursor-pointer"
+            >
+              <span>↺</span>
+              <span>Reset</span>
+            </button>
+          </div>
+
+          {/* Floating tactile guidance at bottom of the stage */}
+          <div className="pointer-events-none absolute inset-x-3 bottom-2 flex items-center justify-between font-mono text-[8px] uppercase tracking-[0.14em] text-white/45">
+            <span>
+              {touchFeedback || (interactiveMode === 'move' ? 'Drag to move anchor · Pinch to zoom' : '1-finger orbit · Pinch to zoom')}
+            </span>
+            <span className="opacity-40">360° Stage</span>
+          </div>
+        </div>
       )}
 
       {/* Cinematic Vignette Gradients */}
@@ -249,26 +381,12 @@ export default function CreativeHero({ instagramHandle, instagramUrl }) {
             {/* Interaction hint */}
             {!has3DFallback && (
               <span className="font-mono text-[8.5px] uppercase tracking-[0.14em] text-white/40 md:text-[9px]">
-                {isTouchDevice ? 'Swipe ↔ to orbit · ↕ to scroll' : 'Drag to orbit 360° · Scroll to zoom · Ctrl + drag to pan'}
+                {isTouchDevice ? 'Use 360° Stage to orbit, zoom & move · Scroll freely outside' : 'Drag to orbit 360° · Scroll to zoom · Ctrl + drag to pan'}
               </span>
             )}
           </div>
         </div>
       </div>
-
-      {/* Floating Exit Pill when Mobile Full 3D is active */}
-      {isTouchDevice && isFull3DActive && (
-        <div className="pointer-events-auto fixed bottom-6 left-1/2 z-50 -translate-x-1/2 shadow-2xl">
-          <button
-            type="button"
-            onClick={() => setIsFull3DActive(false)}
-            className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/30 bg-black/85 px-5 py-2.5 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-white backdrop-blur-xl shadow-2xl transition-transform active:scale-95 cursor-pointer"
-          >
-            <span>✕</span>
-            <span>Exit 3D · Resume Normal Scroll</span>
-          </button>
-        </div>
-      )}
     </section>
   );
 }

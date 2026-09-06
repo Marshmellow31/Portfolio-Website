@@ -116,9 +116,9 @@ export default function CreativeHero({ instagramHandle, instagramUrl }) {
       const currentDist = Math.hypot(t1.x - t2.x, t1.y - t2.y);
       const currentMid = { x: (t1.x + t2.x) / 2, y: (t1.y + t2.y) / 2 };
 
-      // Pinch to zoom
+      // Pinch to zoom: spreading fingers zooms in, pinching zooms out
       if (initialPinchDist.current !== null) {
-        const distDelta = initialPinchDist.current - currentDist;
+        const distDelta = currentDist - initialPinchDist.current;
         if (Math.abs(distDelta) > 0.5) {
           viewerRef.current?.contentWindow?.postMessage(
             { type: 'bullet-zoom', delta: distDelta * 0.5 },
@@ -199,24 +199,24 @@ export default function CreativeHero({ instagramHandle, instagramUrl }) {
         </div>
       )}
 
-      {/* Dedicated Interactive 3D Stage on Mobile: pinch to zoom, move & orbit without scroll interference */}
+      {/* Dedicated Interactive 3D Square in Center on Mobile: pinch to zoom, move & orbit; rest of screen scrolls freely */}
       {isTouchDevice && !has3DFallback && (
         <div
-          className="absolute inset-x-3 top-[20%] bottom-[32%] z-[2] mx-auto max-w-lg touch-none select-none rounded-2xl border border-white/10 bg-transparent transition-colors sm:inset-x-6"
+          className="absolute left-1/2 top-[47%] z-[2] aspect-square w-[min(84vw,340px)] -translate-x-1/2 -translate-y-1/2 touch-none select-none rounded-2xl border border-white/15 bg-white/[0.02] shadow-2xl backdrop-blur-[2px] transition-colors active:border-white/30"
           onTouchStart={handleStageTouchStart}
           onTouchMove={handleStageTouchMove}
           onTouchEnd={handleStageTouchEnd}
           onTouchCancel={handleStageTouchEnd}
           role="region"
-          aria-label="3D Model Interactive Stage. Drag to rotate or move; pinch to zoom."
+          aria-label="3D Model Interactive Center Square. Drag to rotate or move; pinch to zoom. Touch outside to scroll."
         >
           {/* Corner Framing Brackets */}
-          <span className="pointer-events-none absolute left-2 top-2 size-3 border-l border-t border-white/40" />
-          <span className="pointer-events-none absolute right-2 top-2 size-3 border-r border-t border-white/40" />
-          <span className="pointer-events-none absolute bottom-2 left-2 size-3 border-b border-l border-white/40" />
-          <span className="pointer-events-none absolute bottom-2 right-2 size-3 border-b border-r border-white/40" />
+          <span className="pointer-events-none absolute left-2 top-2 size-3.5 border-l-2 border-t-2 border-white/40 rounded-tl-sm" />
+          <span className="pointer-events-none absolute right-2 top-2 size-3.5 border-r-2 border-t-2 border-white/40 rounded-tr-sm" />
+          <span className="pointer-events-none absolute bottom-2 left-2 size-3.5 border-b-2 border-l-2 border-white/40 rounded-bl-sm" />
+          <span className="pointer-events-none absolute bottom-2 right-2 size-3.5 border-b-2 border-r-2 border-white/40 rounded-br-sm" />
 
-          {/* Top Control Bar of Interactive Stage */}
+          {/* Top Control Bar of Interactive Square */}
           <div className="pointer-events-auto absolute left-2.5 right-2.5 top-2.5 flex items-center justify-between gap-2">
             {/* Mode Switcher */}
             <div className="inline-flex items-center rounded-full border border-white/15 bg-black/85 p-0.5 shadow-lg backdrop-blur-md">
@@ -257,12 +257,12 @@ export default function CreativeHero({ instagramHandle, instagramUrl }) {
             </button>
           </div>
 
-          {/* Floating tactile guidance at bottom of the stage */}
+          {/* Floating tactile guidance at bottom of the square */}
           <div className="pointer-events-none absolute inset-x-3 bottom-2 flex items-center justify-between font-mono text-[8px] uppercase tracking-[0.14em] text-white/45">
             <span>
               {touchFeedback || (interactiveMode === 'move' ? 'Drag to move anchor · Pinch to zoom' : '1-finger orbit · Pinch to zoom')}
             </span>
-            <span className="opacity-40">360° Stage</span>
+            <span className="opacity-40">Interactive Square</span>
           </div>
         </div>
       )}

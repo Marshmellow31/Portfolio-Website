@@ -273,16 +273,16 @@ try {
 
     if (pointers.size === 2) {
       const [a, b] = [...pointers.values()], distance = Math.hypot(a[0] - b[0], a[1] - b[1]);
-      if (pinchDistance !== null) scene._nav.NavChangeDolly((pinchDistance - distance) * 0.4);
+      if (pinchDistance !== null) scene._nav.NavChangeDolly((distance - pinchDistance) * 0.4);
       pinchDistance = distance;
     } else {
       const panActive = e.ctrlKey || e.metaKey || isPanning || e.buttons === 2 || e.buttons === 4;
       if (panActive) {
-        // Move the anchor (camera pan)
-        scene._nav.NavPan([deltaX, deltaY]);
+        // Move the anchor (camera pan) - inverted per request
+        scene._nav.NavPan([-deltaX, -deltaY]);
       } else {
-        // Orbit in 360 degrees
-        scene._nav.NavRotation([e.clientX, e.clientY], [deltaX, deltaY]);
+        // Orbit in 360 degrees with cursor - inverted per request
+        scene._nav.NavRotation([e.clientX, e.clientY], [-deltaX, -deltaY]);
         scene._nav._navXAng = Math.max(-0.2, Math.min(0.55, scene._nav._navXAng));
       }
     }

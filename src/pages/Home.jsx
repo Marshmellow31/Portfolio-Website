@@ -198,6 +198,31 @@ export default function Home() {
         </div>
       </header>
 
+      <section id="featured-paymatrix" className="border-b border-border px-[clamp(20px,6vw,96px)] py-[clamp(56px,7vw,112px)]" aria-labelledby="paymatrix-heading">
+        <div className="grid items-center gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-[clamp(48px,6vw,96px)]">
+          <div>
+            <p className="m-0 font-mono text-[11px] uppercase tracking-[.18em] text-text-muted">Featured product · Web + Android</p>
+            <h2 id="paymatrix-heading" className="mb-0 mt-5 font-bold text-text-bright" style={{ fontSize: 'clamp(48px,6vw,88px)', lineHeight: 0.95 }}>
+              PayMatrix<span className="text-text-faint">.</span>
+            </h2>
+            <p className="mb-0 mt-7 max-w-[46ch] text-[17px] leading-relaxed text-text-muted sm:text-[19px]">
+              From a paper receipt to a fair split. I built PayMatrix to bring bill scanning, group balances, and UPI settlement into one expense-sharing product.
+            </p>
+            <div className="mt-9 flex flex-wrap gap-3">
+              <Link to="/projects/paymatrix" className="inline-flex min-h-12 items-center justify-center rounded-[4px] bg-text px-6 text-[13px] font-semibold text-bg no-underline transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
+                Explore the case study
+              </Link>
+              <a href="https://paymatrixapp.online/" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-12 items-center justify-center rounded-[4px] border border-border-strong px-6 text-[13px] font-medium text-text no-underline transition-colors hover:border-white/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
+                Open PayMatrix ↗
+              </a>
+            </div>
+          </div>
+          <Link to="/projects/paymatrix" aria-label="View the PayMatrix case study" className="block overflow-hidden rounded-xl border border-border-strong bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
+            <img src="/projects/paymatrix/01-hero-960.webp" alt="PayMatrix dashboard and expense-sharing case study preview" loading="lazy" width="960" height="600" className="block h-auto w-full" />
+          </Link>
+        </div>
+      </section>
+
       {/* ──────────── ABOUT ──────────── */}
       <section id="about" className="section-pad border-b border-border">
         <div className="grid gap-[clamp(40px,6vw,96px)] [grid-template-columns:repeat(auto-fit,minmax(320px,1fr))]">

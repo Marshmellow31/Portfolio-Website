@@ -27,7 +27,7 @@
     ['Navigator+', 'Native Android GPS dashboard'],
   ];
   const OPEN_MAP = {
-    paymatrix: 'https://pay-matrix.vercel.app/',
+    paymatrix: 'https://paymatrixapp.online/',
     ascend: 'https://ascend-iota-lac.vercel.app/',
     picklerage: 'https://github.com/Marshmellow31/PickleRage-website',
     mann: 'https://github.com/Marshmellow31/Mann-beauty-parlour',

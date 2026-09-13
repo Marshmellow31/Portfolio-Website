@@ -2,7 +2,7 @@
 export const items = [
   {
     image: '/projects/paymatrix.webp',
-    link: 'https://pay-matrix.vercel.app/',
+    link: 'https://paymatrixapp.online/',
     title: 'PayMatrix',
     description: 'AI-powered expense sharing'
   },
@@ -195,7 +195,7 @@ const selectedWorkRaw = [
     ],
     outcome: 'Live in production and used for real group trips — the settle-up flow that used to take an evening of arithmetic now takes three taps.',
     stack: ['React 19', 'Firebase', 'Tailwind', 'Gemini API'],
-    link: 'https://pay-matrix.vercel.app/',
+    link: 'https://paymatrixapp.online/',
     github: 'https://github.com/Marshmellow31/PayMatrix',
     releaseRepo: 'Marshmellow31/PayMatrix',
     instagram: 'https://www.instagram.com/paymatrixapp/',

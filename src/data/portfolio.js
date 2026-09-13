@@ -2,9 +2,9 @@
 export const items = [
   {
     image: '/projects/paymatrix.webp',
-    link: 'https://paymatrixapp.online/',
-    title: 'PayMatrix',
-    description: 'AI-powered expense sharing'
+    link: 'https://pay-matrix.vercel.app/',
+    title: 'paymatrix',
+    description: 'Deterministic expense sharing & settlement engine'
   },
 
   {
@@ -135,10 +135,10 @@ const selectedWorkRaw = [
     slug: 'paymatrix',
     group: 'product',
     weight: 'feature',
-    title: 'PayMatrix',
+    title: 'paymatrix',
     year: '2026',
-    role: 'Design · Full-Stack · AI',
-    type: 'Personal Product',
+    role: 'Full-Stack Architecture · Native Android · Systems',
+    type: 'Flagship Product',
     /* 1200×630 JPEG cut from the hero frame — the social card. The old square
        logo was being centre-cropped to ribbons by summary_large_image. */
     image: '/projects/paymatrix/01-hero-og.jpg',
@@ -158,44 +158,45 @@ const selectedWorkRaw = [
       hero: {
         id: '/projects/paymatrix/01-hero',
         ratio: '16 / 10',
-        alt: 'PayMatrix case study title card — "Splitting bills with friends shouldn\'t feel like accounting" beside an iPhone showing the dashboard with a ₹10,940.59 balance card, debt and pending-returns tiles, and Goa Trip and Flat 402 settlements.',
+        alt: 'paymatrix case study title card — "Splitting bills with friends shouldn\'t feel like accounting" beside a mobile mockup displaying the real-time financial ledger, net debt simplification, and verified settlements.',
       },
       sections: [
         {
           id: '/projects/paymatrix/02-scan',
-          alt: 'PayMatrix bill scanner extracting seven line items and ₹660 of tax from a ₹4,860 restaurant receipt into a review-and-fill form.',
+          alt: 'paymatrix bill scanner extracting line items and tax from a restaurant receipt into a review-and-fill form.',
           sr: 'AI bill scanning. One Gemini Vision call returns total, merchant, date and category as structured JSON — no manual typing anywhere in the flow. Every dish comes back with its own price, which is what makes the itemized split possible. Items total ₹4,200 against a ₹4,860 bill, and the ₹660 gap is captured as shared tax and charges.',
         },
         {
           id: '/projects/paymatrix/03-split',
-          alt: 'PayMatrix assigning individual dishes to five named people, with a GST split mode distributing ₹660 of tax across the group.',
+          alt: 'paymatrix assigning individual dishes to five named people, with a GST split mode distributing tax across the group.',
           sr: 'Itemized split and GST. Three split modes — equal, exact rupee amounts, or itemized — are handled by the same expense record. GST is apportioned by each person\'s dish subtotal rather than divided by head count. Excluding anyone re-runs the whole distribution instantly, and the last share absorbs rounding so totals stay exact.',
         },
         {
           id: '/projects/paymatrix/04-balances',
-          alt: 'PayMatrix net-position screen for a five-person Goa trip, with a diagram collapsing ten raw obligations into two required settlements.',
+          alt: 'paymatrix net-position screen for a five-person Goa trip, with a diagram collapsing ten raw obligations into two required settlements.',
           sr: 'Debt simplification. Every expense nets into one balance per person, then a greedy max-creditor / max-debtor pass pairs them off — collapsing ten raw obligations into two transfers, an 80% reduction, at O(n log n) per settlement and zero rounding drift.',
         },
         {
           id: '/projects/paymatrix/05-upi',
-          alt: 'PayMatrix settle-up screen showing a ₹4,593.93 UPI payment as a scannable QR code, alongside the app\'s data-flow stack.',
-          sr: 'UPI settlement. PayMatrix never touches money — it builds a signed upi://pay intent and hands it off, as a deep link into GPay, PhonePe or Paytm on Android and as a scannable QR on desktop. Marking a payment writes a settlement row, so balances always recompute from expenses plus settlements rather than from a mutable running total. The stack is React 19 and Vite as an installable PWA, Gemini Vision for receipt parsing, Firestore for real-time sync, a balance engine for greedy simplification, and the UPI intent handoff.',
+          alt: 'paymatrix settle-up screen showing a ₹4,593.93 UPI payment as a scannable QR code, alongside the app\'s data-flow stack.',
+          sr: 'UPI settlement. paymatrix never touches money — it builds a signed upi://pay intent and hands it off, as a deep link into GPay, PhonePe or Paytm on Android and as a scannable QR on desktop. Marking a payment writes a settlement row, so balances always recompute from expenses plus settlements rather than from a mutable running total. The stack is React 19 and Vite as an installable PWA, Gemini Vision for receipt parsing, Firestore for real-time sync, a balance engine for greedy simplification, and the UPI intent handoff.',
         },
       ],
     },
-    description: 'Group-expense platform with AI bill scanning (Gemini Vision), greedy debt simplification, native UPI deep-linking, and real-time sync.',
-    problem: 'Splitting group expenses is still a mess of screenshots, manual entry, and "who owes whom" chains. Existing apps make you type every line item by hand and settle debts through long chains of tiny transfers.',
-    approach: 'PayMatrix scans the physical bill instead — Gemini Vision reads the receipt, itemizes it, and assigns items to people. A greedy debt-simplification algorithm collapses the who-owes-whom graph into the minimum number of transfers, and each one deep-links straight into the payer\'s UPI app. Firebase keeps every member of the group in sync in real time.',
+    description: 'Flagship shared-expense PWA and native Android app engineered with integer-paise financial arithmetic, Gemini Vision receipt extraction, O(N log N) greedy debt simplification, and zero-trust UPI intent settlement.',
+    problem: 'Multi-party expense sharing suffers from three structural engineering failures: IEEE 754 floating-point drift across fractional shares, combinatorial settlement friction where an N-member group faces up to N(N-1)/2 individual transactions, and unsafe payment confirmation flows that naively treat external mobile deep-link returns as proof of settled money.',
+    approach: 'paymatrix resolves these directly at the data and architecture layers. All financial calculations execute in integer paise with deterministic remainder allocation, ensuring sum(shares) === total without sub-rupee rounding leakage. A greedy min-cash-flow graph solver collapses net balances into minimal bilateral transfers in O(N log N) time. Receipt digitization uses structured Gemini Vision multimodal parsing with client-side boundary validation, while settlement flows enforce a strict payment boundary: signed upi://pay URI intents and desktop dynamic QRs hand off to payment apps, but transactions remain unconfirmed pending explicit two-party settlement verification.',
     features: [
-      ['AI bill scanning', 'Point a camera at a receipt — Gemini Vision extracts merchant, line items, and totals into a structured split.'],
-      ['Debt simplification', 'A greedy settlement algorithm reduces N-person debt graphs to the fewest possible transactions.'],
-      ['Native UPI deep-linking', 'Every settlement opens directly in GPay/PhonePe/Paytm with amount and note pre-filled.'],
-      ['Real-time group sync', 'Expenses, edits, and settlements propagate to every member instantly via Firestore listeners.'],
-      ['Spending insights', 'Per-person and per-category breakdowns show where the group\'s money actually goes.'],
+      ['Deterministic Integer-Paise Math', 'Computes all monetary shares in integer paise with deterministic remainder distribution, eliminating binary floating-point roundoff errors across arbitrary split topologies.'],
+      ['Greedy Graph Debt Simplification', 'Implements an O(N log N) min-cash-flow pairing pass between net creditors and net debtors, reducing transactional friction by up to 80% without altering individual net positions.'],
+      ['Zero-Trust UPI Settlement Protocol', 'Constructs compliant upi://pay intents with dynamic QR fallback. Acknowledges OS return boundaries: transfers remain unconfirmed pending explicit multi-party verification.'],
+      ['Multimodal Receipt Extraction', 'Integrates Gemini Vision to parse raw paper receipts into structured JSON schemas, with client-side subtotal verification and proportional tax/tip redistribution.'],
+      ['Dual-Surface PWA & Native Android', 'Built on React 19 and Vite with an offline-tolerant Firestore syncing layer, complemented by a native Android runtime (com.paymatrix.app) for low-latency on-device expense entry.'],
+      ['Real-Time Collaborative Ledger', 'Bi-directional reactive state propagation across group members with atomic write batches, ensuring concurrent expense additions never corrupt group balance integrity.'],
     ],
-    outcome: 'Live in production and used for real group trips — the settle-up flow that used to take an evening of arithmetic now takes three taps.',
-    stack: ['React 19', 'Firebase', 'Tailwind', 'Gemini API'],
-    link: 'https://paymatrixapp.online/',
+    outcome: 'Live in production at pay-matrix.vercel.app with automated GitHub Releases serving verified Android APK builds. Validated across multi-day group travels, eliminating manual ledger reconciliations while maintaining 100% mathematical integrity across all transactions.',
+    stack: ['React 19', 'Kotlin / Jetpack Compose', 'Firebase', 'Gemini Vision', 'Tailwind CSS'],
+    link: 'https://pay-matrix.vercel.app/',
     github: 'https://github.com/Marshmellow31/PayMatrix',
     releaseRepo: 'Marshmellow31/PayMatrix',
     instagram: 'https://www.instagram.com/paymatrixapp/',

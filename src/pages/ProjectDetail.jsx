@@ -1,6 +1,9 @@
 import { Link, useParams, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FiArrowUpRight, FiFileText } from 'react-icons/fi';
+import { FiArrowUpRight, FiFileText, FiGlobe, FiDownload } from 'react-icons/fi';
+import { FaGithub } from 'react-icons/fa';
+import { FaInstagram } from 'react-icons/fa6';
+import { SiAndroid } from 'react-icons/si';
 import { selectedWork, getProjectBySlug } from '../data/portfolio';
 import { Reveal } from '../components/Reveal/Reveal';
 import CaseImage from '../components/CaseImage/CaseImage';
@@ -60,215 +63,196 @@ export default function ProjectDetail() {
 
   return (
     <div className="min-h-screen">
-      {/* ── Header ── */}
-      <section className="px-[clamp(20px,6vw,96px)] pt-[110px] pb-[clamp(32px,4vw,56px)]">
-        <Reveal>
-          <Link
-            to="/projects"
-            className="inline-block font-mono text-[11px] tracking-[.14em] text-text-dim no-underline hover:text-text transition-colors mb-8"
-          >
-            ← ALL PROJECTS
-          </Link>
+      {/* ── Side-by-Side Hero Section: Text on Left, Image Box on Right ── */}
+      <section className="px-[clamp(20px,6vw,96px)] pt-[104px] pb-[clamp(40px,5vw,72px)] border-b border-border">
+        <div className="grid gap-[clamp(32px,4vw,64px)] lg:grid-cols-[1.05fr_1.1fr] xl:grid-cols-[1fr_1.15fr] items-center">
+          {/* Left Column: Title, description, and metadata */}
+          <Reveal>
+            <Link
+              to="/projects"
+              className="inline-block font-mono text-[11px] tracking-[.14em] text-text-dim no-underline hover:text-text transition-colors mb-6"
+            >
+              ← ALL PROJECTS
+            </Link>
 
-          <div className="flex items-center gap-[14px] mb-5">
-            <div className="w-10 h-px bg-text" />
-            <span className="mono-label">Case Study — {project.num} / {String(selectedWork.length).padStart(2, '0')}</span>
-            {project.live && (
-              <span className="font-mono text-[9px] tracking-[.14em] text-bg bg-text rounded-[3px] px-[7px] py-[3px]">
-                LIVE
-              </span>
-            )}
-          </div>
+            <div className="flex items-center gap-[14px] mb-4">
+              <div className="w-10 h-px bg-text" />
+              <span className="mono-label">Case Study — {project.num} / {String(selectedWork.length).padStart(2, '0')}</span>
+              {project.live && (
+                <span className="font-mono text-[9px] tracking-[.14em] text-bg bg-text rounded-[3px] px-[7px] py-[2px]">
+                  LIVE
+                </span>
+              )}
+            </div>
 
-          {/* The hero frame renders the title and tagline as artwork, so the
-              real heading is kept for SEO and screen readers but not painted
-              twice. Everything else still renders it normally. */}
-          {frames ? (
-            <>
-              <h1 className="sr-only">{project.title}</h1>
-              <p className="sr-only">{project.description}</p>
-            </>
-          ) : (
-            <>
-              <h1
-                className="m-0 font-bold text-text-bright"
-                style={{ fontSize: 'clamp(44px,8vw,110px)', letterSpacing: '-0.045em', lineHeight: 0.94 }}
-              >
-                {project.title}
-              </h1>
+            <h1
+              className="m-0 font-bold text-text-bright"
+              style={{ fontSize: 'clamp(40px,5.5vw,76px)', letterSpacing: '-0.045em', lineHeight: 0.96 }}
+            >
+              {project.title}
+            </h1>
 
-              <p
-                className="mt-7 max-w-[640px] text-text-muted"
-                style={{ fontSize: 'clamp(16px,1.5vw,20px)', lineHeight: 1.6, textWrap: 'pretty' }}
-              >
-                {project.description}
-              </p>
-            </>
-          )}
-        </Reveal>
+            <p
+              className="mt-5 max-w-[580px] text-text-muted"
+              style={{ fontSize: 'clamp(15px,1.25vw,18px)', lineHeight: 1.65, textWrap: 'pretty' }}
+            >
+              {project.description}
+            </p>
 
-        {/* meta strip */}
-        <Reveal className="mt-[clamp(32px,4vw,52px)] border-t border-border">
-          <div className="grid gap-x-8 gap-y-5 pt-6 [grid-template-columns:repeat(auto-fit,minmax(150px,1fr))]">
-            {/* The hero frame already prints year / role / type / stack. */}
-            {(frames ? [] : [
-              ['YEAR', project.year],
-              ['ROLE', project.role],
-              ['TYPE', project.type],
-              ['STACK', project.stackLine],
-            ]).map(([label, value]) => (
-              <div key={label}>
-                <div className="font-mono text-[10px] tracking-[.2em] text-text-faint mb-2">{label}</div>
-                <div className="font-mono text-[12px] leading-[1.7] tracking-[.04em] text-text">{value}</div>
+            {/* Meta details strip */}
+            <div className="mt-7 pt-5 border-t border-border flex flex-col gap-5">
+              {/* Row 1: Timeline & Role */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <div className="font-mono text-[10px] tracking-[.2em] text-text-faint mb-1.5">TIMELINE &amp; TYPE</div>
+                  <div className="font-mono text-[12px] leading-[1.5] tracking-[.04em] text-text">{project.year} · {project.type}</div>
+                </div>
+                <div>
+                  <div className="font-mono text-[10px] tracking-[.2em] text-text-faint mb-1.5">ROLE</div>
+                  <div className="font-mono text-[12px] leading-[1.5] tracking-[.04em] text-text">{project.role}</div>
+                </div>
               </div>
-            ))}
-            <div>
-              <div className="font-mono text-[10px] tracking-[.2em] text-text-faint mb-2">LINKS</div>
-              <div className="flex flex-wrap items-center gap-3">
-                {project.link && (
-                  <a href={project.link} target="_blank" rel="noreferrer"
-                    className="font-mono text-[12px] tracking-[.08em] text-text no-underline border-b border-white/30 pb-0.5 hover:border-white transition-colors">
-                    VISIT ↗
-                  </a>
-                )}
-                {project.github && (
-                  <a href={project.github} target="_blank" rel="noreferrer"
-                    className="font-mono text-[12px] tracking-[.08em] text-text no-underline border-b border-white/30 pb-0.5 hover:border-white transition-colors">
-                    CODE ↗
-                  </a>
-                )}
-                {project.releaseRepo && (
-                  <a href="#paymatrix-downloads"
-                    className="font-mono text-[12px] tracking-[.08em] text-text no-underline border-b border-white/30 pb-0.5 hover:border-white transition-colors">
-                    DOWNLOAD APK ↓
-                  </a>
-                )}
-                {project.instagram && (
-                  <a href={project.instagram} target="_blank" rel="noreferrer"
-                    className="font-mono text-[12px] tracking-[.08em] text-text no-underline border-b border-white/30 pb-0.5 hover:border-white transition-colors">
-                    INSTAGRAM ↗
-                  </a>
-                )}
-                {project.paper && (
-                  <a href={project.paper} target="_blank" rel="noreferrer"
-                    aria-label={`Read the ${project.title} paper`}
-                    className="group inline-flex min-h-9 items-center gap-2 border border-white/80 bg-white px-3 font-mono text-[11px] tracking-[.08em] text-black no-underline transition-colors hover:bg-transparent hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
-                    <FiFileText className="text-[15px]" aria-hidden="true" />
-                    READ PAPER
-                    <FiArrowUpRight className="text-[14px] transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true" />
-                  </a>
-                )}
-                {!project.link && !project.github && !project.paper && !project.credentials && (
-                  <span className="font-mono text-[12px] text-text-faint">PRIVATE CLIENT WORK</span>
-                )}
+
+              {/* Row 2: Stack Pills */}
+              <div>
+                <div className="font-mono text-[10px] tracking-[.2em] text-text-faint mb-2">CORE STACK</div>
+                <div className="flex flex-wrap gap-1.5">
+                  {project.stack.map((tech) => (
+                    <span
+                      key={tech}
+                      className="font-mono text-[10.5px] tracking-[.04em] text-text bg-white/[0.04] border border-white/10 px-2.5 py-0.5 rounded whitespace-nowrap"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Row 3: Action Links with Actual Platform Logos */}
+              <div>
+                <div className="font-mono text-[10px] tracking-[.2em] text-text-faint mb-2">PLATFORM LINKS</div>
+                <div className="flex flex-wrap items-center gap-2">
+                  {project.link && (
+                    <a
+                      href={project.link}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="group inline-flex items-center gap-1.5 font-mono text-[11px] tracking-[.04em] text-text bg-white/[0.04] hover:bg-white/[0.1] border border-white/10 hover:border-white/25 rounded-md px-2.5 py-1.5 transition-all no-underline shadow-sm"
+                    >
+                      <FiGlobe className="text-[13px] opacity-70 group-hover:opacity-100 transition-opacity" />
+                      <span>Live App</span>
+                      <FiArrowUpRight className="text-[11px] opacity-40 group-hover:opacity-100 transition-opacity" />
+                    </a>
+                  )}
+                  {project.github && (
+                    <a
+                      href={project.github}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="group inline-flex items-center gap-1.5 font-mono text-[11px] tracking-[.04em] text-text bg-white/[0.04] hover:bg-white/[0.1] border border-white/10 hover:border-white/25 rounded-md px-2.5 py-1.5 transition-all no-underline shadow-sm"
+                    >
+                      <FaGithub className="text-[13px] opacity-80 group-hover:opacity-100 transition-opacity" />
+                      <span>GitHub</span>
+                      <FiArrowUpRight className="text-[11px] opacity-40 group-hover:opacity-100 transition-opacity" />
+                    </a>
+                  )}
+                  {project.releaseRepo && (
+                    <a
+                      href="#paymatrix-downloads"
+                      className="group inline-flex items-center gap-1.5 font-mono text-[11px] tracking-[.04em] text-text bg-white/[0.04] hover:bg-white/[0.1] border border-white/10 hover:border-white/25 rounded-md px-2.5 py-1.5 transition-all no-underline shadow-sm"
+                    >
+                      <SiAndroid className="text-[13px] text-[#3DDC84] opacity-90 group-hover:opacity-100 transition-opacity" />
+                      <span>Android APK</span>
+                      <FiDownload className="text-[11px] opacity-50 group-hover:opacity-100 transition-opacity" />
+                    </a>
+                  )}
+                  {project.instagram && (
+                    <a
+                      href={project.instagram}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="group inline-flex items-center gap-1.5 font-mono text-[11px] tracking-[.04em] text-text bg-white/[0.04] hover:bg-white/[0.1] border border-white/10 hover:border-white/25 rounded-md px-2.5 py-1.5 transition-all no-underline shadow-sm"
+                    >
+                      <FaInstagram className="text-[13px] text-[#E1306C] opacity-90 group-hover:opacity-100 transition-opacity" />
+                      <span>Instagram</span>
+                      <FiArrowUpRight className="text-[11px] opacity-40 group-hover:opacity-100 transition-opacity" />
+                    </a>
+                  )}
+                  {project.paper && (
+                    <a
+                      href={project.paper}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={`Read the ${project.title} paper`}
+                      className="group inline-flex items-center gap-1.5 font-mono text-[11px] tracking-[.04em] text-black bg-white hover:bg-white/90 border border-white rounded-md px-2.5 py-1.5 transition-all no-underline shadow-sm"
+                    >
+                      <FiFileText className="text-[13px]" />
+                      <span>Paper</span>
+                      <FiArrowUpRight className="text-[11px]" />
+                    </a>
+                  )}
+                  {!project.link && !project.github && !project.paper && !project.credentials && (
+                    <span className="font-mono text-[11px] text-text-faint">PRIVATE CLIENT WORK</span>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        </Reveal>
-      </section>
+          </Reveal>
 
-      {/* ── Designed hero frame — edge to edge, no card, no border. The band
-             behind it is the frame's own #0A0A0B rather than the page's pure
-             black, so the image has no visible rectangle edge. ── */}
-      {frames && (
-        <section className="bg-[#0A0A0B]">
-          <motion.div layoutId={`project-image-${project.slug}`}>
-            <CaseImage
-              id={frames.hero.id}
-              alt={frames.hero.alt}
-              ratio={frames.hero.ratio}
-              /* 132vh on a 16:10 frame renders ~83% of the viewport height, so
-                 the hero always sits within one screen with room to breathe —
-                 and 1800px stops it ballooning further on a wide monitor. */
-              maxWidth="min(100%, 132vh, 1800px)"
-              sizes="(min-width: 1800px) 1800px, 100vw"
-              priority
-            />
-          </motion.div>
-        </section>
-      )}
-
-      {/* ── Hero image (+ Problem/Approach flanking it on wide screens) ── */}
-      <section className={`px-[clamp(20px,6vw,96px)] pb-[clamp(48px,6vw,88px)] ${frames ? 'pt-[clamp(48px,6vw,88px)]' : ''}`}>
-        {frames ? (
-          <div className="grid gap-[clamp(36px,5vw,80px)] [grid-template-columns:repeat(auto-fit,minmax(300px,1fr))]">
-            <Reveal>
-              <div className="mono-label mb-5">The Problem</div>
-              <p className="m-0 text-text-muted" style={{ fontSize: 'clamp(16px,1.4vw,19px)', lineHeight: 1.7, textWrap: 'pretty' }}>
-                {project.problem}
-              </p>
-            </Reveal>
-            <Reveal>
-              <div className="mono-label mb-5">The Approach</div>
-              <p className="m-0 text-text-muted" style={{ fontSize: 'clamp(16px,1.4vw,19px)', lineHeight: 1.7, textWrap: 'pretty' }}>
-                {project.approach}
-              </p>
-            </Reveal>
-          </div>
-        ) : hasGallery ? (
-          <div className="grid gap-[clamp(28px,3vw,48px)] xl:grid-cols-[auto_minmax(0,1fr)] xl:items-center">
-            <div className="flex justify-center">
-              <motion.div
-                layoutId={`project-image-${project.slug}`}
-                className="inline-flex max-w-full rounded-xl overflow-hidden border border-border bg-black/20"
-              >
-                <GalleryImage
-                  src={heroImage}
-                  alt={`${project.title} — main view`}
-                  className="h-[45vh] sm:h-[55vh] md:h-[70vh] w-auto max-w-full object-contain block"
-                  sizes="(min-width: 1280px) 55vw, 92vw"
-                  priority
-                />
+          {/* Right Column: Hero Image placed in a contained box beside the text */}
+          <Reveal>
+            <div className="rounded-2xl overflow-hidden border border-border-strong bg-[#0A0A0B] p-2 sm:p-3 md:p-3.5 shadow-2xl">
+              <motion.div layoutId={`project-image-${project.slug}`}>
+                {frames ? (
+                  <CaseImage
+                    id={frames.hero.id}
+                    alt={frames.hero.alt}
+                    ratio={frames.hero.ratio}
+                    maxWidth="100%"
+                    className="rounded-xl overflow-hidden w-full h-auto block"
+                    priority
+                  />
+                ) : hasGallery ? (
+                  <GalleryImage
+                    src={heroImage}
+                    alt={`${project.title} — main view`}
+                    className="w-full h-auto max-h-[60vh] object-contain rounded-xl block"
+                    priority
+                  />
+                ) : (
+                  <div className="flex items-center justify-center py-16 px-8">
+                    <img
+                      src={heroImage}
+                      alt={`${project.title} — logo`}
+                      className="max-h-[120px] w-auto"
+                      loading="eager"
+                    />
+                  </div>
+                )}
               </motion.div>
             </div>
-
-            <div className="grid gap-[clamp(28px,3vw,44px)]">
-              <Reveal>
-                <div className="mono-label mb-5">The Problem</div>
-                <p className="m-0 text-text-muted" style={{ fontSize: 'clamp(16px,1.4vw,19px)', lineHeight: 1.7, textWrap: 'pretty' }}>
-                  {project.problem}
-                </p>
-              </Reveal>
-
-              <Reveal>
-                <div className="mono-label mb-5">The Approach</div>
-                <p className="m-0 text-text-muted" style={{ fontSize: 'clamp(16px,1.4vw,19px)', lineHeight: 1.7, textWrap: 'pretty' }}>
-                  {project.approach}
-                </p>
-              </Reveal>
-            </div>
-          </div>
-        ) : (
-          <>
-            <motion.div
-              layoutId={`project-image-${project.slug}`}
-              className="rounded-xl overflow-hidden border border-border bg-surface flex items-center justify-center py-[clamp(48px,8vw,110px)] px-8"
-            >
-              <img
-                src={heroImage}
-                alt={`${project.title} — logo`}
-                className="max-h-[120px] w-auto"
-                loading="eager"
-              />
-            </motion.div>
-
-            <div className="grid gap-[clamp(36px,5vw,80px)] mt-[clamp(48px,6vw,88px)] [grid-template-columns:repeat(auto-fit,minmax(300px,1fr))]">
-              <Reveal>
-                <div className="mono-label mb-5">The Problem</div>
-                <p className="m-0 text-text-muted" style={{ fontSize: 'clamp(16px,1.4vw,19px)', lineHeight: 1.7, textWrap: 'pretty' }}>
-                  {project.problem}
-                </p>
-              </Reveal>
-              <Reveal>
-                <div className="mono-label mb-5">The Approach</div>
-                <p className="m-0 text-text-muted" style={{ fontSize: 'clamp(16px,1.4vw,19px)', lineHeight: 1.7, textWrap: 'pretty' }}>
-                  {project.approach}
-                </p>
-              </Reveal>
-            </div>
-          </>
-        )}
+          </Reveal>
+        </div>
       </section>
+
+      {/* ── Problem & Approach Section ── */}
+      <section className="px-[clamp(20px,6vw,96px)] py-[clamp(48px,6vw,88px)]">
+        <div className="grid gap-[clamp(36px,5vw,80px)] [grid-template-columns:repeat(auto-fit,minmax(300px,1fr))]">
+          <Reveal>
+            <div className="mono-label mb-5">The Problem</div>
+            <p className="m-0 text-text-muted" style={{ fontSize: 'clamp(16px,1.4vw,19px)', lineHeight: 1.7, textWrap: 'pretty' }}>
+              {project.problem}
+            </p>
+          </Reveal>
+          <Reveal>
+            <div className="mono-label mb-5">The Approach</div>
+            <p className="m-0 text-text-muted" style={{ fontSize: 'clamp(16px,1.4vw,19px)', lineHeight: 1.7, textWrap: 'pretty' }}>
+              {project.approach}
+            </p>
+          </Reveal>
+        </div>
+      </section>
+
 
       {project.releaseRepo && <PayMatrixDownloads repo={project.releaseRepo} />}
 

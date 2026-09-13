@@ -101,10 +101,10 @@ export default function Home() {
             style={{ animation: 'hpFadeUp .8s ease both' }}
           >
             <div className="w-10 h-px bg-text" />
-            <span className="mono-label">Full-Stack Developer — IIIT Vadodara</span>
+            <span className="mono-label">Software Engineer — IIIT Vadodara</span>
             <span className="inline-flex items-center gap-2 font-mono text-[10px] tracking-[.14em] uppercase text-text border border-border-strong rounded-full px-3 py-1">
               <span className="w-[6px] h-[6px] rounded-full bg-text" style={{ animation: 'hpPulse 2s ease-in-out infinite' }} />
-              Available for freelance
+              Open to SDE Internships &amp; Roles
             </span>
           </div>
 
@@ -126,15 +126,15 @@ export default function Home() {
           </h1>
 
           <p
-            className="mt-9 max-w-[560px] text-text-muted"
+            className="mt-9 max-w-[620px] text-text-muted"
             style={{
               fontSize: 'clamp(17px,1.6vw,21px)',
               lineHeight: 1.55,
               animation: 'hpFadeUp .8s .25s ease both',
             }}
           >
-            I build production software — web, mobile, and AI tools — shipped to real
-            businesses, not just repos.
+            Software engineer building high-reliability web applications, native Android systems,
+            and client software — engineered for real users, production scale, and strict correctness.
           </p>
 
           <div className="flex flex-wrap items-center gap-4 mt-11 pointer-events-auto animate-[hpFadeUp_0.8s_ease_0.2s_both]">
@@ -201,24 +201,38 @@ export default function Home() {
       <section id="featured-paymatrix" className="border-b border-border px-[clamp(20px,6vw,96px)] py-[clamp(56px,7vw,112px)]" aria-labelledby="paymatrix-heading">
         <div className="grid items-center gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-[clamp(48px,6vw,96px)]">
           <div>
-            <p className="m-0 font-mono text-[11px] uppercase tracking-[.18em] text-text-muted">Featured product · Web + Android</p>
+            <p className="m-0 font-mono text-[11px] uppercase tracking-[.18em] text-text-muted">Featured Systems Project · Web PWA + Native Android</p>
             <h2 id="paymatrix-heading" className="mb-0 mt-5 font-bold text-text-bright" style={{ fontSize: 'clamp(48px,6vw,88px)', lineHeight: 0.95 }}>
-              PayMatrix<span className="text-text-faint">.</span>
+              paymatrix<span className="text-text-faint">.</span>
             </h2>
-            <p className="mb-0 mt-7 max-w-[46ch] text-[17px] leading-relaxed text-text-muted sm:text-[19px]">
-              From a paper receipt to a fair split. I built PayMatrix to bring bill scanning, group balances, and UPI settlement into one expense-sharing product.
+            <p className="mb-0 mt-7 max-w-[48ch] text-[16px] leading-relaxed text-text-muted sm:text-[18px]">
+              Multi-party expense sharing engineered with integer-paise arithmetic, AI receipt parsing, greedy debt graph simplification, and a zero-trust UPI intent settlement protocol. Eliminates floating-point drift and collapses multi-member obligations into minimal direct transfers.
             </p>
-            <div className="mt-9 flex flex-wrap gap-3">
+            <div className="mt-6 flex flex-wrap gap-2">
+              <span className="font-mono text-[10px] tracking-[.1em] uppercase text-text-dim border border-white/10 rounded-full px-3 py-1 bg-white/[0.02] whitespace-nowrap">
+                Integer-Paise Precision
+              </span>
+              <span className="font-mono text-[10px] tracking-[.1em] uppercase text-text-dim border border-white/10 rounded-full px-3 py-1 bg-white/[0.02] whitespace-nowrap">
+                O(N log N) Debt Engine
+              </span>
+              <span className="font-mono text-[10px] tracking-[.1em] uppercase text-text-dim border border-white/10 rounded-full px-3 py-1 bg-white/[0.02] whitespace-nowrap">
+                Zero-Trust Settlement
+              </span>
+              <span className="font-mono text-[10px] tracking-[.1em] uppercase text-text-dim border border-white/10 rounded-full px-3 py-1 bg-white/[0.02] whitespace-nowrap">
+                React 19 + Kotlin Android
+              </span>
+            </div>
+            <div className="mt-8 flex flex-wrap gap-3">
               <Link to="/projects/paymatrix" className="inline-flex min-h-12 items-center justify-center rounded-[4px] bg-text px-6 text-[13px] font-semibold text-bg no-underline transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
                 Explore the case study
               </Link>
-              <a href="https://paymatrixapp.online/" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-12 items-center justify-center rounded-[4px] border border-border-strong px-6 text-[13px] font-medium text-text no-underline transition-colors hover:border-white/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
-                Open PayMatrix ↗
+              <a href="https://pay-matrix.vercel.app/" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-12 items-center justify-center rounded-[4px] border border-border-strong px-6 text-[13px] font-medium text-text no-underline transition-colors hover:border-white/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
+                Open paymatrix ↗
               </a>
             </div>
           </div>
-          <Link to="/projects/paymatrix" aria-label="View the PayMatrix case study" className="block overflow-hidden rounded-xl border border-border-strong bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
-            <img src="/projects/paymatrix/01-hero-960.webp" alt="PayMatrix dashboard and expense-sharing case study preview" loading="lazy" width="960" height="600" className="block h-auto w-full" />
+          <Link to="/projects/paymatrix" aria-label="View the paymatrix case study" className="block overflow-hidden rounded-xl border border-border-strong bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
+            <img src="/projects/paymatrix/01-hero-960.webp" alt="paymatrix dashboard and expense-sharing case study preview" loading="lazy" width="960" height="600" className="block h-auto w-full" />
           </Link>
         </div>
       </section>

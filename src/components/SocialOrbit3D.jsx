@@ -1,4 +1,5 @@
 import { FaGithub, FaInstagram, FaLinkedinIn } from 'react-icons/fa';
+import { FiArrowUpRight } from 'react-icons/fi';
 
 function GmailLogo({ size = 26 }) {
   return (
@@ -79,7 +80,9 @@ export default function SocialOrbit3D({ className = '' }) {
               <span className="mt-1 block truncate font-mono text-[10px] tracking-[.08em] text-text-dim">{handle}</span>
             </span>
 
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/10 text-[14px] text-text-dim transition-all duration-300 group-hover:border-white/25 group-hover:bg-white group-hover:text-black group-hover:rotate-45" aria-hidden="true">↗</span>
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/10 text-[14px] text-text-dim transition-all duration-300 group-hover:border-white/25 group-hover:bg-white group-hover:text-black group-hover:rotate-45" aria-hidden="true">
+              <FiArrowUpRight size={15} />
+            </span>
             <span className="pointer-events-none absolute inset-x-6 bottom-0 h-px origin-left scale-x-0 bg-white/40 transition-transform duration-300 group-hover:scale-x-100" />
           </a>
         ))}

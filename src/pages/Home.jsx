@@ -8,6 +8,7 @@ import { workHistory, getProjectBySlug } from '../data/portfolio';
 import { testimonials } from '../data/testimonials';
 import useMediaQuery from '../utils/useMediaQuery';
 import useSEO from '../utils/useSEO';
+import { FiArrowUpRight } from 'react-icons/fi';
 import { FaJava, FaDatabase, FaGithub, FaLinkedin } from 'react-icons/fa';
 import { FaInstagram } from 'react-icons/fa6';
 import {
@@ -226,8 +227,14 @@ export default function Home() {
               <Link to="/projects/paymatrix" className="inline-flex min-h-12 items-center justify-center rounded-[4px] bg-text px-6 text-[13px] font-semibold text-bg no-underline transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
                 Explore the case study
               </Link>
-              <a href="https://pay-matrix.vercel.app/" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-12 items-center justify-center rounded-[4px] border border-border-strong px-6 text-[13px] font-medium text-text no-underline transition-colors hover:border-white/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
-                Open paymatrix ↗
+              <a
+                href="https://paymatrixapp.online/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex min-h-12 items-center justify-center gap-2 rounded-[4px] border border-border-strong px-6 text-[13px] font-medium text-text no-underline transition-colors hover:border-white/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              >
+                <span>Open paymatrix</span>
+                <FiArrowUpRight className="text-[15px] text-text-dim transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-text" aria-hidden="true" />
               </a>
             </div>
           </div>
@@ -278,9 +285,7 @@ export default function Home() {
                     suffix={s.suffix}
                     className="font-bold group-hover:text-white transition-colors"
                   />
-                  <span className="font-mono text-[12px] opacity-0 group-hover:opacity-100 transition-opacity text-white/50">
-                    ↗
-                  </span>
+                  <FiArrowUpRight className="text-[14px] opacity-0 group-hover:opacity-100 transition-opacity text-white/50" aria-hidden="true" />
                 </div>
               </a>
             ))}
@@ -422,9 +427,10 @@ export default function Home() {
                                       href={linked.link}
                                       target="_blank"
                                       rel="noreferrer"
-                                      className="font-mono text-[11px] tracking-[.1em] uppercase text-text no-underline border-b border-white/30 pb-0.5 hover:border-white transition-colors"
+                                      className="group inline-flex items-center gap-1 font-mono text-[11px] tracking-[.1em] uppercase text-text no-underline border-b border-white/30 pb-0.5 hover:border-white transition-colors"
                                     >
-                                      Visit ↗
+                                      <span>Visit</span>
+                                      <FiArrowUpRight className="text-[12px] opacity-70 group-hover:opacity-100 transition-opacity" aria-hidden="true" />
                                     </a>
                                   )}
                                 </div>
@@ -530,17 +536,19 @@ export default function Home() {
               href="https://github.com/Marshmellow31"
               target="_blank"
               rel="noreferrer"
-              className="font-mono text-[12px] tracking-[.12em] text-text-dim no-underline hover:text-text transition-colors"
+              className="inline-flex items-center gap-1 font-mono text-[12px] tracking-[.12em] text-text-dim no-underline hover:text-text transition-colors"
             >
-              GITHUB ↗
+              <span>GITHUB</span>
+              <FiArrowUpRight className="text-[13px]" aria-hidden="true" />
             </a>
             <a
               href="https://linkedin.com/in/harshil-patel-5a7373333"
               target="_blank"
               rel="noreferrer"
-              className="font-mono text-[12px] tracking-[.12em] text-text-dim no-underline hover:text-text transition-colors"
+              className="inline-flex items-center gap-1 font-mono text-[12px] tracking-[.12em] text-text-dim no-underline hover:text-text transition-colors"
             >
-              LINKEDIN ↗
+              <span>LINKEDIN</span>
+              <FiArrowUpRight className="text-[13px]" aria-hidden="true" />
             </a>
             <div className="font-mono text-[12px] tracking-[.12em] text-text-faint">
               BHARUCH, GUJARAT — IN

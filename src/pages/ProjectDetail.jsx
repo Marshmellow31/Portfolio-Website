@@ -382,7 +382,7 @@ export default function ProjectDetail() {
                         PDF — opens in a new tab
                       </span>
                     </span>
-                    <span className="font-mono text-[16px] text-text-dim group-hover:text-white transition-colors">↗</span>
+                    <FiArrowUpRight className="text-[18px] text-text-dim group-hover:text-white transition-colors" aria-hidden="true" />
                   </a>
                 ))}
               </div>

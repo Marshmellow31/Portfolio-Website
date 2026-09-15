@@ -1,5 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { FaInstagram, FaPlay } from 'react-icons/fa';
+import { FiArrowUpRight } from 'react-icons/fi';
 
 function ReelSkeletons() {
   return (

@@ -2,7 +2,7 @@
 export const items = [
   {
     image: '/projects/paymatrix.webp',
-    link: 'https://pay-matrix.vercel.app/',
+    link: 'https://paymatrixapp.online/',
     title: 'paymatrix',
     description: 'Deterministic expense sharing & settlement engine'
   },
@@ -194,9 +194,9 @@ const selectedWorkRaw = [
       ['Dual-Surface PWA & Native Android', 'Built on React 19 and Vite with an offline-tolerant Firestore syncing layer, complemented by a native Android runtime (com.paymatrix.app) for low-latency on-device expense entry.'],
       ['Real-Time Collaborative Ledger', 'Bi-directional reactive state propagation across group members with atomic write batches, ensuring concurrent expense additions never corrupt group balance integrity.'],
     ],
-    outcome: 'Live in production at pay-matrix.vercel.app with automated GitHub Releases serving verified Android APK builds. Validated across multi-day group travels, eliminating manual ledger reconciliations while maintaining 100% mathematical integrity across all transactions.',
+    outcome: 'Live in production at paymatrixapp.online with automated GitHub Releases serving verified Android APK builds. Validated across multi-day group travels, eliminating manual ledger reconciliations while maintaining 100% mathematical integrity across all transactions.',
     stack: ['React 19', 'Kotlin / Jetpack Compose', 'Firebase', 'Gemini Vision', 'Tailwind CSS'],
-    link: 'https://pay-matrix.vercel.app/',
+    link: 'https://paymatrixapp.online/',
     github: 'https://github.com/Marshmellow31/PayMatrix',
     releaseRepo: 'Marshmellow31/PayMatrix',
     instagram: 'https://www.instagram.com/paymatrixapp/',

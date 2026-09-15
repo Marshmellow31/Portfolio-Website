@@ -1,6 +1,6 @@
 import { Link, useParams, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FiArrowUpRight, FiFileText, FiGlobe, FiDownload } from 'react-icons/fi';
+import { FiArrowUpRight, FiFileText, FiGlobe, FiDownload, FiLayers } from 'react-icons/fi';
 import { FaGithub } from 'react-icons/fa';
 import { FaInstagram } from 'react-icons/fa6';
 import { SiAndroid } from 'react-icons/si';
@@ -9,6 +9,7 @@ import { Reveal } from '../components/Reveal/Reveal';
 import CaseImage from '../components/CaseImage/CaseImage';
 import GalleryImage from '../components/GalleryImage';
 import PayMatrixDownloads from '../components/PayMatrixDownloads';
+import PayMatrixDiagrams from '../components/PayMatrixDiagrams/PayMatrixDiagrams';
 import useSEO from '../utils/useSEO';
 import { SITE_URL } from '../../site.config.mjs';
 
@@ -166,6 +167,16 @@ export default function ProjectDetail() {
                       <FiDownload className="text-[11px] opacity-50 group-hover:opacity-100 transition-opacity" />
                     </a>
                   )}
+                  {project.slug === 'paymatrix' && (
+                    <a
+                      href="#architecture-diagrams"
+                      className="group inline-flex items-center gap-1.5 font-mono text-[11px] tracking-[.04em] text-text bg-white/[0.04] hover:bg-white/[0.1] border border-white/10 hover:border-white/25 rounded-md px-2.5 py-1.5 transition-all no-underline shadow-sm"
+                    >
+                      <FiLayers className="text-[13px] opacity-80 group-hover:opacity-100 transition-opacity" />
+                      <span>Architecture Diagrams</span>
+                      <FiArrowUpRight className="text-[11px] opacity-40 group-hover:opacity-100 transition-opacity" />
+                    </a>
+                  )}
                   {project.instagram && (
                     <a
                       href={project.instagram}
@@ -280,6 +291,9 @@ export default function ProjectDetail() {
           ))}
         </div>
       </section>
+
+      {/* ── System Architecture & Flow Diagrams from PayMatrix repo ── */}
+      {project.slug === 'paymatrix' && <PayMatrixDiagrams />}
 
       {/* ── Designed frames — 2 × 2 on desktop, stacked below. Every frame is
              4:5, so rows align without a single height override. The band and

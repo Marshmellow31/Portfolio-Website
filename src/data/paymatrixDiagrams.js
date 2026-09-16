@@ -1,6 +1,6 @@
 /**
  * Architectural, data model, and workflow diagrams extracted from the
- * canonical Marshmellow31/PayMatrix repository README.md.
+ * canonical Marshmellow31/paymatrix-showcase repository README.md.
  */
 
 export const paymatrixDiagrams = [

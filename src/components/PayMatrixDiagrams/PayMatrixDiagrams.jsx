@@ -53,12 +53,12 @@ export default function PayMatrixDiagrams() {
           <div className="flex flex-wrap items-center justify-between gap-4 mb-3">
             <div className="mono-label">04 — System Specification &amp; Topology</div>
             <a
-              href="https://github.com/Marshmellow31/PayMatrix#readme"
+              href="https://github.com/Marshmellow31/paymatrix-showcase#readme"
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[.14em] uppercase text-text-dim hover:text-white transition-colors"
             >
-              <span>Source: PayMatrix/README.md</span>
+              <span>Source: paymatrix-showcase/README.md</span>
               <FiExternalLink className="text-[11px]" />
             </a>
           </div>

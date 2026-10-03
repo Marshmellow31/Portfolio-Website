@@ -70,20 +70,20 @@ export default function CreatorImpact({ sectionRef, snapshot, status }) {
               <div>
                 <div className="flex items-center justify-between gap-4 font-mono text-[10px] uppercase tracking-[0.22em] text-text-dim">
                   <span>Aggregate public reel views</span>
-                  <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-emerald-400">Verified signal</span>
+                  <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-emerald-400">Historical snapshot</span>
                 </div>
                 <div
                   className="mt-8 inline-flex items-baseline whitespace-nowrap font-heading text-[clamp(68px,12vw,175px)] font-bold leading-[0.8] text-text-bright"
-                  aria-label="Approximately 70 million+ public reel views"
+                  aria-label={`Approximately ${(snapshot.aggregate.totalViewsEstimate / 1_000_000).toFixed(1)} million public reel views`}
                 >
                   <span aria-hidden="true" className="mr-[0.04em] font-normal text-text-muted">≈</span>
-                  <span aria-hidden="true" className="tracking-[-0.075em]"><AnimatedValue target={70} suffix="M+" /></span>
+                  <span aria-hidden="true" className="tracking-[-0.075em]"><AnimatedValue target={snapshot.aggregate.totalViewsEstimate / 1_000_000} decimals={1} suffix="M" /></span>
                 </div>
               </div>
 
               <div className="mt-10 border-t border-white/10 pt-6">
                 <p className="m-0 max-w-xl text-sm leading-relaxed text-text-muted md:text-base">
-                  Calculated from every accessible public reel count. Instagram reports rounded compact figures, yielding a defensible window of <strong className="font-semibold text-text">68M – 72M+</strong> total impressions.
+                  Calculated from every accessible public reel count. Instagram reports rounded compact figures, yielding a defensible window of <strong className="font-semibold text-text">{(snapshot.aggregate.lowerEstimate / 1_000_000).toFixed(1)}M – {(snapshot.aggregate.upperEstimate / 1_000_000).toFixed(1)}M</strong> public reel views. Private impressions and reach are excluded.
                 </p>
               </div>
             </div>
@@ -91,8 +91,8 @@ export default function CreatorImpact({ sectionRef, snapshot, status }) {
             {/* 4-Box Telemetry Matrix */}
             <div className="grid grid-cols-2 gap-px bg-border">
               {[
-                { label: 'Published posts', value: snapshot.profile.publishedPosts.toLocaleString(), note: '330+ active logs' },
-                { label: 'Followers', value: '4,300+', note: 'Organic automotive niche' },
+                { label: 'Published posts', value: snapshot.profile.publishedPosts.toLocaleString(), note: `Snapshot: ${snapshot.capturedAt}` },
+                { label: 'Followers', value: snapshot.profile.followers.toLocaleString(), note: 'Organic automotive niche' },
                 { label: 'Million+ reels', value: snapshot.aggregate.millionViewReels.toLocaleString(), note: 'High viral penetration' },
                 { label: 'Top 6 combined', value: `${Math.round(snapshot.aggregate.topSixViews / 1_000_000)}M`, note: 'Peak flagship reach' },
               ].map((metric, i) => (

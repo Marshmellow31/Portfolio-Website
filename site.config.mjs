@@ -21,7 +21,6 @@ export const TWITTER_HANDLE = '@MelodyDirt';
 
 export const AUTHOR = {
   name: 'Harshil Patel',
-  alternateName: ['guywithblack350', 'guy with black 350', 'the guy with black 350'],
   email: '1080patelharshil@gmail.com',
   jobTitle: 'Software Engineer',
   alumniOf: 'IIIT Vadodara',

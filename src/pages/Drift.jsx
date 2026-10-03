@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import useSEO from '../utils/useSEO';
+import { raceDescription } from '../data/seo';
 import useFullscreen from '../utils/useFullscreen';
 import { createCarState, stepCar, stepDriftCar, gearFor, MAX_SPEED } from '../lib/drift-physics';
 import { createRaceAudio } from '../lib/drift-audio';
@@ -11,6 +12,7 @@ import {
 } from '../lib/circuits';
 import { createField, stepRival, standings, raceReference } from '../lib/race-ai';
 import { detectQuality } from '../lib/quality';
+import { createRoadHeightSampler } from '../lib/track-materials';
 import World, { LightRig } from '../components/race/World';
 import {
   PlayerF1, PlayerCoupe, RivalField, F1_WHEELS, COUPE_WHEELS,
@@ -24,6 +26,7 @@ import { TyreSmoke, SkidMarks, Sparks, DirtKick } from '../components/race/Effec
 
 const ACCENT = '#FF7C00';
 const DRIFT_PAINT = '#08D9D6';
+const IDLE_INPUT = { left: false, right: false, throttle: false, brake: false, handbrake: false };
 
 const bestKey = (id) => `hp-race-best-${id}`;
 const driftKey = (id) => `hp-drift-best-${id}`;
@@ -40,6 +43,7 @@ function createGame(circuit) {
 
   return {
     circuit,
+    roadHeight: createRoadHeightSampler(circuit),
     isDrift,
     car,
     field: isDrift ? [] : createField(circuit, circuit.def.grid || 6, MAX_SPEED),
@@ -97,17 +101,18 @@ function resetGame(g) {
 /* ═══════════════════════════════════════════════════════════════
    GameLoop — physics, race control, scoring, particle emission
    ═══════════════════════════════════════════════════════════════ */
-function GameLoop({ game, isMobile, smokeApi, skidApi, sparkApi, dirtApi }) {
+function GameLoop({ game, isMobile, quality, smokeApi, skidApi, sparkApi, dirtApi }) {
   const contactEuler = useMemo(() => new THREE.Euler(0, 0, 0, 'YZX'), []);
   const contactOffset = useMemo(() => new THREE.Vector3(), []);
 
   useFrame(({ clock }, rawDt) => {
+    if (document.hidden) return;
     const g = game.current;
     const dt = Math.min(rawDt, 0.04);
     const c = g.circuit;
     const { N, step, lapLength } = c;
     const car = g.car;
-    const t = clock.getElapsedTime();
+    const t = clock.elapsedTime;
 
     /* ── Race control ── */
     if (g.phase === 'countdown') {
@@ -120,7 +125,7 @@ function GameLoop({ game, isMobile, smokeApi, skidApi, sparkApi, dirtApi }) {
     // lights-out lock: no throttle until the countdown clears
     const input = live
       ? g.input
-      : { left: false, right: false, throttle: false, brake: false, handbrake: false };
+      : IDLE_INPUT;
     if (isMobile && live && !g.input.brake) input.throttle = true;
 
     /* ── Rivals ── */
@@ -128,7 +133,9 @@ function GameLoop({ game, isMobile, smokeApi, skidApi, sparkApi, dirtApi }) {
       g._traffic = g._traffic || [];
       g._traffic.length = 0;
       for (const a of g.field) g._traffic.push(a);
-      g._traffic.push({ s: g.s, lat: g.lat || 0 });
+      g._playerTraffic ||= { s: 0, lat: 0 };
+      g._playerTraffic.s = g.s; g._playerTraffic.lat = g.lat || 0;
+      g._traffic.push(g._playerTraffic);
       for (const a of g.field) {
         if (a.finished) continue;
         stepRival(a, c, dt, g._traffic, t);
@@ -176,6 +183,9 @@ function GameLoop({ game, isMobile, smokeApi, skidApi, sparkApi, dirtApi }) {
     };
 
     const dLat = (car.x - p.x) * p.nx + (car.z - p.z) * p.nz;
+    // Advance the next frame's local search with the car. Leaving this at
+    // the grid selected a stale segment until the global fallback kicked in.
+    g.progress = bestI;
     g.lat = dLat;
     const onRoad = Math.abs(dLat) < p.half + CURB * 0.6;
 
@@ -235,39 +245,8 @@ function GameLoop({ game, isMobile, smokeApi, skidApi, sparkApi, dirtApi }) {
       }
     }
 
-    /* ── Surface following: height, roll, pitch ── */
-    const fx = Math.sin(car.heading), fz = Math.cos(car.heading);
-    const lx = Math.cos(car.heading), lz = -Math.sin(car.heading);
-    // surface gradient = tilt across the track + grade along it
-    const gx = p.tilt * p.nx + p.grade * Math.sin(p.ang);
-    const gz = p.tilt * p.nz + p.grade * Math.cos(p.ang);
-    const targetRoll = Math.atan(gx * lx + gz * lz);
-    const targetPitch = -Math.atan(gx * fx + gz * fz);
-    const kv = Math.min(1, dt * 14);
-    car.visRoll += (targetRoll - car.visRoll) * kv;
-    car.visPitch += (targetPitch - car.visPitch) * kv;
-
-    /* Match the road at the four real tyre contact patches. The model uses a
-       YZX Euler order, so rotate each local contact point with that exact same
-       transform instead of approximating its height from pitch/roll. */
-    let targetY = surfaceY(p, dLat);
-    const wheels = g.isDrift ? COUPE_WHEELS : F1_WHEELS;
-    contactEuler.set(car.visPitch, car.heading, car.visRoll, 'YZX');
-    for (const wheel of wheels) {
-      contactOffset.set(wheel.x, 0, wheel.z).applyEuler(contactEuler);
-      const along = contactOffset.x * Math.sin(p.ang) + contactOffset.z * Math.cos(p.ang);
-      const wf = c.frameAt(g.s + along);
-      const worldX = car.x + contactOffset.x;
-      const worldZ = car.z + contactOffset.z;
-      const wheelLat = (worldX - wf.x) * wf.nx + (worldZ - wf.z) * wf.nz;
-      const roadY = surfaceY(wf, wheelLat);
-      targetY = Math.max(targetY, roadY - contactOffset.y + 0.012);
-    }
-    // Height must follow both rises and drops immediately. Smoothing only the
-    // downward movement was the source of the visible hovering after crests.
-    car.visY = targetY;
-
     /* ── Rival collisions ── */
+    const fx = Math.sin(car.heading), fz = Math.cos(car.heading);
     const cOff = 1.15, cR = 1.2, minD = cR * 2;
     for (const a of g.field) {
       const ddx = a.x - car.x, ddz = a.z - car.z;
@@ -298,6 +277,46 @@ function GameLoop({ game, isMobile, smokeApi, skidApi, sparkApi, dirtApi }) {
         }
       }
     }
+
+    /* ── Surface following: height, roll, pitch ── */
+    const lx = Math.cos(car.heading), lz = -Math.sin(car.heading);
+    // surface gradient = tilt across the track + grade along it
+    const gx = p.tilt * p.nx + p.grade * Math.sin(p.ang);
+    const gz = p.tilt * p.nz + p.grade * Math.cos(p.ang);
+    const targetRoll = Math.atan(gx * lx + gz * lz);
+    const targetPitch = -Math.atan(gx * fx + gz * fz);
+    const kv = Math.min(1, dt * 14);
+    car.visRoll += (targetRoll - car.visRoll) * kv;
+    car.visPitch += (targetPitch - car.visPitch) * kv;
+
+    /* Match the road at the four real tyre contact patches. The model uses a
+       YZX Euler order, so rotate each local contact point with that exact same
+       transform instead of approximating its height from pitch/roll. */
+    const finalLat = (car.x - p.x) * p.nx + (car.z - p.z) * p.nz;
+    let targetY = g.roadHeight(car.x, car.z, g.s) ?? surfaceY(p, finalLat);
+    const wheels = g.isDrift ? COUPE_WHEELS : F1_WHEELS;
+    contactEuler.set(car.visPitch, car.heading, car.visRoll, 'YZX');
+    for (const wheel of wheels) {
+      // Rotate the hub, then subtract the tyre radius in world space.
+      // Include the F1 suspension offset used by PlayerF1.
+      const suspension = g.isDrift ? 0
+        : (wheel.front ? 1 : -1) * car.longG * 0.012
+          + THREE.MathUtils.clamp(car.lateralG * 0.03, -0.07, 0.07) * (wheel.x > 0 ? -1 : 1);
+      contactOffset.set(wheel.x, wheel.r + suspension, wheel.z).applyEuler(contactEuler);
+      const worldX = car.x + contactOffset.x;
+      const worldZ = car.z + contactOffset.z;
+      let roadY = g.roadHeight(worldX, worldZ);
+      if (roadY === null) {
+        const along = contactOffset.x * Math.sin(p.ang) + contactOffset.z * Math.cos(p.ang);
+        const wf = c.frameAt(g.s + along);
+        const wheelLat = (worldX - wf.x) * wf.nx + (worldZ - wf.z) * wf.nz;
+        roadY = surfaceY(wf, wheelLat);
+      }
+      targetY = Math.max(targetY, roadY - contactOffset.y + wheel.r + 0.012);
+    }
+    // Height must follow both rises and drops immediately. Smoothing only the
+    // downward movement was the source of the visible hovering after crests.
+    car.visY = targetY;
 
     /* ── Standings ── */
     if (!g.isDrift) {
@@ -361,8 +380,9 @@ function GameLoop({ game, isMobile, smokeApi, skidApi, sparkApi, dirtApi }) {
     const surfAt = (ox, oz) => surfaceY(p, dLat + p.nx * ox + p.nz * oz);
     const rx = -fz, rz = fx;
     g._trailTimer = (g._trailTimer || 0) + dt;
-    const emitTrail = g._trailTimer >= 1 / 30;
-    if (emitTrail) g._trailTimer %= 1 / 30;
+    const trailStep = 1 / (30 * quality.particles);
+    const emitTrail = g._trailTimer >= trailStep;
+    if (emitTrail) g._trailTimer %= trailStep;
     if (emitTrail && car.drifting && onRoad) {
       const amt = Math.max(car.slip, input.brake ? 0.25 : 0);
       for (const side of [-0.85, 0.85]) {
@@ -398,7 +418,7 @@ function ChaseCam({ game }) {
 
     /* Countdown: a slow cinematic orbit around the car on the grid. */
     if (g.phase === 'ready' || g.phase === 'countdown') {
-      const t = clock.getElapsedTime() * 0.35;
+      const t = clock.elapsedTime * 0.35;
       const r = 11;
       camera.position.set(
         car.x + Math.sin(t) * r,
@@ -459,27 +479,31 @@ function ChaseCam({ game }) {
    running it. Drops render resolution when needed.
    ═══════════════════════════════════════════════════════════════ */
 function AdaptiveQuality({ quality }) {
-  const { gl } = useThree();
-  const maxDpr = quality.maxDpr;
-  const st = useRef({ t: 0, n: 0, dpr: maxDpr });
-
+  const { gl, setDpr } = useThree();
+  const st = useRef({ t: 0, n: 0, dpr: Math.min(window.devicePixelRatio, quality.maxDpr), good: 0, bad: 0 });
   useFrame((_, dt) => {
     const s = st.current;
+    if (document.hidden || dt > 0.2) { s.t = 0; s.n = 0; return; }
     s.t += dt; s.n++;
-    if (s.t < 1) return;
+    if (s.t < 1.5) return;
     const fps = s.n / s.t;
     s.t = 0; s.n = 0;
     if (import.meta.env.DEV) window.__hpFps = Math.round(fps);
-
-    if (fps < 50) {
-      if (s.dpr > quality.minDpr) {
-        s.dpr = Math.max(quality.minDpr, s.dpr - 0.2);
-        gl.setPixelRatio(Math.min(window.devicePixelRatio, s.dpr));
-      }
-    } else if (fps > 58 && s.dpr < maxDpr) {
-      s.dpr = Math.min(maxDpr, s.dpr + 0.1);
-      gl.setPixelRatio(Math.min(window.devicePixelRatio, s.dpr));
+    s.bad = fps < 50 ? s.bad + 1 : 0;
+    s.good = fps > 58 ? s.good + 1 : 0;
+    // Lower resolution quickly, restore only after sustained headroom.
+    // Use R3F's setter so viewport state and drawing-buffer size stay in sync.
+    const ceiling = Math.min(window.devicePixelRatio, quality.maxDpr);
+    const next = s.bad >= 1 ? Math.max(quality.minDpr, s.dpr - 0.15)
+      : s.good >= 4 ? Math.min(ceiling, s.dpr + 0.05) : s.dpr;
+    if (Math.abs(next - s.dpr) > 0.001) {
+      s.dpr = next; s.good = 0; s.bad = 0;
+      setDpr(next);
     }
+    if (import.meta.env.DEV) window.__hpRenderStats = {
+      fps: Math.round(fps), dpr: s.dpr, calls: gl.info.render.calls,
+      triangles: gl.info.render.triangles,
+    };
   });
   return null;
 }
@@ -587,7 +611,7 @@ const ord = (n) => `${n}${['TH', 'ST', 'ND', 'RD'][(n % 100 - n % 10 !== 10 && n
 export default function Drift() {
   useSEO({
     title: 'Race',
-    description: 'Four hand-built circuits, a field of AI rivals and a drift complex — a pocket racing game built with three.js.',
+    description: raceDescription,
     path: '/drift',
   });
 
@@ -628,6 +652,12 @@ export default function Drift() {
   const [touch] = useState(() => typeof window !== 'undefined' && matchMedia('(pointer: coarse)').matches);
   const quality = useMemo(() => detectQuality(), []);
   const [picker, setPicker] = useState(false);
+  const [pageVisible, setPageVisible] = useState(() => !document.hidden);
+  useEffect(() => {
+    const visibility = () => setPageVisible(!document.hidden);
+    document.addEventListener('visibilitychange', visibility);
+    return () => document.removeEventListener('visibilitychange', visibility);
+  }, []);
   const [hud, setHud] = useState({
     speed: 0, gear: 1, rpm: 0, phase: 'ready', countdown: 0,
     lap: 0, lapTime: 0, lastLap: 0, bestLap: 0, position: 1,
@@ -639,17 +669,23 @@ export default function Drift() {
   const popupRef = useRef(0);
   const [soundOn, setSoundOn] = useState(true);
   const audioRef = useRef(null);
+  const soundOnRef = useRef(soundOn);
+  soundOnRef.current = soundOn;
 
   const ensureAudio = useCallback(() => {
-    if (!audioRef.current) audioRef.current = createRaceAudio();
+    if (!audioRef.current) {
+      audioRef.current = createRaceAudio();
+      audioRef.current.setMuted(!soundOnRef.current);
+    }
     audioRef.current.start();
   }, []);
-  const toggleSound = useCallback(() => setSoundOn((on) => {
-    const next = !on;
+  const toggleSound = useCallback(() => {
+    const next = !soundOnRef.current;
+    soundOnRef.current = next;
+    setSoundOn(next);
     ensureAudio();
     audioRef.current.setMuted(!next);
-    return next;
-  }), [ensureAudio]);
+  }, [ensureAudio]);
 
   const startRace = useCallback(() => {
     const g = game.current;
@@ -668,26 +704,29 @@ export default function Drift() {
     setCircuitId(id);
   };
 
-  /* ── Audio ── */
+  /* ── Audio: smooth controls at 30 Hz, independent of rendering ── */
   useEffect(() => {
-    let raf, lastImpact = 0;
+    let lastImpact = 0, lastGame = null;
     const loop = () => {
-      raf = requestAnimationFrame(loop);
-      const a = audioRef.current;
-      const g = game.current;
-      if (!a || !g) return;
+      const a = audioRef.current, g = game.current;
+      if (!a || !g || document.hidden) return;
+      if (lastGame !== g) { lastGame = g; lastImpact = g.impactId; }
       const c = g.car;
       a.update({
         mode: g.isDrift ? 'drift' : 'race',
-        rpm: c.rpm, speed: c.speed,
+        rpm: c.rpm, speed: c.speed, gear: c.reverse ? -1 : gearFor(c.speed),
         throttle: g.phase === 'racing' && g.input.throttle,
-        drifting: c.drifting, slip: c.slip, onRoad: c.onRoad,
+        braking: c.braking, drifting: c.drifting, slip: c.slip, onRoad: c.onRoad,
+        phase: g.phase, countdown: g.countdown,
       });
       if (g.impactId > lastImpact) { lastImpact = g.impactId; a.impact(g.impactStr); }
     };
-    raf = requestAnimationFrame(loop);
+    const visibility = () => audioRef.current?.setPaused(document.hidden);
+    const id = setInterval(loop, 1000 / 30);
+    document.addEventListener('visibilitychange', visibility);
     return () => {
-      cancelAnimationFrame(raf);
+      clearInterval(id);
+      document.removeEventListener('visibilitychange', visibility);
       audioRef.current?.dispose();
       audioRef.current = null;
     };
@@ -734,6 +773,7 @@ export default function Drift() {
   /* ── HUD poll ── */
   useEffect(() => {
     const id = setInterval(() => {
+      if (document.hidden) return;
       const g = game.current;
       if (!g) return;
       if (import.meta.env.DEV) window.__hpRace = g;
@@ -805,6 +845,7 @@ export default function Drift() {
       {circuit && (
       <Canvas
         key={circuit.id}
+        frameloop={pageVisible ? 'always' : 'never'}
         shadows={false}
         camera={{ position: [0, 6, 40], fov: 55, near: 0.4, far: quality.far }}
         dpr={[quality.minDpr, quality.maxDpr]}
@@ -823,7 +864,7 @@ export default function Drift() {
         <Sparks api={sparkApi} />
         <DirtKick api={dirtApi} color={theme.ground} />
         <GameLoop
-          game={game} isMobile={touch}
+          game={game} isMobile={touch} quality={quality}
           smokeApi={smokeApi} skidApi={skidApi} sparkApi={sparkApi} dirtApi={dirtApi}
         />
         <ChaseCam game={game} />
@@ -839,7 +880,7 @@ export default function Drift() {
           <div className="flex flex-col gap-2 items-start">
             <div className="flex gap-2 flex-wrap">
               <Link to="/" className={chip}>← SITE</Link>
-              <Link to="/playground" className={chip}>PLAYGROUND</Link>
+              <Link to="/" className={chip}>PORTFOLIO</Link>
               <button
                 onClick={() => setPicker((v) => !v)}
                 className="pointer-events-auto font-mono text-[10px] tracking-[.12em] uppercase font-bold border-none cursor-pointer px-4 py-2.5 rounded-full shadow-lg transition-colors"
@@ -989,6 +1030,10 @@ export default function Drift() {
             >
               Change circuit (TAB)
             </button>
+            <a href="/audio/race/CREDITS.txt" target="_blank" rel="noopener noreferrer"
+              className="block mt-3 font-mono text-[9px] text-white/40 hover:text-white/70">
+              Engine recording credits
+            </a>
           </div>
         </div>
       )}
@@ -1033,7 +1078,7 @@ export default function Drift() {
             {!circuit && (
               <div className="flex justify-center gap-2 mb-5">
                 <Link to="/" className={chip}>← SITE</Link>
-                <Link to="/playground" className={chip}>PLAYGROUND</Link>
+                <Link to="/" className={chip}>PORTFOLIO</Link>
               </div>
             )}
             <div className="font-mono text-[10px] tracking-[.3em] text-white/50 uppercase mb-4 text-center">

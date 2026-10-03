@@ -4,13 +4,13 @@
    loop can fire them without causing React renders.
    ──────────────────────────────────────────────────────────────── */
 
-import { useMemo, useRef } from 'react';
+import { memo, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
 /* ── Tyre smoke ── */
 const PUFF = 90;
-export function TyreSmoke({ api }) {
+function TyreSmoke({ api }) {
   const ref = useRef();
   const dummy = useMemo(() => new THREE.Object3D(), []);
   const mat = useRef();
@@ -41,6 +41,7 @@ export function TyreSmoke({ api }) {
   };
 
   useFrame((_, dt) => {
+    dt = Math.min(dt, 0.05);
     if (!ref.current || !active.current) return;
     let alive = 0;
     for (let i = 0; i < PUFF; i++) {
@@ -78,7 +79,7 @@ export function TyreSmoke({ api }) {
 
 /* ── Skid marks ── */
 const SKID = 300;
-export function SkidMarks({ api }) {
+function SkidMarks({ api }) {
   const ref = useRef();
   const dummy = useMemo(() => {
     const d = new THREE.Object3D();
@@ -90,9 +91,11 @@ export function SkidMarks({ api }) {
   })), []);
   const cursor = useRef(0);
   const tick = useRef(0.1);
+  const active = useRef(true);
 
   api.current = {
     emit(x, y, z, heading, roll, heat = 1) {
+      active.current = true;
       const p = pool[cursor.current];
       cursor.current = (cursor.current + 1) % SKID;
       p.x = x; p.y = y; p.z = z;
@@ -100,19 +103,22 @@ export function SkidMarks({ api }) {
       p.w = 0.12 + heat * 0.1;
       p.life = 9;
     },
-    clear() { pool.forEach((p) => { p.life = 0; }); },
+    clear() { pool.forEach((p) => { p.life = 0; }); active.current = true; tick.current = 0.1; },
   };
 
   useFrame((_, dt) => {
-    if (!ref.current) return;
+    dt = Math.min(dt, 0.05);
+    if (!ref.current || !active.current) return;
     tick.current += dt;
     if (tick.current < 0.1) return;
     dt = tick.current;
     tick.current = 0;
+    let alive = 0;
     for (let i = 0; i < SKID; i++) {
       const p = pool[i];
       if (p.life > 0) p.life -= dt;
       const vis = p.life > 0 ? 1 : 0;
+      alive += vis;
       dummy.position.set(p.x, vis ? p.y : -999, p.z);
       dummy.rotation.set(0, p.heading, p.roll);
       dummy.scale.set(p.w * vis, 1, 0.62 * vis);
@@ -120,6 +126,7 @@ export function SkidMarks({ api }) {
       ref.current.setMatrixAt(i, dummy.matrix);
     }
     ref.current.instanceMatrix.needsUpdate = true;
+    active.current = alive > 0;
   });
 
   return (
@@ -132,7 +139,7 @@ export function SkidMarks({ api }) {
 
 /* ── Sparks ── */
 const SPARK = 60;
-export function Sparks({ api }) {
+function Sparks({ api }) {
   const ref = useRef();
   const dummy = useMemo(() => new THREE.Object3D(), []);
   const pool = useMemo(() => Array.from({ length: SPARK }, () => ({
@@ -160,6 +167,7 @@ export function Sparks({ api }) {
   };
 
   useFrame((_, dt) => {
+    dt = Math.min(dt, 0.05);
     if (!ref.current || !active.current) return;
     let alive = 0;
     for (let i = 0; i < SPARK; i++) {
@@ -193,7 +201,7 @@ export function Sparks({ api }) {
 
 /* ── Dirt / gravel kick ── */
 const DIRT = 48;
-export function DirtKick({ api, color = '#5a7d3a' }) {
+function DirtKick({ api, color = '#5a7d3a' }) {
   const ref = useRef();
   const dummy = useMemo(() => new THREE.Object3D(), []);
   const pool = useMemo(() => Array.from({ length: DIRT }, () => ({
@@ -221,6 +229,7 @@ export function DirtKick({ api, color = '#5a7d3a' }) {
   };
 
   useFrame((_, dt) => {
+    dt = Math.min(dt, 0.05);
     if (!ref.current || !active.current) return;
     let alive = 0;
     for (let i = 0; i < DIRT; i++) {
@@ -249,3 +258,9 @@ export function DirtKick({ api, color = '#5a7d3a' }) {
     </instancedMesh>
   );
 }
+
+export { MemoTyreSmoke as TyreSmoke, MemoSkidMarks as SkidMarks, MemoSparks as Sparks, MemoDirtKick as DirtKick };
+const MemoTyreSmoke = memo(TyreSmoke);
+const MemoSkidMarks = memo(SkidMarks);
+const MemoSparks = memo(Sparks);
+const MemoDirtKick = memo(DirtKick);

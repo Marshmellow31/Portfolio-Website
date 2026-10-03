@@ -140,13 +140,14 @@ export function stepRival(ai, circuit, dt, traffic, t) {
 
   /* ── target speed: the tightest reference point in the braking zone ── */
   const look = Math.max(6, Math.round((ai.v * ai.v) / (2 * A_BRAKE) / step) + 4);
-  let target = ref.speed[idx];
+  let targetSq = ref.speed[idx] ** 2;
   for (let k = 1; k <= look; k++) {
     const j = at(k);
     // speed we must already be at now to still make point j
-    const need = Math.sqrt(Math.max(0, ref.speed[j] ** 2 + 2 * A_BRAKE * k * step));
-    if (need < target) target = need;
+    const needSq = Math.max(0, ref.speed[j] ** 2 + 2 * A_BRAKE * k * step);
+    if (needSq < targetSq) targetSq = needSq;
   }
+  let target = Math.sqrt(targetSq);
   target = Math.min(target * ai.pace, ai.top);
   // a slow breathing variation so the field never runs metronomically
   target *= 1 + Math.sin(t * 0.31 + ai.phase) * 0.012;

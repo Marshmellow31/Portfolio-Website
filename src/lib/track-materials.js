@@ -8,6 +8,7 @@
    ──────────────────────────────────────────────────────────────── */
 
 import * as THREE from 'three';
+import { CURB, RUNOFF } from './circuits.js';
 
 /* ── Canvas noise texture (grain for grass, concrete, gravel) ───── */
 export function makeNoiseTexture(size = 256, {
@@ -389,6 +390,76 @@ export function makeRunoffMaterial(theme, detail = 1) {
    and dy is an extra height above the road surface.
 
    Emits aLat / aS / aEdge attributes for the shaders above.          */
+export function buildDrivingSurface(circuit) {
+  const curb = CURB, runoff = RUNOFF;
+  const road = buildRibbon(circuit, [
+    { lat: (p) => -p.half - curb, dy: (p) => 0.02 + 0.07 * p.curb, edge: () => 1.35 },
+    { lat: (p) => -p.half, edge: () => 1 },
+    { lat: (p) => -p.half * 0.5, edge: () => 0.5 },
+    { lat: 0, edge: () => 0 },
+    { lat: (p) => p.half * 0.5, edge: () => 0.5 },
+    { lat: (p) => p.half, edge: () => 1 },
+    { lat: (p) => p.half + curb, dy: (p) => 0.02 + 0.07 * p.curb, edge: () => 1.35 },
+  ]);
+  const runoffSide = (sign) => buildRibbon(circuit, [
+    { lat: (p) => sign * (p.half + curb), dy: -0.04, edge: () => 0 },
+    { lat: (p) => sign * (p.half + curb + runoff * 0.45), dy: -0.3, edge: () => 0.5 },
+    { lat: (p) => sign * (p.half + curb + runoff), dy: -0.5, edge: () => 1 },
+  ]);
+  return { road, runoffL: runoffSide(-1), runoffR: runoffSide(1) };
+}
+
+/* Interpolate the rendered triangles, including changing banks and curbs.
+   A centreline height plus lateral slope is not the same surface between
+   ribbon rows. A spatial index keeps contact independent of lap tracking. */
+export function createRoadHeightSampler(circuit) {
+  const geometries = Object.values(buildDrivingSurface(circuit));
+  // Cache barycentric coefficients in world-space cells once, instead of
+  // rebuilding them for thousands of triangles at every tyre contact.
+  const cellSize = 8;
+  const grid = new Map();
+  for (const geo of geometries) {
+    const p = geo.attributes.position.array, indices = geo.index.array;
+    for (let i = 0; i < indices.length; i += 3) {
+      const a = indices[i] * 3, b = indices[i + 1] * 3, c = indices[i + 2] * 3;
+      const ax = p[a], az = p[a + 2], ay = p[a + 1];
+      const bx = p[b] - ax, bz = p[b + 2] - az;
+      const cx = p[c] - ax, cz = p[c + 2] - az;
+      const det = bx * cz - bz * cx;
+      if (Math.abs(det) < 1e-10) continue;
+      const triangle = { ax, az, ay, ux: cz / det, uz: -cx / det,
+        vx: -bz / det, vz: bx / det, by: p[b + 1] - ay, cy: p[c + 1] - ay };
+      const minX = Math.floor(Math.min(ax, p[b], p[c]) / cellSize);
+      const maxX = Math.floor(Math.max(ax, p[b], p[c]) / cellSize);
+      const minZ = Math.floor(Math.min(az, p[b + 2], p[c + 2]) / cellSize);
+      const maxZ = Math.floor(Math.max(az, p[b + 2], p[c + 2]) / cellSize);
+      for (let x = minX; x <= maxX; x++) {
+        if (!grid.has(x)) grid.set(x, new Map());
+        const column = grid.get(x);
+        for (let z = minZ; z <= maxZ; z++) {
+          if (!column.has(z)) column.set(z, []);
+          column.get(z).push(triangle);
+        }
+      }
+    }
+    geo.dispose();
+  }
+  return (x, z) => {
+    const triangles = grid.get(Math.floor(x / cellSize))?.get(Math.floor(z / cellSize));
+    if (!triangles) return null;
+    let height = -Infinity;
+    for (const t of triangles) {
+      const dx = x - t.ax, dz = z - t.az;
+      const u = t.ux * dx + t.uz * dz;
+      if (u < -1e-6 || u > 1.000001) continue;
+      const v = t.vx * dx + t.vz * dz;
+      if (v < -1e-6 || u + v > 1.000001) continue;
+      height = Math.max(height, t.ay + u * t.by + v * t.cy);
+    }
+    return Number.isFinite(height) ? height : null;
+  };
+}
+
 export function buildRibbon(circuit, columns, opts = {}) {
   const { N, pts, step } = circuit;
   const cols = columns.length;

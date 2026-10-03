@@ -1,3 +1,4 @@
+import { creatorViewsMillions } from '../../data/seo';
 import { useEffect, useRef, useState } from 'react';
 import { FaInstagram } from 'react-icons/fa';
 
@@ -308,7 +309,7 @@ export default function CreativeHero({ instagramHandle, instagramUrl }) {
             <div className="mt-2.5 flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.16em] text-white/50 md:text-[10px]">
               <span className="inline-flex items-center gap-1.5 font-semibold text-white/80">
                 <span className="size-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]" />
-                70M+ Views
+                ≈{creatorViewsMillions.toFixed(1)}M Views
               </span>
               <span className="text-white/20" aria-hidden="true">/</span>
               <span>Automotive Cinema</span>

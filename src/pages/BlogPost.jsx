@@ -15,6 +15,7 @@ export default function BlogPost() {
     description: post?.excerpt,
     path: `/blog/${slug}`,
     ogType: 'article',
+    noindex: !post,
     jsonLd: post && {
       '@context': 'https://schema.org',
       '@graph': [

@@ -4,6 +4,7 @@ import ProjectTile from '../components/Projects/ProjectTile';
 import { SectionCell } from '../components/Projects/SectionCell';
 import SectionNav from '../components/Projects/SectionNav';
 import useSEO from '../utils/useSEO';
+import { projectsDescription } from '../data/seo';
 
 /* The page's column rhythm. Inline rather than an arbitrary Tailwind class —
    the nested commas in repeat(auto-fill, minmax(...)) don't survive the
@@ -52,7 +53,7 @@ function SectionBlock({ group, index, first, inBand, alignEnd }) {
 export default function Projects() {
   useSEO({
     title: 'Projects',
-    description: `${selectedWork.length} projects across personal products, academic work, research, internships, and client work — payments, databases, simulations, PWAs, native Android, embedded hardware, and AI tools, each with a full case study.`,
+    description: projectsDescription,
     path: '/projects',
   });
 

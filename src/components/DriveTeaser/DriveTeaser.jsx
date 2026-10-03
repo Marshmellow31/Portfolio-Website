@@ -5,7 +5,7 @@ import { Canvas, useFrame } from '@react-three/fiber';
 /* ────────────────────────────────────────────────────────────────
    DriveTeaser — the monochrome 3D car on the Home page.
    The whole site is grayscale; this car is secretly hot pink.
-   Hovering leaks the color through, clicking opens /drive where
+   Hovering leaks the color through, clicking opens /drift where
    the world floods into full saturation.
    ──────────────────────────────────────────────────────────────── */
 

@@ -9,7 +9,9 @@
     "images:gallery": "node scripts/optimize-gallery-images.mjs",
     "og": "node scripts/generate-og.mjs",
     "build": "node scripts/optimize-gallery-images.mjs && vite build && node scripts/generate-seo.mjs",
-    "lint": "oxlint --ignore-pattern \"public/bullet-reference/vendor/**\"",
+    "lint": "oxlint --ignore-pattern \"public/bullet-reference/vendor/**\" --ignore-pattern \"projects/**/vendor/**\"",
+    "check:seo": "node scripts/check-seo.mjs",
+    "submit:indexnow": "node scripts/submit-indexnow.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

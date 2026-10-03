@@ -9,7 +9,7 @@
    so a full grid stays cheap.
    ──────────────────────────────────────────────────────────────── */
 
-import { useEffect, useMemo, useRef } from 'react';
+import { memo, useEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import {
@@ -44,7 +44,7 @@ function Wheel({ r = 0.34, w = 0.34, rim = '#b9bcc4', spin, discRef }) {
 /* ═══════════════════════════════════════════════════════════════
    Player F1 — open-wheeler
    ═══════════════════════════════════════════════════════════════ */
-export function PlayerF1({ carRef, accent = '#FF7C00' }) {
+function PlayerF1({ carRef, accent = '#FF7C00' }) {
   const group = useRef();
   const body = useRef();
   const hub = [useRef(), useRef(), useRef(), useRef()];
@@ -87,7 +87,7 @@ export function PlayerF1({ carRef, accent = '#FF7C00' }) {
       }
     }
     if (rain.current) {
-      const t = clock.getElapsedTime();
+      const t = clock.elapsedTime;
       rain.current.emissiveIntensity = c.braking ? (Math.sin(t * 28) > 0 ? 6 : 0.4) : 0.7;
     }
     if (flame.current) {
@@ -238,7 +238,7 @@ export function PlayerF1({ carRef, accent = '#FF7C00' }) {
 /* ═══════════════════════════════════════════════════════════════
    Player drift coupe
    ═══════════════════════════════════════════════════════════════ */
-export function PlayerCoupe({ carRef, paint = '#08D9D6', night = false }) {
+function PlayerCoupe({ carRef, paint = '#08D9D6', night = false }) {
   const group = useRef();
   const body = useRef();
   const steer = [useRef(), useRef()];
@@ -353,7 +353,7 @@ export function PlayerCoupe({ carRef, paint = '#08D9D6', night = false }) {
 /* ═══════════════════════════════════════════════════════════════
    Rival field — merged vertex-coloured bodies + instanced wheels
    ═══════════════════════════════════════════════════════════════ */
-export function RivalField({ fieldRef }) {
+function RivalField({ fieldRef }) {
   const bodyRefs = useRef([]);
   const wheelsRef = useRef();
   const field = fieldRef.current || [];
@@ -417,3 +417,8 @@ export function RivalField({ fieldRef }) {
     </group>
   );
 }
+
+export { MemoPlayerF1 as PlayerF1, MemoPlayerCoupe as PlayerCoupe, MemoRivalField as RivalField };
+const MemoPlayerF1 = memo(PlayerF1);
+const MemoPlayerCoupe = memo(PlayerCoupe);
+const MemoRivalField = memo(RivalField);

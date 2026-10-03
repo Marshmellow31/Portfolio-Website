@@ -11,8 +11,8 @@ import {
   instagramUrl,
 } from '../data/instagram';
 import useSEO from '../utils/useSEO';
+import { creativeDescription, creatorSnapshot } from '../data/seo';
 
-const creativeDescription = 'Harshil Patel’s automotive creator portfolio as @guywithblack350: approximately 70M+ public Instagram reel views, top-performing reels, and brand collaborations.';
 
 const creativeJsonLd = {
   '@context': 'https://schema.org',
@@ -21,9 +21,9 @@ const creativeJsonLd = {
       '@type': 'ProfilePage',
       '@id': 'https://www.harshilpatel.co.in/creative#profile',
       url: 'https://www.harshilpatel.co.in/creative',
-      name: 'Guy With Black 350 — Automotive Content Creator',
+      name: 'guywithblack350 — Automotive Content Creator',
       description: creativeDescription,
-      dateModified: '2026-08-15',
+      dateModified: creatorSnapshot.capturedAt,
       primaryImageOfPage: {
         '@type': 'ImageObject',
         url: 'https://www.harshilpatel.co.in/creative-og.jpg',
@@ -36,10 +36,10 @@ const creativeJsonLd = {
       '@type': 'Person',
       '@id': 'https://www.harshilpatel.co.in/creative#creator',
       name: 'Harshil Patel',
-      alternateName: ['Guy With Black 350', 'guywithblack350', '@guywithblack350'],
+      alternateName: ['guywithblack350', '@guywithblack350'],
       url: 'https://www.harshilpatel.co.in/creative',
       image: 'https://www.harshilpatel.co.in/creative-og.jpg',
-      description: 'Automotive content creator behind @guywithblack350, with approximately 70 million+ public Instagram reel views.',
+      description: creativeDescription,
       sameAs: [
         'https://www.instagram.com/guywithblack350/',
         'https://www.instagram.com/harshil_3105_/',
@@ -48,14 +48,14 @@ const creativeJsonLd = {
       interactionStatistic: {
         '@type': 'InteractionCounter',
         interactionType: { '@type': 'WatchAction' },
-        userInteractionCount: 67683149,
+        userInteractionCount: creatorSnapshot.aggregate.totalViewsEstimate,
       },
     },
     {
       '@type': 'BreadcrumbList',
       itemListElement: [
         { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.harshilpatel.co.in/' },
-        { '@type': 'ListItem', position: 2, name: 'Guy With Black 350', item: 'https://www.harshilpatel.co.in/creative' },
+        { '@type': 'ListItem', position: 2, name: 'guywithblack350', item: 'https://www.harshilpatel.co.in/creative' },
       ],
     },
   ],
@@ -65,7 +65,7 @@ export default function Creative() {
   const { triggerRef, data: snapshot, status } = useInstagramSnapshot();
 
   useSEO({
-    title: 'Automotive Content Creator | Guy With Black 350',
+    title: 'Automotive Content Creator | guywithblack350',
     description: creativeDescription,
     path: '/creative',
     image: '/creative-og.jpg',

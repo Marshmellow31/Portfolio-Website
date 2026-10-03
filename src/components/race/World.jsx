@@ -7,14 +7,14 @@
    without any hand placement.
    ──────────────────────────────────────────────────────────────── */
 
-import { useEffect, useMemo, useRef } from 'react';
+import { memo, useEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { CURB, RUNOFF, hash1, surfaceY } from '../../lib/circuits';
 import { buildTree } from '../../lib/car-geometry';
 import { detectQuality } from '../../lib/quality';
 import {
-  buildRibbon, buildWall, makeRoadMaterial, makeBarrierMaterial,
+  buildDrivingSurface, buildRibbon, buildWall, makeRoadMaterial, makeBarrierMaterial,
   makeRunoffMaterial, makeSkyMaterial, makeNoiseTexture,
 } from '../../lib/track-materials';
 
@@ -126,34 +126,14 @@ function buildingTexture() {
    ═══════════════════════════════════════════════════════════════ */
 const NO_SCENERY = {};
 
-export default function World({ circuit, theme }) {
+function World({ circuit, theme }) {
   const { def, pts, N, lapLength, bounds } = circuit;
   const sc = def.scenery || NO_SCENERY;
   const q = detectQuality();
 
   /* ── Road, curbs, runoff, barriers ── */
   const geo = useMemo(() => {
-    const inner = (p) => -p.half, outer = (p) => p.half;
-    const road = buildRibbon(circuit, [
-      { lat: (p) => -p.half - CURB, dy: (p) => 0.02 + 0.07 * p.curb, edge: () => 1.35 },
-      { lat: inner, edge: () => 1.0 },
-      { lat: (p) => -p.half * 0.5, edge: () => 0.5 },
-      { lat: 0, edge: () => 0 },
-      { lat: (p) => p.half * 0.5, edge: () => 0.5 },
-      { lat: outer, edge: () => 1.0 },
-      { lat: (p) => p.half + CURB, dy: (p) => 0.02 + 0.07 * p.curb, edge: () => 1.35 },
-    ]);
-
-    const runoffL = buildRibbon(circuit, [
-      { lat: (p) => -p.half - CURB, dy: -0.04, edge: () => 0 },
-      { lat: (p) => -p.half - CURB - RUNOFF * 0.45, dy: -0.3, edge: () => 0.5 },
-      { lat: (p) => -p.half - CURB - RUNOFF, dy: -0.5, edge: () => 1 },
-    ]);
-    const runoffR = buildRibbon(circuit, [
-      { lat: (p) => p.half + CURB, dy: -0.04, edge: () => 0 },
-      { lat: (p) => p.half + CURB + RUNOFF * 0.45, dy: -0.3, edge: () => 0.5 },
-      { lat: (p) => p.half + CURB + RUNOFF, dy: -0.5, edge: () => 1 },
-    ]);
+    const { road, runoffL, runoffR } = buildDrivingSurface(circuit);
 
     const wallL = buildWall(circuit, (p) => -p.half - CURB - RUNOFF, 1.25, { rows: 3 });
     const wallR = buildWall(circuit, (p) => p.half + CURB + RUNOFF, 1.25, { rows: 3 });
@@ -459,3 +439,5 @@ export default function World({ circuit, theme }) {
     </group>
   );
 }
+
+export default memo(World);

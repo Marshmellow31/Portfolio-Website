@@ -12,6 +12,7 @@ import PayMatrixDownloads from '../components/PayMatrixDownloads';
 import PayMatrixDiagrams from '../components/PayMatrixDiagrams/PayMatrixDiagrams';
 import useSEO from '../utils/useSEO';
 import { SITE_URL } from '../../site.config.mjs';
+import { projectSchema } from '../data/seo';
 
 /* Case-study page for a single project — /projects/:slug */
 export default function ProjectDetail() {
@@ -22,20 +23,12 @@ export default function ProjectDetail() {
     title: project?.title,
     description: project?.description,
     path: `/projects/${slug}`,
-    image: project?.image,
+    image: project?.ogImage || project?.image,
+    noindex: !project,
     jsonLd: project && {
       '@context': 'https://schema.org',
       '@graph': [
-        {
-          '@type': 'SoftwareApplication',
-          name: project.title,
-          description: project.description,
-          url: `${SITE_URL}/projects/${slug}`,
-          applicationCategory: 'DeveloperApplication',
-          operatingSystem: project.stack?.some(s => s.toLowerCase().includes('android') || s.toLowerCase().includes('kotlin')) ? 'Android, Web Browser' : 'Web Browser',
-          author: { '@type': 'Person', '@id': `${SITE_URL}/#person`, name: 'Harshil Patel', url: `${SITE_URL}/` },
-          offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-        },
+        projectSchema(project),
         {
           '@type': 'BreadcrumbList',
           itemListElement: [

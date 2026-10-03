@@ -1,4 +1,9 @@
 {
+  "redirects": [
+    { "source": "/drive", "destination": "/drift", "permanent": true },
+    { "source": "/playground", "destination": "/drift", "permanent": true },
+    { "source": "/projects/no-fly-zone-simulator", "destination": "/projects/drone-no-fly-zone-simulator", "permanent": true }
+  ],
   "headers": [
     {
       "source": "/(.*)",

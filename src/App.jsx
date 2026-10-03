@@ -28,6 +28,7 @@ const Blog = lazy(() => import('./pages/Blog'));
 const BlogPost = lazy(() => import('./pages/BlogPost'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const Drift = lazy(() => import('./pages/Drift'));
+const Models = lazy(() => import('./pages/Models'));
 
 // Nav items — route links to pages + in-page anchors (Home sections)
 const navLinks = [
@@ -35,6 +36,7 @@ const navLinks = [
   { name: 'Projects', to: '/projects' },
   { name: 'Blog', to: '/blog' },
   { name: 'Creative', to: '/creative' },
+  { name: 'Models', to: '/model' },
   { name: 'Contact', to: '/contact' },
   { name: 'Download CV', href: '/resume.pdf', external: true, download: true },
 ];
@@ -218,6 +220,7 @@ export default function App() {
               <Route path="/blog/:slug" element={<BlogPost />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/drift" element={<Drift />} />
+              <Route path="/model" element={<Models />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </motion.div>

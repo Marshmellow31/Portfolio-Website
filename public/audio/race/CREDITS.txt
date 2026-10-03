@@ -1,0 +1,19 @@
+Recorded racing-engine audio
+
+Source: Williams-Cosworth FW32 (2010)
+Author: Edvvc (Ed Pond)
+https://commons.wikimedia.org/wiki/File:Williams-Cosworth_FW32_(2010).ogg
+
+Licensed under Creative Commons Attribution-ShareAlike 3.0 Unported:
+https://creativecommons.org/licenses/by-sa/3.0/
+
+The source depicts Sam Bird pulling away in a Williams-Cosworth FW32 at
+the Goodwood Festival of Speed on 3 July 2010.
+
+Changes: excerpts at 4.2s, 13.9s and 18.2s were converted to mono 48 kHz,
+filtered, level-normalized, and crossfaded into seamless idle/mid/high
+engine loops. OGG and MP3 variants are provided. The adapted recordings
+remain licensed under CC BY-SA 3.0. No endorsement is implied.
+
+Only these recorded audio assets are covered by this attribution;
+the project's procedural effects and source code are separate works.

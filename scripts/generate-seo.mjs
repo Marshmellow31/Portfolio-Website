@@ -16,9 +16,11 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { SITE_URL, SITE_NAME, DEFAULT_TITLE, OG_IMAGE, AUTHOR } from '../site.config.mjs';
+import { SITE_URL, SITE_NAME, DEFAULT_TITLE, DEFAULT_DESCRIPTION, OG_IMAGE, AUTHOR } from '../site.config.mjs';
 import { selectedWork, workHistory } from '../src/data/portfolio.js';
 import { blogPosts } from '../src/data/blog.js';
+import { vehicleModels } from '../src/data/models.js';
+import { creativeDescription, creatorViewsLabel, projectsDescription, projectSchema, raceDescription } from '../src/data/seo.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
@@ -110,7 +112,7 @@ const CONTACT_BLOCK = `<h2>Contact</h2>
 
 function homeBody() {
   return `<h1>Harshil Patel — Software Engineer at IIIT Vadodara</h1>
-<p>Software engineer and B.Tech student at IIIT Vadodara. Builds production web apps, mobile apps, and AI tools. Automotive content creator <a href="https://www.instagram.com/guywithblack350/">@guywithblack350</a> with approximately 70M+ public reel views.</p>
+<p>Software engineer and B.Tech student at IIIT Vadodara. Builds production web apps, mobile apps, and AI tools. Automotive content creator <a href="https://www.instagram.com/guywithblack350/">@guywithblack350</a> with ${creatorViewsLabel} in the ${INSTAGRAM_SNAPSHOT.capturedAt} snapshot.</p>
 <h2>Selected Work</h2>
 <ul>${selectedWork
     .map(
@@ -144,14 +146,14 @@ function projectsBody() {
 }
 
 function creativeBody() {
-  const total = '68';
-  return `<h1>Guy With Black 350 — Automotive Content Creator</h1>
+  const total = (INSTAGRAM_SNAPSHOT.aggregate.totalViewsEstimate / 1_000_000).toFixed(1);
+  return `<h1>guywithblack350 — Automotive Content Creator</h1>
 <p>Harshil Patel creates automotive content as <a href="https://www.instagram.com/guywithblack350/">@guywithblack350</a>. His accessible public Instagram reels have approximately ${total} million combined views.</p>
 <h2>Creator impact</h2>
 <ul>
   <li>Approximately ${total}M public reel views</li>
   <li>${INSTAGRAM_SNAPSHOT.profile.publishedPosts} published posts</li>
-  <li>4,300+ followers at the ${esc(INSTAGRAM_SNAPSHOT.capturedAt)} snapshot</li>
+  <li>${INSTAGRAM_SNAPSHOT.profile.followers.toLocaleString()} followers at the ${esc(INSTAGRAM_SNAPSHOT.capturedAt)} snapshot</li>
   <li>${INSTAGRAM_SNAPSHOT.aggregate.millionViewReels} reels with at least one million views</li>
 </ul>
 <p>The lifetime view total is an estimate calculated from rounded public reel counts. Private reach, impressions, and plays are excluded.</p>
@@ -229,14 +231,15 @@ const routes = [
   {
     path: '/', priority: 1.0,
     title: DEFAULT_TITLE,
-    description: 'Software engineer and B.Tech student at IIIT Vadodara shipping production web, mobile, and AI products for real businesses.',
+    description: DEFAULT_DESCRIPTION,
     lastmod: lastmodOf('src/pages/Home.jsx', DATA),
     body: homeBody(),
+    jsonLd: { '@context': 'https://schema.org', '@type': 'ProfilePage', '@id': `${SITE_URL}/#profile`, url: `${SITE_URL}/`, name: SITE_NAME, mainEntity: person },
   },
   {
     path: '/projects', priority: 0.9,
     title: 'Projects',
-    description: 'Shipped projects — payments, bookings, PWAs, native Android, and AI tools — each with a full case study.',
+    description: projectsDescription,
     lastmod: lastmodOf('src/pages/Projects.jsx', DATA),
     body: projectsBody(),
     jsonLd: {
@@ -267,26 +270,13 @@ const routes = [
     path: `/projects/${p.slug}`, priority: 0.8,
     title: p.title,
     description: p.description,
-    image: p.image,
+    image: p.ogImage || p.image,
     lastmod: lastmodOf(DATA, 'src/pages/ProjectDetail.jsx'),
     body: projectBody(p),
     jsonLd: {
       '@context': 'https://schema.org',
       '@graph': [
-        {
-          '@type': 'SoftwareApplication',
-          name: p.title,
-          description: p.description,
-          url: `${SITE_URL}/projects/${p.slug}`,
-          applicationCategory: 'DeveloperApplication',
-          operatingSystem: p.stack.some(s => s.toLowerCase().includes('android') || s.toLowerCase().includes('kotlin')) ? 'Android, Web Browser' : 'Web Browser',
-          author: person,
-          offers: {
-            '@type': 'Offer',
-            price: '0',
-            priceCurrency: 'USD',
-          },
-        },
+        projectSchema(p),
         {
           '@type': 'BreadcrumbList',
           itemListElement: [
@@ -366,8 +356,8 @@ const routes = [
   })),
   {
     path: '/creative', priority: 0.8,
-    title: 'Automotive Content Creator | Guy With Black 350',
-    description: 'Harshil Patel’s automotive creator portfolio as @guywithblack350: approximately 70M+ public Instagram reel views, top-performing reels, and brand collaborations.',
+    title: 'Automotive Content Creator | guywithblack350',
+    description: creativeDescription,
     image: '/creative-og.jpg',
     images: INSTAGRAM_SNAPSHOT.topReels.map((reel) => ({ src: reel.image, title: `${reel.title} — ${reel.views}` })),
     lastmod: lastmodOf('src/pages/Creative.jsx', 'src/data/instagram-snapshot.json', 'src/components/Creative/CreativeHero.jsx', 'src/components/Creative/CreatorImpact.jsx', 'src/components/Creative/TopReels.jsx'),
@@ -379,8 +369,8 @@ const routes = [
           '@type': 'ProfilePage',
           '@id': `${SITE_URL}/creative#profile`,
           url: `${SITE_URL}/creative`,
-          name: 'Guy With Black 350 — Automotive Content Creator',
-          description: 'Harshil Patel’s automotive creator portfolio as @guywithblack350, with approximately 70M+ public Instagram reel views.',
+          name: 'guywithblack350 — Automotive Content Creator',
+          description: creativeDescription,
           dateModified: INSTAGRAM_SNAPSHOT.capturedAt,
           primaryImageOfPage: { '@type': 'ImageObject', url: `${SITE_URL}/creative-og.jpg`, width: 1200, height: 630 },
           mainEntity: { '@id': `${SITE_URL}/creative#creator` },
@@ -389,10 +379,10 @@ const routes = [
           '@type': 'Person',
           '@id': `${SITE_URL}/creative#creator`,
           name: 'Harshil Patel',
-          alternateName: ['Guy With Black 350', 'guywithblack350', '@guywithblack350'],
+          alternateName: ['guywithblack350', '@guywithblack350'],
           url: `${SITE_URL}/creative`,
           image: `${SITE_URL}/creative-og.jpg`,
-          description: 'Automotive content creator behind @guywithblack350, with approximately 70 million+ public Instagram reel views.',
+          description: creativeDescription,
           sameAs: AUTHOR.sameAs,
           interactionStatistic: {
             '@type': 'InteractionCounter',
@@ -404,10 +394,26 @@ const routes = [
           '@type': 'BreadcrumbList',
           itemListElement: [
             { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
-            { '@type': 'ListItem', position: 2, name: 'Guy With Black 350', item: `${SITE_URL}/creative` },
+            { '@type': 'ListItem', position: 2, name: 'guywithblack350', item: `${SITE_URL}/creative` },
           ],
         },
       ],
+    },
+  },
+  {
+    path: '/model', priority: 0.7,
+    title: 'Interactive Vehicle Models',
+    description: 'Explore and download local 3D models of the Toyota Fortuner and Mahindra XUV 7XO.',
+    lastmod: lastmodOf('src/pages/Models.jsx', 'src/data/models.js'),
+    body: `<h1>Interactive Vehicle Models</h1>
+<p>A curated shelf of interactive machines.</p>
+<ol>${vehicleModels.map((model) => `<li><a href="${esc(model.viewerUrl)}">${esc(model.maker)} ${esc(model.name)}</a> — ${esc(model.kind)}</li>`).join('')}</ol>`,
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: 'Interactive Vehicle Models',
+      url: `${SITE_URL}/model`,
+      hasPart: vehicleModels.map((model) => ({ '@type': '3DModel', name: `${model.maker} ${model.name}`, url: model.viewerUrl })),
     },
   },
   {
@@ -432,11 +438,11 @@ const routes = [
   {
     path: '/drift', priority: 0.5,
     title: 'Race',
-    description: 'A pocket F1 car flat-out on a banked superspeedway oval. Chase lap times, kiss the wall, light up the tyres.',
+    description: raceDescription,
     lastmod: lastmodOf('src/pages/Drift.jsx'),
     body: simpleBody(
-      'Race — a pocket F1 car on a banked superspeedway',
-      'A pocket F1 car flat-out on a banked superspeedway oval. Chase lap times, kiss the wall, light up the tyres. Built with React Three Fiber.',
+      'Race — Ridge Grand Prix and Harbour Drift Complex',
+      raceDescription,
     ),
     jsonLd: {
       '@context': 'https://schema.org',
@@ -482,6 +488,7 @@ function renderRoute(base, r) {
   html = setMeta(html, 'name', 'twitter:description', r.description);
   html = setMeta(html, 'name', 'twitter:url', url);
   html = setMeta(html, 'name', 'twitter:image', image);
+  html = setMeta(html, 'name', 'twitter:image:alt', `${r.title || SITE_NAME} — ${SITE_NAME}`);
 
   /* Project screenshots have unknown dimensions — drop the 1200×630 hints.
      Cards cut by scripts/optimize-case-images.mjs are the exception: they're
@@ -500,7 +507,7 @@ function renderRoute(base, r) {
   if (r.jsonLd) {
     html = html.replace(
       '</head>',
-      `  <script type="application/ld+json">${JSON.stringify(r.jsonLd)}</script>\n  </head>`,
+      `  <script type="application/ld+json" id="route-jsonld">${JSON.stringify(r.jsonLd)}</script>\n  </head>`,
     );
   }
 
@@ -580,7 +587,7 @@ const notFound = renderRoute(base, {
   <li><a href="${SITE_URL}/">Home</a></li>
   <li><a href="${SITE_URL}/projects">Projects</a></li>
   <li><a href="${SITE_URL}/blog">Blog</a></li>
-  <li><a href="${SITE_URL}/creative">Guy With Black 350</a></li>
+  <li><a href="${SITE_URL}/creative">guywithblack350</a></li>
   <li><a href="${SITE_URL}/contact">Contact</a></li>
 </ul>`,
 })
@@ -648,7 +655,7 @@ const LLMS_PREAMBLE = `# ${SITE_NAME}
 ## Bio & Overview
 Harshil Patel is a software engineer and computer science student at IIIT Vadodara (Indian Institute of Information Technology, Vadodara). He specializes in React, TypeScript, Node.js, Firebase, Svelte 5, Android (Kotlin), PWA, and AI API integrations (Gemini, Claude, Ollama).
 
-Alongside software engineering, Harshil is an automotive content creator operating under the handle **@guywithblack350**, with approximately 70M+ public Instagram reel views and collaborations with automotive and lifestyle brands.
+Alongside software engineering, Harshil is an automotive content creator operating under the handle **@guywithblack350**, with ${creatorViewsLabel} in the ${INSTAGRAM_SNAPSHOT.capturedAt} snapshot and collaborations with automotive and lifestyle brands.
 
 - **Website**: ${SITE_URL}/
 - **GitHub**: https://github.com/Marshmellow31
@@ -695,6 +702,16 @@ const llmsPosts = blogPosts
 await writeFile(
   path.join(DIST, 'llms.txt'),
   `${LLMS_PREAMBLE}
+---
+
+## Automotive Creator Portfolio
+
+- **Account**: guywithblack350
+- **Portfolio**: ${SITE_URL}/creative
+- **Historical public snapshot**: ${INSTAGRAM_SNAPSHOT.capturedAt}
+- **View estimate**: ${creatorViewsLabel}; rounded-count range ${(INSTAGRAM_SNAPSHOT.aggregate.lowerEstimate / 1_000_000).toFixed(1)}M to ${(INSTAGRAM_SNAPSHOT.aggregate.upperEstimate / 1_000_000).toFixed(1)}M.
+- **Scope**: Accessible public reel views only. Private reach, impressions, and plays are excluded. These figures do not establish current account metrics.
+
 ---
 
 ## Featured Software Projects

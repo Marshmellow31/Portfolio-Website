@@ -8,6 +8,7 @@ import { workHistory, getProjectBySlug } from '../data/portfolio';
 import { testimonials } from '../data/testimonials';
 import useMediaQuery from '../utils/useMediaQuery';
 import useSEO from '../utils/useSEO';
+import { DEFAULT_DESCRIPTION } from '../../site.config.mjs';
 import { FiArrowUpRight } from 'react-icons/fi';
 import { FaJava, FaDatabase, FaGithub, FaLinkedin } from 'react-icons/fa';
 import { FaInstagram } from 'react-icons/fa6';
@@ -77,7 +78,7 @@ export default function Home() {
   const isDesktop = useMediaQuery('(min-width: 1024px)');
   const [openAccordion, setOpenAccordion] = useState(null);
   const reducedMotion = useReducedMotion();
-  useSEO({ description: 'Full-stack developer at IIIT Vadodara shipping production web, mobile, and AI products for real businesses.', path: '/' });
+  useSEO({ description: DEFAULT_DESCRIPTION, path: '/' });
   const teaserRef = useRef(null);
   const teaserNear = useInView(teaserRef, { margin: '600px 0px', once: true });
   return (

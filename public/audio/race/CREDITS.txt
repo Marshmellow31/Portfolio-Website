@@ -1,19 +1,21 @@
-Recorded racing-engine audio
+Recorded V10 racing-engine audio
 
-Source: Williams-Cosworth FW32 (2010)
+Source: Red Bull-Cosworth RB1 (2005)
 Author: Edvvc (Ed Pond)
-https://commons.wikimedia.org/wiki/File:Williams-Cosworth_FW32_(2010).ogg
-
-Licensed under Creative Commons Attribution-ShareAlike 3.0 Unported:
+https://commons.wikimedia.org/wiki/File:Red_Bull-Cosworth_RB1_(2005).ogg
+License: Creative Commons Attribution-ShareAlike 3.0 Unported
 https://creativecommons.org/licenses/by-sa/3.0/
 
-The source depicts Sam Bird pulling away in a Williams-Cosworth FW32 at
-the Goodwood Festival of Speed on 3 July 2010.
+Changes: a steady 2.5-second section beginning at 8.35 seconds was converted
+into mono 48 kHz idle and running loops. Filtering, envelope stabilization,
+100 ms loop crossfades and click-free PCM endpoints were applied. The
+running adaptation is pitch-shifted by 1.65 for the classic high-rev tone.
+Both WAV adaptations remain under CC BY-SA 3.0. No endorsement is implied.
 
-Changes: excerpts at 4.2s, 13.9s and 18.2s were converted to mono 48 kHz,
-filtered, level-normalized, and crossfaded into seamless idle/mid/high
-engine loops. OGG and MP3 variants are provided. The adapted recordings
-remain licensed under CC BY-SA 3.0. No endorsement is implied.
+The legacy f1-idle/mid/high OGG and MP3 assets are unused. They remain
+adaptations of Williams-Cosworth FW32 (2010), by the same author under
+CC BY-SA 3.0:
+https://commons.wikimedia.org/wiki/File:Williams-Cosworth_FW32_(2010).ogg
 
-Only these recorded audio assets are covered by this attribution;
-the project's procedural effects and source code are separate works.
+Only the recordings are covered by these credits. Procedural effects and
+source code are separate works.

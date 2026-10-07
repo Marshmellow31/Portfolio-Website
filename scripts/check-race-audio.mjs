@@ -6,7 +6,8 @@ export async function checkRaceAudio(OfflineContext = globalThis.OfflineAudioCon
   const scenarios = [
     ['idle', { rpm: 0, speed: 0, gear: 1, onRoad: true }],
     ['acceleration', { rpm: 0.85, speed: 70, gear: 6, onRoad: true, throttle: true }],
-    ['drift', { mode: 'drift', rpm: 0.7, speed: 25, gear: 3, onRoad: true, slip: 0.8 }],
+    ['high-rpm', { rpm: 1, speed: 92, gear: 8, onRoad: true, throttle: true }],
+    ['drift', { mode: 'drift', rpm: 0.7, speed: 25, gear: 3, onRoad: true, slip: 0.8, drifting: true }],
     ['gravel', { rpm: 0.5, speed: 30, gear: 3, onRoad: false }],
     ['impact', { rpm: 0.3, speed: 20, gear: 2, onRoad: true }],
     ['countdown', { rpm: 0, speed: 0, gear: 1, onRoad: true, phase: 'countdown', countdown: 3 }],

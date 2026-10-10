@@ -8,7 +8,7 @@ import { workHistory, getProjectBySlug } from '../data/portfolio';
 import { testimonials } from '../data/testimonials';
 import useMediaQuery from '../utils/useMediaQuery';
 import useSEO from '../utils/useSEO';
-import { DEFAULT_DESCRIPTION } from '../../site.config.mjs';
+import { DEFAULT_DESCRIPTION, PORTRAIT } from '../../site.config.mjs';
 import { FiArrowUpRight } from 'react-icons/fi';
 import { FaJava, FaDatabase, FaGithub, FaLinkedin } from 'react-icons/fa';
 import { FaInstagram } from 'react-icons/fa6';
@@ -247,9 +247,23 @@ export default function Home() {
 
       {/* ──────────── ABOUT ──────────── */}
       <section id="about" className="section-pad border-b border-border">
-        <div className="grid gap-[clamp(40px,6vw,96px)] [grid-template-columns:repeat(auto-fit,minmax(320px,1fr))]">
+        <div className="grid gap-[clamp(40px,6vw,96px)] [grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))]">
           <Reveal>
             <div className="mono-label mb-4">01 — About</div>
+            <figure className="m-0 mb-6 flex items-center gap-4">
+              <img
+                src={PORTRAIT.src}
+                srcSet={`${PORTRAIT.thumbnail} 256w, ${PORTRAIT.src} 1024w`}
+                sizes="96px"
+                alt={PORTRAIT.alt}
+                width={PORTRAIT.width}
+                height={PORTRAIT.height}
+                loading="lazy"
+                decoding="async"
+                className="block h-auto w-24 shrink-0"
+              />
+              <figcaption className="text-sm text-text-muted">Harshil Patel</figcaption>
+            </figure>
             <h2
               className="m-0 mb-8 font-bold"
               style={{ fontSize: 'clamp(34px,4.5vw,64px)', lineHeight: 1 }}

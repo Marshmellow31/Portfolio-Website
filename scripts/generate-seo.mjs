@@ -16,7 +16,7 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { SITE_URL, SITE_NAME, DEFAULT_TITLE, DEFAULT_DESCRIPTION, OG_IMAGE, AUTHOR } from '../site.config.mjs';
+import { SITE_URL, SITE_NAME, DEFAULT_TITLE, DEFAULT_DESCRIPTION, OG_IMAGE, AUTHOR, PORTRAIT } from '../site.config.mjs';
 import { selectedWork, workHistory } from '../src/data/portfolio.js';
 import { blogPosts } from '../src/data/blog.js';
 import { vehicleModels } from '../src/data/models.js';
@@ -112,6 +112,7 @@ const CONTACT_BLOCK = `<h2>Contact</h2>
 
 function homeBody() {
   return `<h1>Harshil Patel — Software Engineer at IIIT Vadodara</h1>
+<figure><img src="${PORTRAIT.src}" srcset="${PORTRAIT.thumbnail} 256w, ${PORTRAIT.src} 1024w" sizes="96px" alt="${esc(PORTRAIT.alt)}" width="${PORTRAIT.width}" height="${PORTRAIT.height}" loading="lazy" style="display:block;width:96px;height:auto" /><figcaption>Harshil Patel</figcaption></figure>
 <p>Software engineer and B.Tech student at IIIT Vadodara. Builds production web apps, mobile apps, and AI tools. Automotive content creator <a href="https://www.instagram.com/guywithblack350/">@guywithblack350</a> with ${creatorViewsLabel} in the ${INSTAGRAM_SNAPSHOT.capturedAt} snapshot.</p>
 <h2>Selected Work</h2>
 <ul>${selectedWork
@@ -223,6 +224,7 @@ const person = {
   '@id': `${SITE_URL}/#person`,
   name: SITE_NAME,
   url: `${SITE_URL}/`,
+  image: `${SITE_URL}${PORTRAIT.src}`,
   sameAs: AUTHOR.sameAs,
 };
 
@@ -232,9 +234,10 @@ const routes = [
     path: '/', priority: 1.0,
     title: DEFAULT_TITLE,
     description: DEFAULT_DESCRIPTION,
-    lastmod: lastmodOf('src/pages/Home.jsx', DATA),
+    images: [{ src: PORTRAIT.src, title: PORTRAIT.alt }, { src: OG_IMAGE, title: DEFAULT_TITLE }],
+    lastmod: lastmodOf('src/pages/Home.jsx', DATA, 'site.config.mjs', `public${PORTRAIT.src}`),
     body: homeBody(),
-    jsonLd: { '@context': 'https://schema.org', '@type': 'ProfilePage', '@id': `${SITE_URL}/#profile`, url: `${SITE_URL}/`, name: SITE_NAME, mainEntity: person },
+    jsonLd: { '@context': 'https://schema.org', '@type': 'ProfilePage', '@id': `${SITE_URL}/#profile`, url: `${SITE_URL}/`, name: SITE_NAME, mainEntity: person, primaryImageOfPage: { '@type': 'ImageObject', contentUrl: `${SITE_URL}${PORTRAIT.src}`, url: `${SITE_URL}${PORTRAIT.src}`, caption: PORTRAIT.alt, width: PORTRAIT.width, height: PORTRAIT.height, about: { '@id': `${SITE_URL}/#person` } } },
   },
   {
     path: '/projects', priority: 0.9,
@@ -607,7 +610,6 @@ ${routes
     <priority>${r.priority.toFixed(1)}</priority>
 ${routeImages.map((img) => `    <image:image>
       <image:loc>${SITE_URL}${img.src}</image:loc>
-      <image:title>${esc(img.title || r.title)}</image:title>
     </image:image>`).join('\n')}
   </url>`;
   })
@@ -658,6 +660,7 @@ Harshil Patel is a software engineer and computer science student at IIIT Vadoda
 Alongside software engineering, Harshil is an automotive content creator operating under the handle **@guywithblack350**, with ${creatorViewsLabel} in the ${INSTAGRAM_SNAPSHOT.capturedAt} snapshot and collaborations with automotive and lifestyle brands.
 
 - **Website**: ${SITE_URL}/
+- **Portrait of Harshil Patel**: ${SITE_URL}${PORTRAIT.src} (displayed in the homepage About section)
 - **GitHub**: https://github.com/Marshmellow31
 - **LinkedIn**: https://linkedin.com/in/harshil-patel-5a7373333
 - **Instagram (Personal)**: https://www.instagram.com/harshil_3105_/

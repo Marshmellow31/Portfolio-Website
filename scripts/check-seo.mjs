@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile, access } from 'node:fs/promises';
 import vm from 'node:vm';
-import { SITE_URL, SITE_NAME, DEFAULT_TITLE, DEFAULT_DESCRIPTION, OG_IMAGE, TWITTER_HANDLE } from '../site.config.mjs';
+import { SITE_URL, SITE_NAME, DEFAULT_TITLE, DEFAULT_DESCRIPTION, OG_IMAGE, TWITTER_HANDLE, PORTRAIT } from '../site.config.mjs';
 import { creativeDescription, projectsDescription, creatorSnapshot } from '../src/data/seo.js';
 
 const sitemap = await readFile('dist/sitemap.xml', 'utf8');
@@ -44,6 +44,14 @@ for (const url of urls) {
     assert(nodes.some(node => node['@type'] === 'WebSite' && node.name === SITE_NAME), 'homepage site identity');
     const identity = nodes.find(node => node['@id'] === `${SITE_URL}/#person`);
     assert(identity?.name === SITE_NAME && !identity.alternateName, 'creator alias attached to homepage identity');
+    assert.equal(identity.image, SITE_URL + PORTRAIT.src, 'identity portrait');
+    const profile = nodes.find(node => node['@type'] === 'ProfilePage');
+    assert.equal(profile.primaryImageOfPage.contentUrl, SITE_URL + PORTRAIT.src, 'profile portrait');
+    assert(html.includes(`src="${PORTRAIT.src}"`) && html.includes(`alt="${PORTRAIT.alt}"`), 'no-JS portrait discoverability');
+    const homeEntry = sitemap.match(/<url>\s*<loc>[^<]+\/<\/loc>[\s\S]*?<\/url>/)?.[0];
+    assert(homeEntry?.includes(`<image:loc>${SITE_URL}${PORTRAIT.src}</image:loc>`), 'homepage portrait sitemap entry');
+    await access(`dist${PORTRAIT.src}`);
+    await access(`dist${PORTRAIT.thumbnail}`);
   }
 }
 const notFound = await readFile('dist/404.html', 'utf8');
@@ -52,6 +60,7 @@ const robots = await readFile('dist/robots.txt', 'utf8');
 assert(robots.includes(`Sitemap: ${SITE_URL}/sitemap.xml`));
 for (const bot of ['OAI-SearchBot', 'PerplexityBot', 'Bingbot']) assert(robots.includes(`User-agent: ${bot}\nAllow: /`));
 const llms = await readFile('dist/llms.txt', 'utf8');
+assert(llms.includes(SITE_URL + PORTRAIT.src), 'AI profile portrait link');
 assert(llms.includes('67.7M') && llms.includes(creatorSnapshot.capturedAt), 'LLM context metric provenance');
 
 // Exercise the actual hook with a minimal head DOM and immediate React effects.
@@ -86,7 +95,7 @@ const document = {
 };
 const source = (await readFile('src/utils/useSEO.js', 'utf8'))
   .replace(/^import .*;\r?\n/gm, '').replace('export default function', 'function');
-const context = vm.createContext({ document, window: { location: { pathname: '/creative' } }, useEffect: fn => fn(), SITE_URL, SITE_NAME, DEFAULT_TITLE, DEFAULT_DESCRIPTION, OG_IMAGE, TWITTER_HANDLE });
+const context = vm.createContext({ document, window: { location: { pathname: '/creative' } }, useEffect: fn => fn(), SITE_URL, SITE_NAME, DEFAULT_TITLE, DEFAULT_DESCRIPTION, OG_IMAGE, TWITTER_HANDLE, PORTRAIT });
 vm.runInContext(source, context);
 context.useSEO({ title: 'Creative', path: '/creative', description: creativeDescription, image: '/creative-og.jpg', jsonLd: { '@type': 'ProfilePage', url: `${SITE_URL}/creative` } });
 context.useSEO({ title: 'Post', path: '/blog/test', image: '/test.webp', ogType: 'article', jsonLd: { '@graph': [{ '@type': 'BlogPosting', datePublished: '2026-08-15' }] } });
@@ -99,6 +108,7 @@ assert(!meta('property', 'article:published_time'));
 assert.equal(meta('name', 'title').attributes.content, 'Contact — Harshil Patel');
 context.useSEO({ path: '/', description: DEFAULT_DESCRIPTION });
 assert.equal(JSON.parse(document.getElementById('route-jsonld').textContent)['@type'], 'ProfilePage');
+assert.equal(JSON.parse(document.getElementById('route-jsonld').textContent).primaryImageOfPage.contentUrl, SITE_URL + PORTRAIT.src, 'portrait survives navigation back home');
 assert.equal(meta('name', 'description').attributes.content, DEFAULT_DESCRIPTION);
 context.useSEO({ path: '/missing', noindex: true });
 assert(!document.getElementById('route-jsonld'));

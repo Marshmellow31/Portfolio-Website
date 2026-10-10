@@ -12,6 +12,13 @@ export const DEFAULT_DESCRIPTION =
 /* JPEG on purpose — LinkedIn and several other scrapers won't render a WebP
    social card. Regenerate with `npm run og` after changing name/tagline. */
 export const OG_IMAGE = '/og-image.jpg';
+export const PORTRAIT = {
+  src: '/harshil-patel-portrait.webp',
+  thumbnail: '/harshil-patel-portrait-256.webp',
+  alt: 'Portrait of Harshil Patel, software engineer and IIIT Vadodara student',
+  width: 1024,
+  height: 1307,
+};
 export const LOCALE = 'en_US';
 
 /* X/Twitter card attribution. This is the X handle, which is NOT the same as

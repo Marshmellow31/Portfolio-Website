@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { SITE_URL, SITE_NAME, DEFAULT_TITLE, DEFAULT_DESCRIPTION, OG_IMAGE, TWITTER_HANDLE } from '../../site.config.mjs';
+import { SITE_URL, SITE_NAME, DEFAULT_TITLE, DEFAULT_DESCRIPTION, OG_IMAGE, TWITTER_HANDLE, PORTRAIT } from '../../site.config.mjs';
 
 const initialPath = window.location.pathname.replace(/\/$/, '') || '/';
 const initialRouteData = document.getElementById('route-jsonld')?.textContent;
@@ -25,6 +25,7 @@ export default function useSEO({ title, description, path = '', image, noindex =
     '@context': 'https://schema.org', '@type': 'ProfilePage',
     '@id': `${SITE_URL}/#profile`, url: `${SITE_URL}/`, name: SITE_NAME,
     mainEntity: { '@id': `${SITE_URL}/#person` },
+    primaryImageOfPage: { '@type': 'ImageObject', url: `${SITE_URL}${PORTRAIT.src}`, contentUrl: `${SITE_URL}${PORTRAIT.src}`, width: PORTRAIT.width, height: PORTRAIT.height, caption: PORTRAIT.alt, about: { '@id': `${SITE_URL}/#person` } },
   } : {
     '@context': 'https://schema.org', '@type': 'WebPage',
     url: SITE_URL + path, name: title || SITE_NAME,

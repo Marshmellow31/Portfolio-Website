@@ -1,29 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { animate, motion, useInView, useMotionValue, useReducedMotion } from 'framer-motion';
-
-function AnimatedValue({ target, decimals = 0, suffix = '' }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, amount: 0.55 });
-  const reducedMotion = useReducedMotion();
-  const value = useMotionValue(0);
-  const [display, setDisplay] = useState(reducedMotion ? target : 0);
-
-  useEffect(() => {
-    if (!inView) return;
-    if (reducedMotion) {
-      setDisplay(target);
-      return;
-    }
-    const controls = animate(value, target, {
-      duration: 1.15,
-      ease: [0.22, 1, 0.36, 1],
-      onUpdate: (latest) => setDisplay(latest),
-    });
-    return () => controls.stop();
-  }, [inView, reducedMotion, target, value]);
-
-  return <span ref={ref}>{display.toFixed(decimals)}{suffix}</span>;
-}
+import { motion, useReducedMotion } from 'framer-motion';
+import { creatorHeadlineViewsLabel, creatorViewsUpdatedAt } from '../../data/seo';
 
 function LoadingState() {
   return (
@@ -69,21 +45,20 @@ export default function CreatorImpact({ sectionRef, snapshot, status }) {
             <div className="relative flex min-h-[380px] flex-col justify-between overflow-hidden bg-bg p-[clamp(28px,5vw,68px)]">
               <div>
                 <div className="flex items-center justify-between gap-4 font-mono text-[10px] uppercase tracking-[0.22em] text-text-dim">
-                  <span>Aggregate public reel views</span>
-                  <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-emerald-400">Historical snapshot</span>
+                  <span>Total reel views</span>
+                  <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-emerald-400">Creator update</span>
                 </div>
                 <div
                   className="mt-8 inline-flex items-baseline whitespace-nowrap font-heading text-[clamp(68px,12vw,175px)] font-bold leading-[0.8] text-text-bright"
-                  aria-label={`Approximately ${(snapshot.aggregate.totalViewsEstimate / 1_000_000).toFixed(1)} million public reel views`}
+                  aria-label="70 million plus reel views"
                 >
-                  <span aria-hidden="true" className="mr-[0.04em] font-normal text-text-muted">≈</span>
-                  <span aria-hidden="true" className="tracking-[-0.075em]"><AnimatedValue target={snapshot.aggregate.totalViewsEstimate / 1_000_000} decimals={1} suffix="M" /></span>
+                  <span aria-hidden="true" className="tracking-[-0.04em]">{creatorHeadlineViewsLabel}</span>
                 </div>
               </div>
 
               <div className="mt-10 border-t border-white/10 pt-6">
                 <p className="m-0 max-w-xl text-sm leading-relaxed text-text-muted md:text-base">
-                  Calculated from every accessible public reel count. Instagram reports rounded compact figures, yielding a defensible window of <strong className="font-semibold text-text">{(snapshot.aggregate.lowerEstimate / 1_000_000).toFixed(1)}M – {(snapshot.aggregate.upperEstimate / 1_000_000).toFixed(1)}M</strong> public reel views. Private impressions and reach are excluded.
+                  More than 70 million views across automotive reels. Updated by the creator on {creatorViewsUpdatedAt}. Individual reel counts and the breakdown below reflect the {snapshot.capturedAt} snapshot.
                 </p>
               </div>
             </div>

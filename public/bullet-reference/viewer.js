@@ -312,6 +312,14 @@ try {
   }, {passive:false});
 
   window.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && parent !== window) {
+      pointers.clear();
+      pinchDistance = null;
+      isPanning = false;
+      canvas.blur();
+      parent.postMessage({ type: 'bullet-exit-controls' }, location.origin);
+      return;
+    }
     if ((e.key === 'Control' || e.key === 'Meta') && innerWidth >= 768) {
       canvas.style.cursor = 'move';
     }

@@ -11,7 +11,7 @@ import {
   instagramUrl,
 } from '../data/instagram';
 import useSEO from '../utils/useSEO';
-import { creativeDescription, creatorSnapshot } from '../data/seo';
+import { creativeDescription, creatorViewsMinimum, creatorViewsUpdatedAt } from '../data/seo';
 
 
 const creativeJsonLd = {
@@ -23,7 +23,7 @@ const creativeJsonLd = {
       url: 'https://www.harshilpatel.co.in/creative',
       name: 'guywithblack350 — Automotive Content Creator',
       description: creativeDescription,
-      dateModified: creatorSnapshot.capturedAt,
+      dateModified: creatorViewsUpdatedAt,
       primaryImageOfPage: {
         '@type': 'ImageObject',
         url: 'https://www.harshilpatel.co.in/creative-og.jpg',
@@ -48,7 +48,8 @@ const creativeJsonLd = {
       interactionStatistic: {
         '@type': 'InteractionCounter',
         interactionType: { '@type': 'WatchAction' },
-        userInteractionCount: creatorSnapshot.aggregate.totalViewsEstimate,
+        userInteractionCount: creatorViewsMinimum,
+        description: 'More than 70 million views; creator-reported lower bound.',
       },
     },
     {

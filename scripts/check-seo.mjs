@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile, access } from 'node:fs/promises';
 import vm from 'node:vm';
 import { SITE_URL, SITE_NAME, DEFAULT_TITLE, DEFAULT_DESCRIPTION, OG_IMAGE, TWITTER_HANDLE, PORTRAIT } from '../site.config.mjs';
-import { creativeDescription, projectsDescription, creatorSnapshot } from '../src/data/seo.js';
+import { creativeDescription, projectsDescription, creatorSnapshot, creatorViewsMinimum, creatorViewsLabel, creatorViewsUpdatedAt } from '../src/data/seo.js';
 
 const sitemap = await readFile('dist/sitemap.xml', 'utf8');
 const urls = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map(match => match[1]);
@@ -35,8 +35,8 @@ for (const url of urls) {
   await access(`dist${new URL(image).pathname}`);
   if (route === '/creative') {
     assert(html.includes(creativeDescription), 'creative description drift');
-    assert(!/Guy With Black 350|70M\+|70 million\+/.test(html), 'creative identity or metrics drift');
-    assert(nodes.some(node => node.interactionStatistic?.userInteractionCount === creatorSnapshot.aggregate.totalViewsEstimate));
+    assert(!/Guy With Black 350|67\.7M|66\.2M|69\.2M/.test(html), 'creative identity or metrics drift');
+    assert(nodes.some(node => node.interactionStatistic?.userInteractionCount === creatorViewsMinimum));
   }
   if (route === '/projects') assert(html.includes(projectsDescription), 'projects description drift');
   if (route === '/') {
@@ -61,7 +61,7 @@ assert(robots.includes(`Sitemap: ${SITE_URL}/sitemap.xml`));
 for (const bot of ['OAI-SearchBot', 'PerplexityBot', 'Bingbot']) assert(robots.includes(`User-agent: ${bot}\nAllow: /`));
 const llms = await readFile('dist/llms.txt', 'utf8');
 assert(llms.includes(SITE_URL + PORTRAIT.src), 'AI profile portrait link');
-assert(llms.includes('67.7M') && llms.includes(creatorSnapshot.capturedAt), 'LLM context metric provenance');
+assert(llms.includes(creatorViewsLabel) && llms.includes(creatorViewsUpdatedAt) && llms.includes(creatorSnapshot.capturedAt), 'LLM context metric provenance');
 
 // Exercise the actual hook with a minimal head DOM and immediate React effects.
 // This catches metadata that survives navigation, without loading 3D scenes.

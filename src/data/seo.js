@@ -2,9 +2,13 @@ import snapshot from './instagram-snapshot.json' with { type: 'json' };
 import { SITE_URL } from '../../site.config.mjs';
 import { selectedWork } from './portfolio.js';
 
-export const creatorViewsMillions = snapshot.aggregate.totalViewsEstimate / 1_000_000;
-export const creatorViewsLabel = `approximately ${creatorViewsMillions.toFixed(1)}M public reel views`;
-export const creativeDescription = `Harshil Patel’s automotive creator portfolio as @guywithblack350: ${creatorViewsLabel} in the ${snapshot.capturedAt} snapshot, top reels, and brand collaborations.`;
+// Current headline confirmed by the creator on 2026-10-10.
+// The dated reel audit remains separate from this updated lifetime total.
+export const creatorViewsMinimum = 70_000_000;
+export const creatorViewsUpdatedAt = '2026-10-10';
+export const creatorHeadlineViewsLabel = '70M+';
+export const creatorViewsLabel = '70 million+ views';
+export const creativeDescription = `Harshil Patel’s automotive creator portfolio as @guywithblack350: ${creatorViewsLabel}, top reels, and brand collaborations.`;
 export const projectsDescription = `${selectedWork.length} projects across personal products, academic work, research, internships, and client work — payments, databases, simulations, PWAs, native Android, embedded hardware, and AI tools, each with a full case study.`;
 export const creatorSnapshot = snapshot;
 export const raceDescription = 'Race against local AI rivals on Ridge Grand Prix or slide through Harbour Drift Complex in a browser game built with React Three Fiber.';

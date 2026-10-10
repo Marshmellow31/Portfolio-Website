@@ -20,7 +20,7 @@ import { SITE_URL, SITE_NAME, DEFAULT_TITLE, DEFAULT_DESCRIPTION, OG_IMAGE, AUTH
 import { selectedWork, workHistory } from '../src/data/portfolio.js';
 import { blogPosts } from '../src/data/blog.js';
 import { vehicleModels } from '../src/data/models.js';
-import { creativeDescription, creatorViewsLabel, projectsDescription, projectSchema, raceDescription } from '../src/data/seo.js';
+import { creativeDescription, creatorViewsLabel, creatorViewsMinimum, creatorViewsUpdatedAt, projectsDescription, projectSchema, raceDescription } from '../src/data/seo.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
@@ -113,7 +113,7 @@ const CONTACT_BLOCK = `<h2>Contact</h2>
 function homeBody() {
   return `<h1>Harshil Patel — Software Engineer at IIIT Vadodara</h1>
 <figure><img src="${PORTRAIT.src}" srcset="${PORTRAIT.thumbnail} 256w, ${PORTRAIT.src} 1024w" sizes="96px" alt="${esc(PORTRAIT.alt)}" width="${PORTRAIT.width}" height="${PORTRAIT.height}" loading="lazy" style="display:block;width:96px;height:auto" /><figcaption>Harshil Patel</figcaption></figure>
-<p>Software engineer and B.Tech student at IIIT Vadodara. Builds production web apps, mobile apps, and AI tools. Automotive content creator <a href="https://www.instagram.com/guywithblack350/">@guywithblack350</a> with ${creatorViewsLabel} in the ${INSTAGRAM_SNAPSHOT.capturedAt} snapshot.</p>
+<p>Software engineer and B.Tech student at IIIT Vadodara. Builds production web apps, mobile apps, and AI tools. Automotive content creator <a href="https://www.instagram.com/guywithblack350/">@guywithblack350</a> with ${creatorViewsLabel}, reported by the creator on ${creatorViewsUpdatedAt}.</p>
 <h2>Selected Work</h2>
 <ul>${selectedWork
     .map(
@@ -147,17 +147,16 @@ function projectsBody() {
 }
 
 function creativeBody() {
-  const total = (INSTAGRAM_SNAPSHOT.aggregate.totalViewsEstimate / 1_000_000).toFixed(1);
   return `<h1>guywithblack350 — Automotive Content Creator</h1>
-<p>Harshil Patel creates automotive content as <a href="https://www.instagram.com/guywithblack350/">@guywithblack350</a>. His accessible public Instagram reels have approximately ${total} million combined views.</p>
+<p>Harshil Patel creates automotive content as <a href="https://www.instagram.com/guywithblack350/">@guywithblack350</a>, with ${creatorViewsLabel} across automotive reels.</p>
 <h2>Creator impact</h2>
 <ul>
-  <li>Approximately ${total}M public reel views</li>
+  <li>${creatorViewsLabel}</li>
   <li>${INSTAGRAM_SNAPSHOT.profile.publishedPosts} published posts</li>
   <li>${INSTAGRAM_SNAPSHOT.profile.followers.toLocaleString()} followers at the ${esc(INSTAGRAM_SNAPSHOT.capturedAt)} snapshot</li>
   <li>${INSTAGRAM_SNAPSHOT.aggregate.millionViewReels} reels with at least one million views</li>
 </ul>
-<p>The lifetime view total is an estimate calculated from rounded public reel counts. Private reach, impressions, and plays are excluded.</p>
+<p>The lifetime total was reported by the creator on ${creatorViewsUpdatedAt}. Individual reel counts and the audience breakdown reflect the ${INSTAGRAM_SNAPSHOT.capturedAt} historical snapshot.</p>
 <h2>Top Instagram reels</h2>
 <ol>${INSTAGRAM_SNAPSHOT.topReels.map((reel) => `<li><a href="${esc(reel.url)}"><strong>${esc(reel.title)}</strong></a> — ${esc(reel.views)} · ${esc(reel.date)}</li>`).join('')}</ol>
 <h2>Brand collaborations</h2>
@@ -374,7 +373,7 @@ const routes = [
           url: `${SITE_URL}/creative`,
           name: 'guywithblack350 — Automotive Content Creator',
           description: creativeDescription,
-          dateModified: INSTAGRAM_SNAPSHOT.capturedAt,
+          dateModified: creatorViewsUpdatedAt,
           primaryImageOfPage: { '@type': 'ImageObject', url: `${SITE_URL}/creative-og.jpg`, width: 1200, height: 630 },
           mainEntity: { '@id': `${SITE_URL}/creative#creator` },
         },
@@ -390,7 +389,8 @@ const routes = [
           interactionStatistic: {
             '@type': 'InteractionCounter',
             interactionType: { '@type': 'WatchAction' },
-            userInteractionCount: INSTAGRAM_SNAPSHOT.aggregate.totalViewsEstimate,
+            userInteractionCount: creatorViewsMinimum,
+            description: 'More than 70 million views; creator-reported lower bound.',
           },
         },
         {
@@ -657,7 +657,7 @@ const LLMS_PREAMBLE = `# ${SITE_NAME}
 ## Bio & Overview
 Harshil Patel is a software engineer and computer science student at IIIT Vadodara (Indian Institute of Information Technology, Vadodara). He specializes in React, TypeScript, Node.js, Firebase, Svelte 5, Android (Kotlin), PWA, and AI API integrations (Gemini, Claude, Ollama).
 
-Alongside software engineering, Harshil is an automotive content creator operating under the handle **@guywithblack350**, with ${creatorViewsLabel} in the ${INSTAGRAM_SNAPSHOT.capturedAt} snapshot and collaborations with automotive and lifestyle brands.
+Alongside software engineering, Harshil is an automotive content creator operating under the handle **@guywithblack350**, with ${creatorViewsLabel} reported by the creator on ${creatorViewsUpdatedAt} and collaborations with automotive and lifestyle brands.
 
 - **Website**: ${SITE_URL}/
 - **Portrait of Harshil Patel**: ${SITE_URL}${PORTRAIT.src} (displayed in the homepage About section)
@@ -712,8 +712,8 @@ await writeFile(
 - **Account**: guywithblack350
 - **Portfolio**: ${SITE_URL}/creative
 - **Historical public snapshot**: ${INSTAGRAM_SNAPSHOT.capturedAt}
-- **View estimate**: ${creatorViewsLabel}; rounded-count range ${(INSTAGRAM_SNAPSHOT.aggregate.lowerEstimate / 1_000_000).toFixed(1)}M to ${(INSTAGRAM_SNAPSHOT.aggregate.upperEstimate / 1_000_000).toFixed(1)}M.
-- **Scope**: Accessible public reel views only. Private reach, impressions, and plays are excluded. These figures do not establish current account metrics.
+- **Total views**: ${creatorViewsLabel}; reported by the creator on ${creatorViewsUpdatedAt}.
+- **Scope**: The updated lifetime total is creator-reported. Individual reel counts, followers, and the audience breakdown remain historical snapshot figures.
 
 ---
 

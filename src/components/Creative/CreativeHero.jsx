@@ -1,10 +1,13 @@
-import { creatorViewsMillions } from '../../data/seo';
+import { creatorHeadlineViewsLabel } from '../../data/seo';
 import { useEffect, useRef, useState } from 'react';
 import { FaInstagram } from 'react-icons/fa';
+import { FiArrowDown, FiArrowUpRight } from 'react-icons/fi';
 
 export default function CreativeHero({ instagramHandle, instagramUrl }) {
   const heroRef = useRef(null);
   const viewerRef = useRef(null);
+  const modelToggleRef = useRef(null);
+  const [isModelControlEnabled, setIsModelControlEnabled] = useState(false);
   const [activeFinish, setActiveFinish] = useState('premium');
   const [isTouchDevice, setIsTouchDevice] = useState(false);
   const [has3DFallback, setHas3DFallback] = useState(false);
@@ -24,7 +27,7 @@ export default function CreativeHero({ instagramHandle, instagramUrl }) {
     );
 
     const handleViewerMessage = (event) => {
-      if (event.source !== viewerRef.current?.contentWindow) return;
+      if (event.origin !== window.location.origin || event.source !== viewerRef.current?.contentWindow) return;
 
       if (event.data?.type === 'bullet-scroll') {
         window.scrollBy({ top: event.data.deltaY, behavior: 'auto' });
@@ -32,6 +35,9 @@ export default function CreativeHero({ instagramHandle, instagramUrl }) {
         if (event.data.finish) setActiveFinish(event.data.finish);
       } else if (event.data?.type === 'bullet-unsupported') {
         setHas3DFallback(true);
+      } else if (event.data?.type === 'bullet-exit-controls') {
+        setIsModelControlEnabled(false);
+        modelToggleRef.current?.focus({ preventScroll: true });
       }
     };
 
@@ -56,6 +62,26 @@ export default function CreativeHero({ instagramHandle, instagramUrl }) {
       observer.disconnect();
     };
   }, []);
+
+  useEffect(() => {
+    if (!isModelControlEnabled) {
+      activeTouches.current.clear();
+      initialPinchDist.current = null;
+      prevMidpoint.current = null;
+      lastSingleTouch.current = null;
+      setTouchFeedback(null);
+      return;
+    }
+
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        setIsModelControlEnabled(false);
+        modelToggleRef.current?.focus({ preventScroll: true });
+      }
+    };
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [isModelControlEnabled]);
 
   const handleSelectFinish = (finishKey) => {
     setActiveFinish(finishKey);
@@ -179,11 +205,13 @@ export default function CreativeHero({ instagramHandle, instagramUrl }) {
       {/* 3D Model Iframe Layer */}
       <div className="absolute inset-0 pt-16 md:pt-0">
         <iframe
+          id="creative-model"
           ref={viewerRef}
+          tabIndex={isModelControlEnabled && !has3DFallback ? 0 : -1}
           src="/bullet-reference/index.html?embedded=1"
           title="Interactive Royal Enfield Bullet 350 3D Model"
           className={`h-full w-full border-0 transition-opacity duration-300 ${
-            has3DFallback ? 'opacity-0 pointer-events-none' : isTouchDevice ? 'pointer-events-none' : 'pointer-events-auto'
+            has3DFallback ? 'opacity-0 pointer-events-none' : isTouchDevice || !isModelControlEnabled ? 'pointer-events-none' : 'pointer-events-auto'
           }`}
         />
       </div>
@@ -201,7 +229,7 @@ export default function CreativeHero({ instagramHandle, instagramUrl }) {
       )}
 
       {/* Dedicated Interactive 3D Square in Center on Mobile: pinch to zoom, move & orbit; rest of screen scrolls freely */}
-      {isTouchDevice && !has3DFallback && (
+      {isModelControlEnabled && isTouchDevice && !has3DFallback && (
         <div
           className="absolute left-1/2 top-[47%] z-[2] aspect-square w-[min(84vw,340px)] -translate-x-1/2 -translate-y-1/2 touch-none select-none rounded-2xl border border-white/15 bg-white/[0.02] shadow-2xl backdrop-blur-[2px] transition-colors active:border-white/30"
           onTouchStart={handleStageTouchStart}
@@ -218,14 +246,14 @@ export default function CreativeHero({ instagramHandle, instagramUrl }) {
           <span className="pointer-events-none absolute bottom-2 right-2 size-3.5 border-b-2 border-r-2 border-white/40 rounded-br-sm" />
 
           {/* Top Control Bar of Interactive Square */}
-          <div className="pointer-events-auto absolute left-2.5 right-2.5 top-2.5 flex items-center justify-between gap-2">
+          <div onTouchStart={(event) => event.stopPropagation()} className="pointer-events-auto absolute left-2.5 right-2.5 top-2.5 flex items-center justify-between gap-2">
             {/* Mode Switcher */}
             <div className="inline-flex items-center rounded-full border border-white/15 bg-black/85 p-0.5 shadow-lg backdrop-blur-md">
               <button
                 type="button"
                 onClick={(e) => { e.stopPropagation(); setInteractiveMode('orbit'); }}
                 aria-pressed={interactiveMode === 'orbit'}
-                className={`rounded-full px-2.5 py-0.5 font-mono text-[8px] uppercase tracking-[0.14em] transition-all cursor-pointer ${
+                className={`min-h-11 rounded-full px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] transition-all cursor-pointer ${
                   interactiveMode === 'orbit'
                     ? 'bg-white font-semibold text-black shadow-sm'
                     : 'bg-transparent text-white/55 hover:text-white'
@@ -237,7 +265,7 @@ export default function CreativeHero({ instagramHandle, instagramUrl }) {
                 type="button"
                 onClick={(e) => { e.stopPropagation(); setInteractiveMode('move'); }}
                 aria-pressed={interactiveMode === 'move'}
-                className={`rounded-full px-2.5 py-0.5 font-mono text-[8px] uppercase tracking-[0.14em] transition-all cursor-pointer ${
+                className={`min-h-11 rounded-full px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] transition-all cursor-pointer ${
                   interactiveMode === 'move'
                     ? 'bg-white font-semibold text-black shadow-sm'
                     : 'bg-transparent text-white/55 hover:text-white'
@@ -251,7 +279,7 @@ export default function CreativeHero({ instagramHandle, instagramUrl }) {
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); handleResetView(); }}
-              className="inline-flex items-center gap-1 rounded-full border border-white/15 bg-black/85 px-2.5 py-1 font-mono text-[8px] font-medium uppercase tracking-[0.14em] text-white/70 shadow-lg backdrop-blur-md transition-all hover:border-white/30 hover:text-white active:scale-95 cursor-pointer"
+              className="inline-flex min-h-11 items-center gap-1 rounded-full border border-white/15 bg-black/85 px-2.5 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-white/70 shadow-lg backdrop-blur-md transition-all hover:border-white/30 hover:text-white active:scale-95 cursor-pointer"
             >
               <span>↺</span>
               <span>Reset</span>
@@ -296,39 +324,65 @@ export default function CreativeHero({ instagramHandle, instagramUrl }) {
             </h1>
           </div>
 
+          {!has3DFallback && (
+            <div className="pointer-events-auto flex max-w-xs flex-col items-start gap-2 md:items-end">
+              <button
+                ref={modelToggleRef}
+                type="button"
+                aria-pressed={isModelControlEnabled}
+                aria-controls="creative-model"
+                aria-describedby="creative-model-hint"
+                onClick={() => setIsModelControlEnabled((enabled) => !enabled)}
+                className={`inline-flex min-h-11 items-center justify-center rounded-full border px-5 py-2.5 text-sm font-medium cursor-pointer transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white ${
+                  isModelControlEnabled
+                    ? 'border-white bg-white text-black hover:bg-white/90'
+                    : 'border-white/40 bg-black/80 text-white hover:border-white hover:bg-white/10'
+                }`}
+              >
+                {isModelControlEnabled ? 'Back to scrolling' : 'Explore in 3D'}
+              </button>
+              <p id="creative-model-hint" className="m-0 text-xs leading-relaxed text-white/75 md:text-right" aria-live="polite">
+                {isModelControlEnabled
+                  ? isTouchDevice
+                    ? 'Drag or pinch inside the frame. Scroll outside it.'
+                    : 'Drag to rotate · Scroll to zoom · Esc to exit'
+                  : 'Scroll to explore the page. Enable 3D to rotate and zoom.'}
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Bottom Control & Narrative Deck */}
         <div className="mt-auto flex flex-col items-start justify-between gap-4 pt-6 md:gap-6 lg:flex-row lg:items-end">
           {/* Left Narrative Block */}
-          <div className="max-w-md lg:max-w-lg">
-            <p className="m-0 font-heading text-[clamp(1.05rem,1.55vw,1.35rem)] font-semibold leading-[1.32] tracking-[-0.02em] text-white">
+          <div className="max-w-[32rem]">
+            <p className="m-0 max-w-[30ch] text-balance font-heading text-[clamp(1.2rem,1.9vw,1.65rem)] font-medium leading-[1.35] tracking-[-0.025em] text-white">
               I document machines, roads, and the stories built around them.
             </p>
 
-            <div className="mt-2.5 flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.16em] text-white/50 md:text-[10px]">
-              <span className="inline-flex items-center gap-1.5 font-semibold text-white/80">
-                <span className="size-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]" />
-                ≈{creatorViewsMillions.toFixed(1)}M Views
+            <div className="mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1 text-sm leading-relaxed">
+              <span className="inline-flex items-baseline gap-1.5 text-white">
+                <span className="text-xl font-semibold tracking-[-0.025em] tabular-nums">{creatorHeadlineViewsLabel}</span>
+                <span className="text-white/80">views</span>
               </span>
-              <span className="text-white/20" aria-hidden="true">/</span>
-              <span>Automotive Cinema</span>
+              <span className="text-white/35" aria-hidden="true">/</span>
+              <span className="text-white/70">Automotive cinema</span>
             </div>
 
-            <div className="mt-3.5 flex items-center gap-4 font-mono text-[9px] uppercase tracking-[0.16em] md:text-[9.5px]">
+            <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-1 text-sm font-medium">
               <a
                 href="#top-reels"
-                className="pointer-events-auto inline-flex items-center gap-1 border-b border-white/40 pb-0.5 text-white transition-colors hover:border-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                className="pointer-events-auto group inline-flex min-h-11 items-center gap-2 text-white underline decoration-white/40 underline-offset-8 transition-colors hover:decoration-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
               >
                 <span>Explore stories</span>
-                <span aria-hidden="true">↗</span>
+                <FiArrowUpRight className="size-4 transition-transform motion-safe:group-hover:-translate-y-0.5 motion-safe:group-hover:translate-x-0.5" aria-hidden="true" />
               </a>
               <a
                 href="#impact"
-                className="pointer-events-auto inline-flex items-center gap-1 text-white/50 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                className="pointer-events-auto group inline-flex min-h-11 items-center gap-2 text-white/75 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
               >
-                <span>Audience signal</span>
-                <span aria-hidden="true">↓</span>
+                <span>View audience insights</span>
+                <FiArrowDown className="size-4 transition-transform motion-safe:group-hover:translate-y-0.5" aria-hidden="true" />
               </a>
             </div>
           </div>
@@ -379,12 +433,6 @@ export default function CreativeHero({ instagramHandle, instagramUrl }) {
               </a>
             </div>
 
-            {/* Interaction hint */}
-            {!has3DFallback && (
-              <span className="font-mono text-[8.5px] uppercase tracking-[0.14em] text-white/40 md:text-[9px]">
-                {isTouchDevice ? 'Use 360° Stage to orbit, zoom & move · Scroll freely outside' : 'Drag to orbit 360° · Scroll to zoom · Ctrl + drag to pan'}
-              </span>
-            )}
           </div>
         </div>
       </div>

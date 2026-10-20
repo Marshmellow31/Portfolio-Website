@@ -158,28 +158,28 @@ const selectedWorkRaw = [
       hero: {
         id: '/projects/paymatrix/01-hero',
         ratio: '16 / 10',
-        alt: 'paymatrix case study title card — "Splitting bills with friends shouldn\'t feel like accounting" beside a mobile mockup displaying the real-time financial ledger, net debt simplification, and verified settlements.',
+        alt: 'paymatrix mobile web and native Android dashboards side by side, using fictional Asha and Weekend away demo data.',
       },
       sections: [
         {
           id: '/projects/paymatrix/02-scan',
-          alt: 'paymatrix bill scanner extracting line items and tax from a restaurant receipt into a review-and-fill form.',
-          sr: 'AI bill scanning. One Gemini Vision call returns total, merchant, date and category as structured JSON — no manual typing anywhere in the flow. Every dish comes back with its own price, which is what makes the itemized split possible. Items total ₹4,200 against a ₹4,860 bill, and the ₹660 gap is captured as shared tax and charges.',
+          alt: 'paymatrix mobile web receipt scanner with Take Photo and Choose Photos actions.',
+          sr: 'Mobile web receipt scanning. The current scanner accepts a camera photo or one or more receipt images, then lets the user review extracted details before filling an expense. This frame shows the input screen, not a completed scan.',
         },
         {
           id: '/projects/paymatrix/03-split',
-          alt: 'paymatrix assigning individual dishes to five named people, with a GST split mode distributing tax across the group.',
-          sr: 'Itemized split and GST. Three split modes — equal, exact rupee amounts, or itemized — are handled by the same expense record. GST is apportioned by each person\'s dish subtotal rather than divided by head count. Excluding anyone re-runs the whole distribution instantly, and the last share absorbs rounding so totals stay exact.',
+          alt: 'paymatrix native Android itemized split editor for a fictional ₹1,050 expense, with ₹600 and ₹400 item subtotals and ₹50 shared charges.',
+          sr: 'Native Android split editor. Equal, percentage, exact, shares and itemized modes appear in the current interface. The fictional itemized example shows ₹1,000 in items and ₹50 in shared charges. No changes were saved.',
         },
         {
           id: '/projects/paymatrix/04-balances',
-          alt: 'paymatrix net-position screen for a five-person Goa trip, with a diagram collapsing ten raw obligations into two required settlements.',
-          sr: 'Debt simplification. Every expense nets into one balance per person, then a greedy max-creditor / max-debtor pass pairs them off — collapsing ten raw obligations into two transfers, an 80% reduction, at O(n log n) per settlement and zero rounding drift.',
+          alt: 'paymatrix native Android group member balances: Asha gets back ₹420 and Dev owes ₹420 in the fictional Weekend away group.',
+          sr: 'Native Android group balances. The Members tab shows the fictional group’s two members and their opposing ₹420 balances, alongside expense entry, scanning and settle-up actions.',
         },
         {
           id: '/projects/paymatrix/05-upi',
-          alt: 'paymatrix settle-up screen showing a ₹4,593.93 UPI payment as a scannable QR code, alongside the app\'s data-flow stack.',
-          sr: 'UPI settlement. paymatrix never touches money — it builds a signed upi://pay intent and hands it off, as a deep link into GPay, PhonePe or Paytm on Android and as a scannable QR on desktop. Marking a payment writes a settlement row, so balances always recompute from expenses plus settlements rather than from a mutable running total. The stack is React 19 and Vite as an installable PWA, Gemini Vision for receipt parsing, Firestore for real-time sync, a balance engine for greedy simplification, and the UPI intent handoff.',
+          alt: 'paymatrix native Android UPI dialog for a fictional ₹123.45 payment, with app handoff, QR sharing and an explicit settlement-confirmation action.',
+          sr: 'Native Android UPI handoff. The current dialog offers Pay via App, Save QR, Share QR to app, and I Have Paid · Confirm Settlement. It uses an example recipient and fictional data. Opening or returning from a payment app does not verify that money moved.',
         },
       ],
     },

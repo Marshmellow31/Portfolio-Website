@@ -1,7 +1,7 @@
 {
   "/projects/paymatrix/01-hero": {
-    "width": 3840,
-    "height": 2400,
+    "width": 1920,
+    "height": 1200,
     "avif": [
       {
         "w": 960,
@@ -14,10 +14,6 @@
       {
         "w": 1920,
         "file": "01-hero-1920.avif"
-      },
-      {
-        "w": 2880,
-        "file": "01-hero-2880.avif"
       }
     ],
     "webp": [
@@ -32,18 +28,14 @@
       {
         "w": 1920,
         "file": "01-hero-1920.webp"
-      },
-      {
-        "w": 2880,
-        "file": "01-hero-2880.webp"
       }
     ],
     "png": "01-hero-1440.png",
     "og": "01-hero-og.jpg"
   },
   "/projects/paymatrix/02-scan": {
-    "width": 2560,
-    "height": 3200,
+    "width": 1280,
+    "height": 1600,
     "avif": [
       {
         "w": 640,
@@ -56,10 +48,6 @@
       {
         "w": 1280,
         "file": "02-scan-1280.avif"
-      },
-      {
-        "w": 1920,
-        "file": "02-scan-1920.avif"
       }
     ],
     "webp": [
@@ -74,17 +62,13 @@
       {
         "w": 1280,
         "file": "02-scan-1280.webp"
-      },
-      {
-        "w": 1920,
-        "file": "02-scan-1920.webp"
       }
     ],
     "png": "02-scan-960.png"
   },
   "/projects/paymatrix/03-split": {
-    "width": 2560,
-    "height": 3200,
+    "width": 1280,
+    "height": 1600,
     "avif": [
       {
         "w": 640,
@@ -97,10 +81,6 @@
       {
         "w": 1280,
         "file": "03-split-1280.avif"
-      },
-      {
-        "w": 1920,
-        "file": "03-split-1920.avif"
       }
     ],
     "webp": [
@@ -115,17 +95,13 @@
       {
         "w": 1280,
         "file": "03-split-1280.webp"
-      },
-      {
-        "w": 1920,
-        "file": "03-split-1920.webp"
       }
     ],
     "png": "03-split-960.png"
   },
   "/projects/paymatrix/04-balances": {
-    "width": 2560,
-    "height": 3200,
+    "width": 1280,
+    "height": 1600,
     "avif": [
       {
         "w": 640,
@@ -138,10 +114,6 @@
       {
         "w": 1280,
         "file": "04-balances-1280.avif"
-      },
-      {
-        "w": 1920,
-        "file": "04-balances-1920.avif"
       }
     ],
     "webp": [
@@ -156,17 +128,13 @@
       {
         "w": 1280,
         "file": "04-balances-1280.webp"
-      },
-      {
-        "w": 1920,
-        "file": "04-balances-1920.webp"
       }
     ],
     "png": "04-balances-960.png"
   },
   "/projects/paymatrix/05-upi": {
-    "width": 2560,
-    "height": 3200,
+    "width": 1280,
+    "height": 1600,
     "avif": [
       {
         "w": 640,
@@ -179,10 +147,6 @@
       {
         "w": 1280,
         "file": "05-upi-1280.avif"
-      },
-      {
-        "w": 1920,
-        "file": "05-upi-1920.avif"
       }
     ],
     "webp": [
@@ -197,10 +161,6 @@
       {
         "w": 1280,
         "file": "05-upi-1280.webp"
-      },
-      {
-        "w": 1920,
-        "file": "05-upi-1920.webp"
       }
     ],
     "png": "05-upi-960.png"

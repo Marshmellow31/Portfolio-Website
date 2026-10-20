@@ -1,3 +1,4 @@
+import PayMatrixPreview from '../components/PayMatrixPreview';
 import { lazy, Suspense, useState, useRef } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'framer-motion';
 import { Reveal, CountUp } from '../components/Reveal/Reveal';
@@ -203,22 +204,22 @@ export default function Home() {
       <section id="featured-paymatrix" className="border-b border-border px-[clamp(20px,6vw,96px)] py-[clamp(56px,7vw,112px)]" aria-labelledby="paymatrix-heading">
         <div className="grid items-center gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-[clamp(48px,6vw,96px)]">
           <div>
-            <p className="m-0 font-mono text-[11px] uppercase tracking-[.18em] text-text-muted">Featured Systems Project · Web PWA + Native Android</p>
+            <p className="m-0 font-mono text-[11px] uppercase tracking-[.18em] text-text-muted">Web + Android · Featured project</p>
             <h2 id="paymatrix-heading" className="mb-0 mt-5 font-bold text-text-bright" style={{ fontSize: 'clamp(48px,6vw,88px)', lineHeight: 0.95 }}>
               paymatrix<span className="text-text-faint">.</span>
             </h2>
             <p className="mb-0 mt-7 max-w-[48ch] text-[16px] leading-relaxed text-text-muted sm:text-[18px]">
-              Multi-party expense sharing engineered with integer-paise arithmetic, AI receipt parsing, greedy debt graph simplification, and a zero-trust UPI intent settlement protocol. Eliminates floating-point drift and collapses multi-member obligations into minimal direct transfers.
+              Shared expenses, from the receipt to the final split. Scan a bill, divide it fairly, and see who owes whom—on the web or in the native Android app.
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
               <span className="font-mono text-[10px] tracking-[.1em] uppercase text-text-dim border border-white/10 rounded-full px-3 py-1 bg-white/[0.02] whitespace-nowrap">
-                Integer-Paise Precision
+                Precise splits
               </span>
               <span className="font-mono text-[10px] tracking-[.1em] uppercase text-text-dim border border-white/10 rounded-full px-3 py-1 bg-white/[0.02] whitespace-nowrap">
-                O(N log N) Debt Engine
+                Simplified balances
               </span>
               <span className="font-mono text-[10px] tracking-[.1em] uppercase text-text-dim border border-white/10 rounded-full px-3 py-1 bg-white/[0.02] whitespace-nowrap">
-                Zero-Trust Settlement
+                UPI handoff
               </span>
               <span className="font-mono text-[10px] tracking-[.1em] uppercase text-text-dim border border-white/10 rounded-full px-3 py-1 bg-white/[0.02] whitespace-nowrap">
                 React 19 + Kotlin Android
@@ -239,9 +240,7 @@ export default function Home() {
               </a>
             </div>
           </div>
-          <Link to="/projects/paymatrix" aria-label="View the paymatrix case study" className="block overflow-hidden rounded-xl border border-border-strong bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
-            <img src="/projects/paymatrix/01-hero-960.webp" alt="paymatrix dashboard and expense-sharing case study preview" loading="lazy" width="960" height="600" className="block h-auto w-full" />
-          </Link>
+          <PayMatrixPreview />
         </div>
       </section>
 

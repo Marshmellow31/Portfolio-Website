@@ -1,3 +1,4 @@
+import PayMatrixPreview from '../components/PayMatrixPreview';
 import { Link, useParams, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FiArrowUpRight, FiFileText, FiGlobe, FiDownload, FiLayers } from 'react-icons/fi';
@@ -205,9 +206,9 @@ export default function ProjectDetail() {
 
           {/* Right Column: Hero Image placed in a contained box beside the text */}
           <Reveal>
-            <div className="rounded-2xl overflow-hidden border border-border-strong bg-[#0A0A0B] p-2 sm:p-3 md:p-3.5 shadow-2xl">
+            <div className={project.slug === 'paymatrix' ? 'min-w-0' : 'rounded-2xl overflow-hidden border border-border-strong bg-[#0A0A0B] p-2 sm:p-3 md:p-3.5 shadow-2xl'}>
               <motion.div layoutId={`project-image-${project.slug}`}>
-                {frames ? (
+                {project.slug === 'paymatrix' ? <PayMatrixPreview priority /> : frames ? (
                   <CaseImage
                     id={frames.hero.id}
                     alt={frames.hero.alt}

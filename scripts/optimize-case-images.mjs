@@ -52,7 +52,8 @@ async function main() {
     }
 
     for (const [file, cfg] of Object.entries(set.files)) {
-      const base = path.basename(file, path.extname(file));
+      const sourceBase = path.basename(file, path.extname(file));
+      const base = `${sourceBase}-20261020`;
       const input = path.join(ROOT, set.src, file);
       const meta = await sharp(input).metadata();
       const widths = cfg.widths.filter((w) => w <= meta.width);
@@ -89,7 +90,7 @@ async function main() {
         console.log(`  ${base} og 1200x630 jpg  ${kb(o.size)}`);
       }
 
-      manifest[`${set.out.replace('public', '')}/${base}`] = entry;
+      manifest[`${set.out.replace('public', '')}/${sourceBase}`] = entry;
     }
   }
 

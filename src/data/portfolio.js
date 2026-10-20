@@ -1,7 +1,7 @@
 /* ─── Project items for the sphere (Interactive) ─── */
 export const items = [
   {
-    image: '/projects/paymatrix.webp',
+    image: '/projects/paymatrix-mobile-20261020.webp',
     link: 'https://paymatrixapp.online/',
     title: 'paymatrix',
     description: 'Deterministic expense sharing & settlement engine'
@@ -141,14 +141,14 @@ const selectedWorkRaw = [
     type: 'Flagship Product',
     /* 1200×630 JPEG cut from the hero frame — the social card. The old square
        logo was being centre-cropped to ribbons by summary_large_image. */
-    image: '/projects/paymatrix/01-hero-og.jpg',
+    image: '/projects/paymatrix/01-hero-20261020-og.jpg',
     /* Card-carousel slides — small WebP derivatives, hero first. */
     images: [
-      '/projects/paymatrix/01-hero-960.webp',
-      '/projects/paymatrix/02-scan-640.webp',
-      '/projects/paymatrix/03-split-640.webp',
-      '/projects/paymatrix/04-balances-640.webp',
-      '/projects/paymatrix/05-upi-640.webp',
+      '/projects/paymatrix/01-hero-20261020-960.webp',
+      '/projects/paymatrix/02-scan-20261020-640.webp',
+      '/projects/paymatrix/03-split-20261020-640.webp',
+      '/projects/paymatrix/04-balances-20261020-640.webp',
+      '/projects/paymatrix/05-upi-20261020-640.webp',
     ],
     /* Designed case-study frames. Each one already carries its own headline,
        body copy and callout labels, so the page renders them edge to edge and

@@ -55,3 +55,8 @@ for (const frame of frames) {
 }
 await sharp(path.join(dir, '01-hero.png')).resize(960).webp({ quality: 82 }).toFile(path.join(root, 'public/projects/paymatrix.webp'));
 console.log('Generated five paymatrix frames and project thumbnail.');
+
+// These imports are fingerprinted by Vite, avoiding stale public image caches.
+await sharp(path.join(dir, 'screens/web-home.png')).webp({ quality: 88 }).toFile(path.join(dir, 'screens/web-mobile.webp'));
+await sharp(path.join(dir, 'screens/dark-home.png')).extract({ left: 0, top: 94, width: 720, height: 1506 }).webp({ quality: 88 }).toFile(path.join(dir, 'screens/android-mobile.webp'));
+await sharp(path.join(dir, '01-hero.png')).resize(960).webp({ quality: 82 }).toFile(path.join(root, 'public/projects/paymatrix-mobile-20261020.webp'));

@@ -1,0 +1,20 @@
+.paymatrix-preview { min-width: 0; padding: clamp(20px, 3vw, 40px); border: 1px solid var(--color-border-strong); border-radius: 16px; background: #101013; }
+.paymatrix-preview-screens { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: clamp(16px, 3vw, 36px); max-width: 580px; margin: auto; }
+.paymatrix-preview-screen { margin: 0; min-width: 0; }
+.paymatrix-preview-screen figcaption { display: flex; flex-direction: column; gap: 4px; margin-bottom: 16px; }
+.paymatrix-preview-screen strong { font-size: 14px; color: #f2f2f3; font-weight: 600; }
+.paymatrix-preview-screen figcaption span { font-size: 11px; color: #a8a8b0; }
+.paymatrix-preview-screen img { display: block; width: 100%; height: auto; border: 1px solid #3f3f46; border-radius: 14px; }
+.paymatrix-preview-note { margin: 20px 0 0; font-size: 12px; line-height: 1.5; color: #a8a8b0; text-align: center; }
+.paymatrix-preview-switch { display: none; }
+@media (max-width: 639px) {
+  .paymatrix-preview { padding: 16px; }
+  .paymatrix-preview-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 20px; padding: 4px; border: 1px solid #3f3f46; border-radius: 10px; }
+  .paymatrix-preview-switch button { min-height: 44px; border-radius: 6px; color: #a8a8b0; font-size: 13px; cursor: pointer; }
+  .paymatrix-preview-switch button[aria-pressed=true] { background: #f2f2f3; color: #101013; }
+  .paymatrix-preview-switch button:focus-visible { outline: 2px solid white; outline-offset: 2px; }
+  .paymatrix-preview-screens { display: block; max-width: 260px; }
+  .paymatrix-preview-screen { display: none; }
+  .paymatrix-preview-screen.is-active { display: block; }
+  .paymatrix-preview-screen figcaption { text-align: center; }
+}

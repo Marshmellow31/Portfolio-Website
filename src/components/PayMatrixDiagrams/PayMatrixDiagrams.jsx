@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { FiLayers, FiDatabase, FiCpu, FiRepeat, FiShield, FiExternalLink, FiX } from 'react-icons/fi';
 import { paymatrixDiagrams } from '../../data/paymatrixDiagrams';
 import MermaidCanvas from './MermaidCanvas';
+import ArchitectureOverview from './ArchitectureOverview';
 import { Reveal } from '../Reveal/Reveal';
 
 const ICONS = {
@@ -15,30 +16,21 @@ const ICONS = {
 export default function PayMatrixDiagrams() {
   const [activeTabId, setActiveTabId] = useState('system-architecture');
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showArchitectureDetail, setShowArchitectureDetail] = useState(false);
+  const dialogRef = useRef(null);
 
   const activeDiagram = paymatrixDiagrams.find((d) => d.id === activeTabId) || paymatrixDiagrams[0];
   const IconComponent = ICONS[activeDiagram.id] || FiLayers;
 
-  // Handle escape key to close fullscreen modal
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape' && isFullscreen) {
-        setIsFullscreen(false);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isFullscreen]);
-
-  // Lock body scroll when fullscreen is active
-  useEffect(() => {
-    if (isFullscreen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
+    if (!isFullscreen) return;
+    const dialog = dialogRef.current;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    dialog.showModal();
     return () => {
-      document.body.style.overflow = '';
+      dialog.close();
+      document.body.style.overflow = previous;
     };
   }, [isFullscreen]);
 
@@ -82,8 +74,14 @@ export default function PayMatrixDiagrams() {
       </div>
 
       {/* ── Interactive Tab Navigation ── */}
-      <div className="mb-6 overflow-x-auto pb-2 scrollbar-none">
-        <div className="flex items-center gap-2 min-w-max border-b border-border pb-3">
+      <label className="mb-6 flex flex-col gap-2 text-sm text-text-muted sm:hidden">
+        Choose a diagram
+        <select className="min-h-12 w-full rounded-lg border border-border-strong bg-surface px-3 text-text-bright" value={activeTabId} onChange={(event) => setActiveTabId(event.target.value)}>
+          {paymatrixDiagrams.map((diagram) => <option key={diagram.id} value={diagram.id}>{diagram.shortLabel}</option>)}
+        </select>
+      </label>
+      <div className="mb-6 hidden sm:block">
+        <div className="flex flex-wrap items-center gap-2 border-b border-border pb-3">
           {paymatrixDiagrams.map((diag, index) => {
             const TabIcon = ICONS[diag.id] || FiLayers;
             const isActive = diag.id === activeTabId;
@@ -91,8 +89,9 @@ export default function PayMatrixDiagrams() {
               <button
                 key={diag.id}
                 type="button"
+                aria-pressed={isActive}
                 onClick={() => setActiveTabId(diag.id)}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-lg font-mono text-[12px] tracking-[.04em] transition-all cursor-pointer ${
+                className={`flex items-center gap-2 min-h-11 px-3.5 py-2 rounded-lg font-mono text-[12px] tracking-[.04em] transition-all cursor-pointer ${
                   isActive
                     ? 'bg-white text-black font-semibold shadow-md'
                     : 'bg-white/[0.03] text-text-dim hover:text-white hover:bg-white/[0.06] border border-white/5'
@@ -131,11 +130,17 @@ export default function PayMatrixDiagrams() {
 
       {/* ── Main Interactive Diagram Canvas ── */}
       <div className="mb-8">
-        <MermaidCanvas
+        {activeTabId === 'system-architecture' && <>
+          <ArchitectureOverview />
+          <button type="button" aria-expanded={showArchitectureDetail} onClick={() => setShowArchitectureDetail(!showArchitectureDetail)} className="mt-4 min-h-11 rounded-lg border border-border-strong px-4 text-sm text-text-muted hover:text-white focus-visible:outline-2 focus-visible:outline-white">
+            {showArchitectureDetail ? 'Hide detailed connections' : 'Explore detailed connections'}
+          </button>
+        </>}
+        {(activeTabId !== 'system-architecture' || showArchitectureDetail) && <div className={activeTabId === 'system-architecture' ? 'mt-4' : ''}><MermaidCanvas
           diagram={activeDiagram}
           isFullscreen={false}
           onToggleFullscreen={() => setIsFullscreen(true)}
-        />
+        /></div>}
       </div>
 
       {/* ── Architecture Highlights Grid ── */}
@@ -171,14 +176,14 @@ export default function PayMatrixDiagrams() {
       </div>
 
       {/* ── Fullscreen Modal Overlay ── */}
-      {isFullscreen && (
-        <div className="fixed inset-0 z-50 bg-[#070709]/95 backdrop-blur-md flex flex-col p-4 sm:p-6 md:p-8 animate-in fade-in duration-200">
+      <dialog ref={dialogRef} className="diagram-dialog" aria-labelledby="diagram-dialog-title" onCancel={() => setIsFullscreen(false)} onClose={() => setIsFullscreen(false)}>
+        {isFullscreen && <>
           {/* Modal Header */}
           <div className="flex items-center justify-between gap-4 pb-4 border-b border-border mb-4">
             <div className="flex items-center gap-3">
               <IconComponent className="text-[18px] text-white" />
               <div>
-                <div className="text-[16px] sm:text-[18px] font-semibold text-text-bright">
+                <div id="diagram-dialog-title" className="text-[16px] sm:text-[18px] font-semibold text-text-bright">
                   {activeDiagram.title}
                 </div>
                 <div className="font-mono text-[10px] tracking-[.12em] text-text-faint uppercase">
@@ -191,7 +196,7 @@ export default function PayMatrixDiagrams() {
               <button
                 type="button"
                 onClick={() => setIsFullscreen(false)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-mono text-[11px] tracking-[.06em] transition-colors"
+                className="flex items-center gap-1.5 min-h-11 min-w-11 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-mono text-[11px] tracking-[.06em] transition-colors"
               >
                 <FiX className="text-[14px]" />
                 <span>CLOSE</span>
@@ -200,15 +205,15 @@ export default function PayMatrixDiagrams() {
           </div>
 
           {/* Modal Diagram Viewport */}
-          <div className="flex-1 overflow-hidden">
+          <div className="flex-1 min-h-0 overflow-hidden">
             <MermaidCanvas
               diagram={activeDiagram}
               isFullscreen={true}
               onToggleFullscreen={() => setIsFullscreen(false)}
             />
           </div>
-        </div>
-      )}
+        </>}
+      </dialog>
     </section>
   );
 }

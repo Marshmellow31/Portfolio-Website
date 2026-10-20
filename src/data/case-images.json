@@ -5,33 +5,33 @@
     "avif": [
       {
         "w": 960,
-        "file": "01-hero-960.avif"
+        "file": "01-hero-20261020-960.avif"
       },
       {
         "w": 1440,
-        "file": "01-hero-1440.avif"
+        "file": "01-hero-20261020-1440.avif"
       },
       {
         "w": 1920,
-        "file": "01-hero-1920.avif"
+        "file": "01-hero-20261020-1920.avif"
       }
     ],
     "webp": [
       {
         "w": 960,
-        "file": "01-hero-960.webp"
+        "file": "01-hero-20261020-960.webp"
       },
       {
         "w": 1440,
-        "file": "01-hero-1440.webp"
+        "file": "01-hero-20261020-1440.webp"
       },
       {
         "w": 1920,
-        "file": "01-hero-1920.webp"
+        "file": "01-hero-20261020-1920.webp"
       }
     ],
-    "png": "01-hero-1440.png",
-    "og": "01-hero-og.jpg"
+    "png": "01-hero-20261020-1440.png",
+    "og": "01-hero-20261020-og.jpg"
   },
   "/projects/paymatrix/02-scan": {
     "width": 1280,
@@ -39,32 +39,32 @@
     "avif": [
       {
         "w": 640,
-        "file": "02-scan-640.avif"
+        "file": "02-scan-20261020-640.avif"
       },
       {
         "w": 960,
-        "file": "02-scan-960.avif"
+        "file": "02-scan-20261020-960.avif"
       },
       {
         "w": 1280,
-        "file": "02-scan-1280.avif"
+        "file": "02-scan-20261020-1280.avif"
       }
     ],
     "webp": [
       {
         "w": 640,
-        "file": "02-scan-640.webp"
+        "file": "02-scan-20261020-640.webp"
       },
       {
         "w": 960,
-        "file": "02-scan-960.webp"
+        "file": "02-scan-20261020-960.webp"
       },
       {
         "w": 1280,
-        "file": "02-scan-1280.webp"
+        "file": "02-scan-20261020-1280.webp"
       }
     ],
-    "png": "02-scan-960.png"
+    "png": "02-scan-20261020-960.png"
   },
   "/projects/paymatrix/03-split": {
     "width": 1280,
@@ -72,32 +72,32 @@
     "avif": [
       {
         "w": 640,
-        "file": "03-split-640.avif"
+        "file": "03-split-20261020-640.avif"
       },
       {
         "w": 960,
-        "file": "03-split-960.avif"
+        "file": "03-split-20261020-960.avif"
       },
       {
         "w": 1280,
-        "file": "03-split-1280.avif"
+        "file": "03-split-20261020-1280.avif"
       }
     ],
     "webp": [
       {
         "w": 640,
-        "file": "03-split-640.webp"
+        "file": "03-split-20261020-640.webp"
       },
       {
         "w": 960,
-        "file": "03-split-960.webp"
+        "file": "03-split-20261020-960.webp"
       },
       {
         "w": 1280,
-        "file": "03-split-1280.webp"
+        "file": "03-split-20261020-1280.webp"
       }
     ],
-    "png": "03-split-960.png"
+    "png": "03-split-20261020-960.png"
   },
   "/projects/paymatrix/04-balances": {
     "width": 1280,
@@ -105,32 +105,32 @@
     "avif": [
       {
         "w": 640,
-        "file": "04-balances-640.avif"
+        "file": "04-balances-20261020-640.avif"
       },
       {
         "w": 960,
-        "file": "04-balances-960.avif"
+        "file": "04-balances-20261020-960.avif"
       },
       {
         "w": 1280,
-        "file": "04-balances-1280.avif"
+        "file": "04-balances-20261020-1280.avif"
       }
     ],
     "webp": [
       {
         "w": 640,
-        "file": "04-balances-640.webp"
+        "file": "04-balances-20261020-640.webp"
       },
       {
         "w": 960,
-        "file": "04-balances-960.webp"
+        "file": "04-balances-20261020-960.webp"
       },
       {
         "w": 1280,
-        "file": "04-balances-1280.webp"
+        "file": "04-balances-20261020-1280.webp"
       }
     ],
-    "png": "04-balances-960.png"
+    "png": "04-balances-20261020-960.png"
   },
   "/projects/paymatrix/05-upi": {
     "width": 1280,
@@ -138,31 +138,31 @@
     "avif": [
       {
         "w": 640,
-        "file": "05-upi-640.avif"
+        "file": "05-upi-20261020-640.avif"
       },
       {
         "w": 960,
-        "file": "05-upi-960.avif"
+        "file": "05-upi-20261020-960.avif"
       },
       {
         "w": 1280,
-        "file": "05-upi-1280.avif"
+        "file": "05-upi-20261020-1280.avif"
       }
     ],
     "webp": [
       {
         "w": 640,
-        "file": "05-upi-640.webp"
+        "file": "05-upi-20261020-640.webp"
       },
       {
         "w": 960,
-        "file": "05-upi-960.webp"
+        "file": "05-upi-20261020-960.webp"
       },
       {
         "w": 1280,
-        "file": "05-upi-1280.webp"
+        "file": "05-upi-20261020-1280.webp"
       }
     ],
-    "png": "05-upi-960.png"
+    "png": "05-upi-20261020-960.png"
   }
 }

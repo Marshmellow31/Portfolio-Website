@@ -73,6 +73,27 @@ that matter for a competitive name query.
 
 ## Still to do (off the site)
 
+### Search Console noindex alert — checked 2026-10-26
+
+- **Verified:** the report (last updated 2026-10-23) listed one excluded URL:
+  `https://www.harshilpatel.co.in/bullet-reference/index.html?embedded=1`.
+  This is the iframe used by the Creative hero, not a standalone portfolio landing page.
+  Its `noindex,nofollow` tag is intentional; keep it out of search and the sitemap.
+- **Verified:** all 28 live sitemap pages returned HTTP 200, self-referencing canonicals,
+  indexable robots metadata, and no `X-Robots-Tag` header during this check.
+  This verifies crawl eligibility, not whether Google has indexed each page.
+- **Recommendation-not-fact:** no Search Console action is needed for this exclusion.
+  Do not request indexing or click **Validate Fix** for the intentionally excluded viewer.
+  No Performance report or PageSpeed Insights setting needs changing for this alert.
+- If a real portfolio page later appears here, inspect that exact URL, use **Test live URL**,
+  fix any blocking tag/header, then **Request Indexing**. Use **Validate Fix** only once
+  the unintended exclusions in that issue have been resolved.
+- Every production build now runs `check:seo`. It checks sitemap-page metadata and blocking
+  deployment headers, while preserving the intentional viewer, RSS, and 404 exclusions.
+  See [Google's Page indexing report documentation](https://support.google.com/webmasters/answer/7440203).
+
+### Historical setup checklist
+
 Google Search Console and Bing are both verified and the sitemap is submitted; the site entered
 Google's index on **2026-07-21**. Remaining:
 

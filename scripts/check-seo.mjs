@@ -9,6 +9,11 @@ const urls = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map(match => match[1]);
 assert.equal(new Set(urls).size, urls.length, 'duplicate sitemap URL');
 const titles = new Set();
 const deployment = JSON.parse(await readFile('vercel.json', 'utf8'));
+// HTML metadata cannot override a blocking HTTP header. Check both layers.
+const indexingHeaders = (deployment.headers || []).filter(rule =>
+  rule.headers.some(header => /^x-robots-tag$/i.test(header.key) && /\b(noindex|none)\b/i.test(header.value)));
+// These expressions mirror the regex-style sources currently used in vercel.json.
+const matchesPath = (source, route) => new RegExp(`^(?:${source})$`).test(route);
 for (const oldPath of ['/drive', '/playground', '/projects/no-fly-zone-simulator']) {
   const redirect = deployment.redirects.find(rule => rule.source === oldPath);
   assert(redirect?.permanent && urls.includes(SITE_URL + redirect.destination), `legacy redirect: ${oldPath}`);
@@ -24,6 +29,7 @@ for (const url of urls) {
   assert.match(html, /<meta name="description" content="[^"]+"/, route);
   assert.match(html, /<noscript id="page-content">[\s\S]*?<h1>/, route);
   assert(!html.includes('noindex'), `indexable route blocked: ${route}`);
+  assert(!indexingHeaders.some(rule => matchesPath(rule.source, route)), `indexable route blocked by HTTP header: ${route}`);
   const scripts = [...html.matchAll(/<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)];
   const nodes = scripts.flatMap(match => { const data = JSON.parse(match[1]); return data['@graph'] || [data]; });
   assert.equal((html.match(/id="site-jsonld"/g) || []).length, 1, route);
@@ -56,6 +62,12 @@ for (const url of urls) {
 }
 const notFound = await readFile('dist/404.html', 'utf8');
 assert.match(notFound, /name="robots" content="noindex, follow"/);
+// The Creative page embeds this viewer; it is deliberately not a search landing page.
+const viewer = await readFile('dist/bullet-reference/index.html', 'utf8');
+assert.match(viewer, /<meta name="robots" content="noindex,nofollow">/);
+assert(!urls.some(url => new URL(url).pathname.startsWith('/bullet-reference')), 'embedded viewer in sitemap');
+assert(!urls.includes(`${SITE_URL}/rss.xml`), 'RSS feed in page sitemap');
+assert(indexingHeaders.some(rule => matchesPath(rule.source, '/rss.xml')), 'RSS indexing policy missing');
 const robots = await readFile('dist/robots.txt', 'utf8');
 assert(robots.includes(`Sitemap: ${SITE_URL}/sitemap.xml`));
 for (const bot of ['OAI-SearchBot', 'PerplexityBot', 'Bingbot']) assert(robots.includes(`User-agent: ${bot}\nAllow: /`));

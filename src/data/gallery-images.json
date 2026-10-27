@@ -41,6 +41,268 @@
     "w": 640,
     "h": 800
   },
+  "/projects/podium/11-form-builder-desktop.webp": {
+    "w": 1430,
+    "h": 993,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/podium/11-form-builder-desktop-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/podium/11-form-builder-desktop-768.webp"
+      },
+      {
+        "w": 1200,
+        "file": "/projects/podium/11-form-builder-desktop-1200.webp"
+      }
+    ]
+  },
+  "/projects/podium/10-control-room-desktop.webp": {
+    "w": 1430,
+    "h": 993,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/podium/10-control-room-desktop-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/podium/10-control-room-desktop-768.webp"
+      },
+      {
+        "w": 1200,
+        "file": "/projects/podium/10-control-room-desktop-1200.webp"
+      }
+    ]
+  },
+  "/projects/podium/15-challenge-desktop.webp": {
+    "w": 1430,
+    "h": 993,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/podium/15-challenge-desktop-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/podium/15-challenge-desktop-768.webp"
+      },
+      {
+        "w": 1200,
+        "file": "/projects/podium/15-challenge-desktop-1200.webp"
+      }
+    ]
+  },
+  "/projects/podium/12-form-builder-mobile.webp": {
+    "w": 380,
+    "h": 822
+  },
+  "/projects/podium/13-form-preview-mobile.webp": {
+    "w": 380,
+    "h": 822
+  },
+  "/projects/podium/06-discover-mobile.webp": {
+    "w": 390,
+    "h": 844
+  },
+  "/projects/itool/gallery-light.webp": {
+    "w": 1410,
+    "h": 996,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/itool/gallery-light-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/itool/gallery-light-768.webp"
+      },
+      {
+        "w": 1200,
+        "file": "/projects/itool/gallery-light-1200.webp"
+      }
+    ]
+  },
+  "/projects/itool/connect-dark.webp": {
+    "w": 1410,
+    "h": 996,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/itool/connect-dark-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/itool/connect-dark-768.webp"
+      },
+      {
+        "w": 1200,
+        "file": "/projects/itool/connect-dark-1200.webp"
+      }
+    ]
+  },
+  "/projects/itool/gallery-dark.webp": {
+    "w": 1410,
+    "h": 996,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/itool/gallery-dark-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/itool/gallery-dark-768.webp"
+      },
+      {
+        "w": 1200,
+        "file": "/projects/itool/gallery-dark-1200.webp"
+      }
+    ]
+  },
+  "/projects/itool/export-light.webp": {
+    "w": 1410,
+    "h": 996,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/itool/export-light-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/itool/export-light-768.webp"
+      },
+      {
+        "w": 1200,
+        "file": "/projects/itool/export-light-1200.webp"
+      }
+    ]
+  },
+  "/projects/itool/results-dark.webp": {
+    "w": 1410,
+    "h": 996,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/itool/results-dark-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/itool/results-dark-768.webp"
+      },
+      {
+        "w": 1200,
+        "file": "/projects/itool/results-dark-1200.webp"
+      }
+    ]
+  },
+  "/projects/opensense/vehicle-demo-dark.webp": {
+    "w": 1080,
+    "h": 2400,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/opensense/vehicle-demo-dark-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/opensense/vehicle-demo-dark-768.webp"
+      }
+    ]
+  },
+  "/projects/opensense/climate-dark.webp": {
+    "w": 1080,
+    "h": 2400,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/opensense/climate-dark-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/opensense/climate-dark-768.webp"
+      }
+    ]
+  },
+  "/projects/opensense/media-dark.webp": {
+    "w": 1080,
+    "h": 2400,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/opensense/media-dark-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/opensense/media-dark-768.webp"
+      }
+    ]
+  },
+  "/projects/opensense/insights-dark.webp": {
+    "w": 1080,
+    "h": 2400,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/opensense/insights-dark-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/opensense/insights-dark-768.webp"
+      }
+    ]
+  },
+  "/projects/opensense/vehicle-light.webp": {
+    "w": 1080,
+    "h": 2400,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/opensense/vehicle-light-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/opensense/vehicle-light-768.webp"
+      }
+    ]
+  },
+  "/projects/opensense/settings-dark.webp": {
+    "w": 1080,
+    "h": 2400,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/opensense/settings-dark-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/opensense/settings-dark-768.webp"
+      }
+    ]
+  },
+  "/projects/pineapple-music/yellow-fruit-cover.webp": {
+    "w": 1672,
+    "h": 941,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/pineapple-music/yellow-fruit-cover-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/pineapple-music/yellow-fruit-cover-768.webp"
+      },
+      {
+        "w": 1200,
+        "file": "/projects/pineapple-music/yellow-fruit-cover-1200.webp"
+      },
+      {
+        "w": 1600,
+        "file": "/projects/pineapple-music/yellow-fruit-cover-1600.webp"
+      }
+    ]
+  },
   "/projects/esp32/esp32-dashboard-01.webp": {
     "w": 1375,
     "h": 901

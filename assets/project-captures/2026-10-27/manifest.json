@@ -1,0 +1,348 @@
+[
+  {
+    "file": "public/projects/opensense/vehicle-offline-dark.webp",
+    "width": 1080,
+    "height": 2400,
+    "bytes": 139270,
+    "sha256": "e77f4b739cd7496e0738b7a8ecfe258ff3389f5fcc163e235759b295121ba55b",
+    "project": "OpenSense",
+    "source": "Android emulator",
+    "fontScale": 1,
+    "simulated": false
+  },
+  {
+    "file": "public/projects/opensense/vehicle-demo-dark.webp",
+    "width": 1080,
+    "height": 2400,
+    "bytes": 139954,
+    "sha256": "b13ba42db0eeb6c62bf0dec6587617e7205dd19f54455526bbdb8a10dbf46ca4",
+    "project": "OpenSense",
+    "source": "Android emulator",
+    "fontScale": 1,
+    "simulated": true
+  },
+  {
+    "file": "public/projects/opensense/climate-dark.webp",
+    "width": 1080,
+    "height": 2400,
+    "bytes": 50784,
+    "sha256": "eb6a336da820525baa578b33a1a15744496eebf5e2aa32240f67e7c36b79b537",
+    "project": "OpenSense",
+    "source": "Android emulator",
+    "fontScale": 1,
+    "simulated": true
+  },
+  {
+    "file": "public/projects/opensense/media-dark.webp",
+    "width": 1080,
+    "height": 2400,
+    "bytes": 57154,
+    "sha256": "f60c58b7cbc4f8a4f7f9919670ff95ce1d7f06f88ee69ba789e36d222593e013",
+    "project": "OpenSense",
+    "source": "Android emulator",
+    "fontScale": 1,
+    "simulated": true
+  },
+  {
+    "file": "public/projects/opensense/insights-dark.webp",
+    "width": 1080,
+    "height": 2400,
+    "bytes": 81662,
+    "sha256": "32041d8f0353ea64cfa8af6a57b36d5bb7bc02713b4d0ec8c9699f92b0591477",
+    "project": "OpenSense",
+    "source": "Android emulator",
+    "fontScale": 1,
+    "simulated": true
+  },
+  {
+    "file": "public/projects/opensense/settings-dark.webp",
+    "width": 1080,
+    "height": 2400,
+    "bytes": 148116,
+    "sha256": "51898529ff11a9d1062b676f58bdf7a2147074228e74b26f3e85006c16252940",
+    "project": "OpenSense",
+    "source": "Android emulator",
+    "fontScale": 1,
+    "simulated": true
+  },
+  {
+    "file": "public/projects/opensense/vehicle-light.webp",
+    "width": 1080,
+    "height": 2400,
+    "bytes": 143162,
+    "sha256": "9b6f25b70e197ba6ddeafce3316bf2b4e04349f8aa5c677a0f69f0891d7556aa",
+    "project": "OpenSense",
+    "source": "Android emulator",
+    "fontScale": 1,
+    "simulated": true
+  },
+  {
+    "file": "public/projects/opensense/climate-light.webp",
+    "width": 1080,
+    "height": 2400,
+    "bytes": 51608,
+    "sha256": "c786ae5ca70a563ff39f41ccd3ab113b12f0d4a9677864444a368f32e1633fac",
+    "project": "OpenSense",
+    "source": "Android emulator",
+    "fontScale": 1,
+    "simulated": true
+  },
+  {
+    "file": "public/projects/pineapple-music/yellow-fruit-cover.webp",
+    "width": 1672,
+    "height": 941,
+    "bytes": 156870,
+    "sha256": "dd5b5980736b6fbbd32961f0a8ac14d9478aac1c5e336074a282a3374f145a26",
+    "project": "Pineapple Music",
+    "source": "AI-generated illustration",
+    "screenshot": false
+  },
+  {
+    "file": "public/projects/podium/01-landing-desktop.webp",
+    "width": 1440,
+    "height": 1000,
+    "bytes": 39494,
+    "sha256": "e80f5a7ad8c3ab7c004f04e7b752d90bb6e2b6a913f34ec014eeb780a5d79933",
+    "project": "Podium",
+    "source": "Local browser capture",
+    "demoData": true
+  },
+  {
+    "file": "public/projects/podium/02-onboarding-desktop.webp",
+    "width": 1440,
+    "height": 1000,
+    "bytes": 72144,
+    "sha256": "237c738374d223f1fe28fe0ecb42d287527f30ab81cbd37a322dc39505215805",
+    "project": "Podium",
+    "source": "Local browser capture",
+    "demoData": true
+  },
+  {
+    "file": "public/projects/podium/03-organizer-onboarding-desktop.webp",
+    "width": 1440,
+    "height": 1000,
+    "bytes": 76894,
+    "sha256": "d1509b443295bc8c630e1e6a6b227fd2ad1bf2773f1abb6e3f8017b77f48104b",
+    "project": "Podium",
+    "source": "Local browser capture",
+    "demoData": true
+  },
+  {
+    "file": "public/projects/podium/04-organizer-onboarding-mobile.webp",
+    "width": 380,
+    "height": 1688,
+    "bytes": 74400,
+    "sha256": "345f967ef5716f0f6da5342628c3b9d3cfc33c21a3d9137ce52d1c0197063967",
+    "project": "Podium",
+    "source": "Local browser capture",
+    "demoData": true
+  },
+  {
+    "file": "public/projects/podium/05-landing-mobile.webp",
+    "width": 390,
+    "height": 844,
+    "bytes": 33108,
+    "sha256": "5c390f545060bad5f35d9396318734357d58d8b8ada3446e75fda78aa9a6ef6e",
+    "project": "Podium",
+    "source": "Local browser capture",
+    "demoData": true
+  },
+  {
+    "file": "public/projects/podium/06-discover-mobile.webp",
+    "width": 390,
+    "height": 844,
+    "bytes": 21930,
+    "sha256": "118532c642b06f6c61563a65167ce396a2d4594df9298a205226bca7cd93f0ea",
+    "project": "Podium",
+    "source": "Local browser capture",
+    "demoData": true
+  },
+  {
+    "file": "public/projects/podium/07-challenge-mobile.webp",
+    "width": 380,
+    "height": 2647,
+    "bytes": 112182,
+    "sha256": "7168a3dcf35065e1fb35b8f862c62ffc357edd53dca1dece0e20eb8bf799be34",
+    "project": "Podium",
+    "source": "Local browser capture",
+    "demoData": true
+  },
+  {
+    "file": "public/projects/podium/08-organizer-mobile.webp",
+    "width": 380,
+    "height": 822,
+    "bytes": 14010,
+    "sha256": "c5e3d1c8be7ecac71a71999faaafc3ed0e4ed89948cadba8399f5ac78043f0e1",
+    "project": "Podium",
+    "source": "Local browser capture",
+    "demoData": true
+  },
+  {
+    "file": "public/projects/podium/09-organizer-desktop.webp",
+    "width": 1440,
+    "height": 1000,
+    "bytes": 37012,
+    "sha256": "f527f72e214eb4099844eb356d7e472a269395c6a79a560e48923f2eb1140c6e",
+    "project": "Podium",
+    "source": "Local browser capture",
+    "demoData": true
+  },
+  {
+    "file": "public/projects/podium/10-control-room-desktop.webp",
+    "width": 1430,
+    "height": 993,
+    "bytes": 73970,
+    "sha256": "1e52713078d9b78ac98f188ef4a2107519854ca270a0b06d695074a6d5054ea2",
+    "project": "Podium",
+    "source": "Local browser capture",
+    "demoData": true
+  },
+  {
+    "file": "public/projects/podium/11-form-builder-desktop.webp",
+    "width": 1430,
+    "height": 993,
+    "bytes": 76632,
+    "sha256": "d98b02b56eebbba2bfa726dcf8635cd064c41f394c181a1bf4d22cc5f96a3adb",
+    "project": "Podium",
+    "source": "Local browser capture",
+    "demoData": true
+  },
+  {
+    "file": "public/projects/podium/12-form-builder-mobile.webp",
+    "width": 380,
+    "height": 822,
+    "bytes": 20014,
+    "sha256": "a9224113a61a447187a8f4f57e968b3f62da1859e274187cd9ecb326047e3789",
+    "project": "Podium",
+    "source": "Local browser capture",
+    "demoData": true
+  },
+  {
+    "file": "public/projects/podium/13-form-preview-mobile.webp",
+    "width": 380,
+    "height": 822,
+    "bytes": 24506,
+    "sha256": "b8b41c03afacd3c31135277b47eb77c84e174790c07dc4122e1963c9142d4e26",
+    "project": "Podium",
+    "source": "Local browser capture",
+    "demoData": true
+  },
+  {
+    "file": "public/projects/podium/14-form-preview-desktop.webp",
+    "width": 1440,
+    "height": 1000,
+    "bytes": 53176,
+    "sha256": "3a1eff65b4500a49b376ac2cb60dc9966bb8993ee565020c1d89f5ada13c9861",
+    "project": "Podium",
+    "source": "Local browser capture",
+    "demoData": true
+  },
+  {
+    "file": "public/projects/podium/15-challenge-desktop.webp",
+    "width": 1430,
+    "height": 993,
+    "bytes": 67884,
+    "sha256": "d60807a16eede620b5481b90136bcc4adc2b7ce7176db6787c58534fcebf51f5",
+    "project": "Podium",
+    "source": "Local browser capture",
+    "demoData": true
+  },
+  {
+    "file": "public/projects/podium/16-discover-desktop.webp",
+    "width": 1440,
+    "height": 1000,
+    "bytes": 26358,
+    "sha256": "1f546d28fafc2b9ab777e50ebf4fd936181eb3aa3e14e16e4a37483785d898d4",
+    "project": "Podium",
+    "source": "Local browser capture",
+    "demoData": true
+  },
+  {
+    "file": "public/projects/itool/connect-light.webp",
+    "width": 1410,
+    "height": 996,
+    "bytes": 50968,
+    "sha256": "7919c2eae3a9fd7353a5cf70f6f5ff1f4cfb5674d854e7531a96a84d7a66ab5e",
+    "project": "ITool",
+    "source": "Published README screenshot",
+    "sourceCommit": "4e4c4838bec8f1dc51fb8323f7389c02a3a09a33",
+    "demoData": true
+  },
+  {
+    "file": "public/projects/itool/connect-dark.webp",
+    "width": 1410,
+    "height": 996,
+    "bytes": 49688,
+    "sha256": "ace210cc7dceaaf3068690cf2d0bdd1bbc8a2186614861abaa3dd5830e51ceed",
+    "project": "ITool",
+    "source": "Published README screenshot",
+    "sourceCommit": "4e4c4838bec8f1dc51fb8323f7389c02a3a09a33",
+    "demoData": true
+  },
+  {
+    "file": "public/projects/itool/gallery-light.webp",
+    "width": 1410,
+    "height": 996,
+    "bytes": 128076,
+    "sha256": "64ccbbb27c522404e9019618929e5f1d6eaed2586d2da8c1fcbb08601a2879af",
+    "project": "ITool",
+    "source": "Published README screenshot",
+    "sourceCommit": "4e4c4838bec8f1dc51fb8323f7389c02a3a09a33",
+    "demoData": true
+  },
+  {
+    "file": "public/projects/itool/gallery-dark.webp",
+    "width": 1410,
+    "height": 996,
+    "bytes": 126910,
+    "sha256": "588e6110829421debdb40226d65424116a014c31591eb320f984b5e4c08733c3",
+    "project": "ITool",
+    "source": "Published README screenshot",
+    "sourceCommit": "4e4c4838bec8f1dc51fb8323f7389c02a3a09a33",
+    "demoData": true
+  },
+  {
+    "file": "public/projects/itool/export-light.webp",
+    "width": 1410,
+    "height": 996,
+    "bytes": 51540,
+    "sha256": "6f7dd3a6689f47f11e7741f2ed8ff11fa6c9e99c0c6475bd383f9adb52009053",
+    "project": "ITool",
+    "source": "Published README screenshot",
+    "sourceCommit": "4e4c4838bec8f1dc51fb8323f7389c02a3a09a33",
+    "demoData": true
+  },
+  {
+    "file": "public/projects/itool/export-dark.webp",
+    "width": 1410,
+    "height": 996,
+    "bytes": 51040,
+    "sha256": "7b5d022a0361bf5536aa4b9c4efabb72c49a28a31ccbe6419ff6d0da4f27db0b",
+    "project": "ITool",
+    "source": "Published README screenshot",
+    "sourceCommit": "4e4c4838bec8f1dc51fb8323f7389c02a3a09a33",
+    "demoData": true
+  },
+  {
+    "file": "public/projects/itool/results-light.webp",
+    "width": 1410,
+    "height": 996,
+    "bytes": 32432,
+    "sha256": "33d4862338127593138efd00060d25c657cf35cb601ca54dee1dc4ef337dbda7",
+    "project": "ITool",
+    "source": "Published README screenshot",
+    "sourceCommit": "4e4c4838bec8f1dc51fb8323f7389c02a3a09a33",
+    "demoData": true
+  },
+  {
+    "file": "public/projects/itool/results-dark.webp",
+    "width": 1410,
+    "height": 996,
+    "bytes": 31466,
+    "sha256": "3ea679361dfc52c475a65de334fe4db7a26b76b9dd9a0894454ca006b81d9890",
+    "project": "ITool",
+    "source": "Published README screenshot",
+    "sourceCommit": "4e4c4838bec8f1dc51fb8323f7389c02a3a09a33",
+    "demoData": true
+  }
+]

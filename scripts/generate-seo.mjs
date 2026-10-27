@@ -62,6 +62,7 @@ const lastmodOf = (...files) => {
 };
 
 const DATA = 'src/data/portfolio.js';
+const PROJECT_DATA = [DATA, 'src/data/project-additions.js'];
 const BLOG_DATA = 'src/data/blog.js';
 
 /* ── no-JS body content ───────────────────────────────────────────────
@@ -135,7 +136,7 @@ ${CONTACT_BLOCK}`;
 
 function projectsBody() {
   return `<h1>Projects — Harshil Patel</h1>
-<p>Shipped projects — payments, bookings, PWAs, native Android, and AI tools — each with a full case study.</p>
+<p>${esc(projectsDescription)}</p>
 <ul>${selectedWork
     .map(
       (p) =>
@@ -178,6 +179,8 @@ function projectBody(p) {
   return `<h1>${esc(p.title)}</h1>
 <p><strong>${esc(p.role || '')}</strong>${p.year ? ` · ${esc(p.year)}` : ''}</p>
 <p>${esc(p.description)}</p>
+${p.statusLabel ? `<p>Status: ${esc(p.statusLabel)}</p>` : ''}
+${p.imageNote ? `<p>${esc(p.imageNote)}</p>` : ''}
 ${p.problem ? `<h2>Problem</h2><p>${esc(p.problem)}</p>` : ''}
 ${p.approach ? `<h2>Approach</h2><p>${esc(p.approach)}</p>` : ''}
 ${feat ? `<h2>Features</h2><ul>${feat}</ul>` : ''}
@@ -234,7 +237,7 @@ const routes = [
     title: DEFAULT_TITLE,
     description: DEFAULT_DESCRIPTION,
     images: [{ src: PORTRAIT.src, title: PORTRAIT.alt }, { src: OG_IMAGE, title: DEFAULT_TITLE }],
-    lastmod: lastmodOf('src/pages/Home.jsx', DATA, 'site.config.mjs', `public${PORTRAIT.src}`),
+    lastmod: lastmodOf('src/pages/Home.jsx', ...PROJECT_DATA, 'site.config.mjs', `public${PORTRAIT.src}`),
     body: homeBody(),
     jsonLd: { '@context': 'https://schema.org', '@type': 'ProfilePage', '@id': `${SITE_URL}/#profile`, url: `${SITE_URL}/`, name: SITE_NAME, mainEntity: person, primaryImageOfPage: { '@type': 'ImageObject', contentUrl: `${SITE_URL}${PORTRAIT.src}`, url: `${SITE_URL}${PORTRAIT.src}`, caption: PORTRAIT.alt, width: PORTRAIT.width, height: PORTRAIT.height, about: { '@id': `${SITE_URL}/#person` } } },
   },
@@ -242,7 +245,7 @@ const routes = [
     path: '/projects', priority: 0.9,
     title: 'Projects',
     description: projectsDescription,
-    lastmod: lastmodOf('src/pages/Projects.jsx', DATA),
+    lastmod: lastmodOf('src/pages/Projects.jsx', ...PROJECT_DATA),
     body: projectsBody(),
     jsonLd: {
       '@context': 'https://schema.org',
@@ -273,7 +276,7 @@ const routes = [
     title: p.title,
     description: p.description,
     image: p.ogImage || p.image,
-    lastmod: lastmodOf(DATA, 'src/pages/ProjectDetail.jsx'),
+    lastmod: lastmodOf(...PROJECT_DATA, 'src/pages/ProjectDetail.jsx'),
     body: projectBody(p),
     jsonLd: {
       '@context': 'https://schema.org',

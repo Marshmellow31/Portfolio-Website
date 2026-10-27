@@ -70,12 +70,12 @@ export default function ProjectDetail() {
               ← ALL PROJECTS
             </Link>
 
-            <div className="flex items-center gap-[14px] mb-4">
+            <div className="flex flex-wrap items-center gap-x-[14px] gap-y-3 mb-4">
               <div className="w-10 h-px bg-text" />
-              <span className="mono-label">Case Study — {project.num} / {String(selectedWork.length).padStart(2, '0')}</span>
-              {project.live && (
-                <span className="font-mono text-[9px] tracking-[.14em] text-bg bg-text rounded-[3px] px-[7px] py-[2px]">
-                  LIVE
+              <span className="mono-label whitespace-nowrap">Case Study — {project.num} / {String(selectedWork.length).padStart(2, '0')}</span>
+              {(project.live || project.statusLabel) && (
+                <span className={`font-mono text-[9px] tracking-[.14em] whitespace-nowrap rounded-[3px] px-[7px] py-[2px] ${project.live ? 'text-bg bg-text' : 'text-text-muted border border-border-strong'}`}>
+                  {project.live ? 'LIVE' : project.statusLabel}
                 </span>
               )}
             </div>
@@ -220,7 +220,7 @@ export default function ProjectDetail() {
                 ) : hasGallery ? (
                   <GalleryImage
                     src={heroImage}
-                    alt={`${project.title} — main view`}
+                    alt={project.imageNote || `${project.title} — main view`}
                     className="w-full h-auto max-h-[60vh] object-contain rounded-xl block"
                     priority
                   />
@@ -236,6 +236,9 @@ export default function ProjectDetail() {
                 )}
               </motion.div>
             </div>
+            {project.imageNote && (
+              <p className="mt-3 mb-0 text-xs leading-relaxed text-text-muted">{project.imageNote}</p>
+            )}
           </Reveal>
         </div>
       </section>
@@ -329,7 +332,7 @@ export default function ProjectDetail() {
                   <GalleryImage
                     src={src}
                     alt={`${project.title} — screen ${i + 2}`}
-                    className="w-full h-auto block"
+                    className={project.group === 'hobby' ? 'w-full h-auto max-h-[760px] object-contain block' : 'w-full h-auto block'}
                   />
                 </div>
               </Reveal>

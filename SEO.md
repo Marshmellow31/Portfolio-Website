@@ -73,6 +73,35 @@ that matter for a competitive name query.
 
 ## Still to do (off the site)
 
+### Four new project pages — 2026-10-27
+
+The build now generates 32 sitemap routes, including `/projects/podium`,
+`/projects/itool`, `/projects/opensense` and `/projects/pineapple-music`.
+Titles, descriptions, canonical URLs, CreativeWork/Breadcrumb structured data,
+image sitemap entries and internal project links come from the project data.
+Static content includes experimental status and image provenance. Sitemap
+modification dates track both portfolio data modules.
+
+After production deployment:
+
+1. Verify the four public URLs return 200, the expected title and canonical,
+   and indexable robots metadata. Confirm they appear in `/sitemap.xml`.
+2. In Google Search Console, open **URL inspection**, paste each new canonical
+   URL, choose **Test live URL**, then **Request indexing** if eligible.
+   The existing sitemap URL stays `https://www.harshilpatel.co.in/sitemap.xml`;
+   verify its status in **Sitemaps**. An already submitted sitemap does not need
+   resubmission for every edit.
+3. In Bing Webmaster Tools, verify the existing sitemap and optionally use
+   **URL Submission** for the four new URLs.
+4. Check indexing reports later. Submission is a crawl request, not proof of indexing.
+
+Do not submit the intentionally excluded `/bullet-reference/index.html?embedded=1`
+viewer or validate its intentional noindex as a fault. Search-engine submissions
+have not been performed as part of this code change.
+
+References: [Google recrawl guidance](https://developers.google.com/search/docs/crawling-indexing/ask-google-to-recrawl),
+[Bing URL Submission](https://www.bing.com/webmasters/help/URL-Submission-62f2860b).
+
 ### Search Console noindex alert — checked 2026-10-26
 
 - **Verified:** the report (last updated 2026-10-23) listed one excluded URL:

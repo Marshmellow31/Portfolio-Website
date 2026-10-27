@@ -1,5 +1,8 @@
+import { projectAdditions } from './project-additions.js';
+
 /* ─── Project items for the sphere (Interactive) ─── */
 export const items = [
+  ...projectAdditions.map(({ image, github, title, description }) => ({ image, link: github, title, description })),
   {
     image: '/projects/paymatrix-mobile-20261020.webp',
     link: 'https://paymatrixapp.online/',
@@ -202,6 +205,7 @@ const selectedWorkRaw = [
     instagram: 'https://www.instagram.com/paymatrixapp/',
     live: true,
   },
+  ...projectAdditions,
   {
     slug: 'esp32-smart-ac',
     group: 'product',
@@ -616,7 +620,13 @@ export const projectGroups = [
     id: 'product',
     label: 'Products',
     title: 'Products I Built',
-    blurb: 'Things I shipped because I wanted them to exist — hardware, AI, and apps that people other than me now use.',
+    blurb: 'Products I build because I want them to exist — from everyday tools to platforms still being refined.',
+  },
+  {
+    id: 'hobby',
+    label: 'Hobby & Experiments',
+    title: 'Hobby & Experiments',
+    blurb: 'Native tools, protocol research and unfinished ideas I explore out of curiosity. Each project states what works and what still needs verification.',
   },
   {
     id: 'internship',

@@ -1,4 +1,5 @@
 import PayMatrixPreview from '../components/PayMatrixPreview';
+import PayMatrixAvailability from '../components/PayMatrixAvailability';
 import { lazy, Suspense, useState, useRef } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'framer-motion';
 import { Reveal, CountUp } from '../components/Reveal/Reveal';
@@ -225,22 +226,14 @@ export default function Home() {
                 React 19 + Kotlin Android
               </span>
             </div>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/projects/paymatrix" className="inline-flex min-h-12 items-center justify-center rounded-[4px] bg-text px-6 text-[13px] font-semibold text-bg no-underline transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
-                Explore the case study
-              </Link>
-              <a
-                href="https://paymatrixapp.online/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group inline-flex min-h-12 items-center justify-center gap-2 rounded-[4px] border border-border-strong px-6 text-[13px] font-medium text-text no-underline transition-colors hover:border-white/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-              >
-                <span>Open paymatrix</span>
-                <FiArrowUpRight className="text-[15px] text-text-dim transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-text" aria-hidden="true" />
-              </a>
-            </div>
+            <PayMatrixAvailability />
+            <Link to="/projects/paymatrix" className="inline-flex min-h-12 items-center gap-2 text-[13px] font-medium text-text no-underline hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
+              See how it works <FiArrowUpRight aria-hidden="true" />
+            </Link>
           </div>
-          <PayMatrixPreview />
+          <div className="min-w-0 w-full max-w-[600px] justify-self-center lg:w-[88%]">
+            <PayMatrixPreview />
+          </div>
         </div>
       </section>
 

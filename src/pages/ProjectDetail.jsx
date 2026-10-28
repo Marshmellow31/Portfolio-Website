@@ -1,15 +1,14 @@
 import PayMatrixPreview from '../components/PayMatrixPreview';
 import { Link, useParams, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FiArrowUpRight, FiFileText, FiGlobe, FiDownload, FiLayers } from 'react-icons/fi';
+import { FiArrowUpRight, FiFileText, FiGlobe, FiLayers } from 'react-icons/fi';
 import { FaGithub } from 'react-icons/fa';
 import { FaInstagram } from 'react-icons/fa6';
-import { SiAndroid } from 'react-icons/si';
 import { selectedWork, getProjectBySlug } from '../data/portfolio';
 import { Reveal } from '../components/Reveal/Reveal';
 import CaseImage from '../components/CaseImage/CaseImage';
 import GalleryImage from '../components/GalleryImage';
-import PayMatrixDownloads from '../components/PayMatrixDownloads';
+import PayMatrixAvailability from '../components/PayMatrixAvailability';
 import PayMatrixDiagrams from '../components/PayMatrixDiagrams/PayMatrixDiagrams';
 import useSEO from '../utils/useSEO';
 import { SITE_URL } from '../../site.config.mjs';
@@ -94,6 +93,8 @@ export default function ProjectDetail() {
               {project.description}
             </p>
 
+            {project.playStore && <PayMatrixAvailability />}
+
             {/* Meta details strip */}
             <div className="mt-7 pt-5 border-t border-border flex flex-col gap-5">
               {/* Row 1: Timeline & Role */}
@@ -151,14 +152,15 @@ export default function ProjectDetail() {
                       <FiArrowUpRight className="text-[11px] opacity-40 group-hover:opacity-100 transition-opacity" />
                     </a>
                   )}
-                  {project.releaseRepo && (
+                  {project.playStore && (
                     <a
-                      href="#paymatrix-downloads"
+                      href={project.playStore}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="group inline-flex items-center gap-1.5 font-mono text-[11px] tracking-[.04em] text-text bg-white/[0.04] hover:bg-white/[0.1] border border-white/10 hover:border-white/25 rounded-md px-2.5 py-1.5 transition-all no-underline shadow-sm"
                     >
-                      <SiAndroid className="text-[13px] text-[#3DDC84] opacity-90 group-hover:opacity-100 transition-opacity" />
-                      <span>Android APK</span>
-                      <FiDownload className="text-[11px] opacity-50 group-hover:opacity-100 transition-opacity" />
+                      <span>Google Play</span>
+                      <FiArrowUpRight className="text-[11px] opacity-50 group-hover:opacity-100 transition-opacity" />
                     </a>
                   )}
                   {project.slug === 'paymatrix' && (
@@ -262,7 +264,6 @@ export default function ProjectDetail() {
       </section>
 
 
-      {project.releaseRepo && <PayMatrixDownloads repo={project.releaseRepo} />}
 
       {/* ── Features ── */}
       <section className="px-[clamp(20px,6vw,96px)] pb-[clamp(48px,6vw,88px)]">

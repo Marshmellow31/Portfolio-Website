@@ -1,3 +1,4 @@
+import { PAYMATRIX_PLAY_STORE_URL } from './paymatrixLinks.js';
 import { projectAdditions } from './project-additions.js';
 
 /* ─── Project items for the sphere (Interactive) ─── */
@@ -197,11 +198,11 @@ const selectedWorkRaw = [
       ['Dual-Surface PWA & Native Android', 'Built on React 19 and Vite with an offline-tolerant Firestore syncing layer, complemented by a native Android runtime (com.paymatrix.app) for low-latency on-device expense entry.'],
       ['Real-Time Collaborative Ledger', 'Bi-directional reactive state propagation across group members with atomic write batches, ensuring concurrent expense additions never corrupt group balance integrity.'],
     ],
-    outcome: 'Live in production at paymatrixapp.online with automated GitHub Releases serving verified Android APK builds. Validated across multi-day group travels, eliminating manual ledger reconciliations while maintaining 100% mathematical integrity across all transactions.',
+    outcome: 'Available on Google Play for Android and on the web at paymatrixapp.online. Shared-expense tracking brings receipt scanning, precise splits, simplified balances, and user-confirmed settlements into one flow.',
     stack: ['React 19', 'Kotlin / Jetpack Compose', 'Firebase', 'Gemini Vision', 'Tailwind CSS'],
     link: 'https://paymatrixapp.online/',
     github: 'https://github.com/Marshmellow31/paymatrix-showcase',
-    releaseRepo: 'Marshmellow31/paymatrix-showcase',
+    playStore: PAYMATRIX_PLAY_STORE_URL,
     instagram: 'https://www.instagram.com/paymatrixapp/',
     live: true,
   },

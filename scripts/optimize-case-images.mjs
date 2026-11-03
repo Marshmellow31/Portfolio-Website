@@ -53,7 +53,7 @@ async function main() {
 
     for (const [file, cfg] of Object.entries(set.files)) {
       const sourceBase = path.basename(file, path.extname(file));
-      const base = `${sourceBase}-20261020`;
+      const base = `${sourceBase}-20261102`;
       const input = path.join(ROOT, set.src, file);
       const meta = await sharp(input).metadata();
       const widths = cfg.widths.filter((w) => w <= meta.width);

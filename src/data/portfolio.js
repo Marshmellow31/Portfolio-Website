@@ -5,7 +5,7 @@ import { projectAdditions } from './project-additions.js';
 export const items = [
   ...projectAdditions.map(({ image, github, title, description }) => ({ image, link: github, title, description })),
   {
-    image: '/projects/paymatrix-mobile-20261020.webp',
+    image: '/projects/paymatrix-mobile-20261102.webp',
     link: 'https://paymatrixapp.online/',
     title: 'paymatrix',
     description: 'Deterministic expense sharing & settlement engine'
@@ -145,14 +145,14 @@ const selectedWorkRaw = [
     type: 'Flagship Product',
     /* 1200×630 JPEG cut from the hero frame — the social card. The old square
        logo was being centre-cropped to ribbons by summary_large_image. */
-    image: '/projects/paymatrix/01-hero-20261020-og.jpg',
+    image: '/projects/paymatrix/01-hero-20261102-og.jpg',
     /* Card-carousel slides — small WebP derivatives, hero first. */
     images: [
-      '/projects/paymatrix/01-hero-20261020-960.webp',
-      '/projects/paymatrix/02-scan-20261020-640.webp',
-      '/projects/paymatrix/03-split-20261020-640.webp',
-      '/projects/paymatrix/04-balances-20261020-640.webp',
-      '/projects/paymatrix/05-upi-20261020-640.webp',
+      '/projects/paymatrix/01-hero-20261102-960.webp',
+      '/projects/paymatrix/02-scan-20261102-640.webp',
+      '/projects/paymatrix/03-split-20261102-640.webp',
+      '/projects/paymatrix/04-balances-20261102-640.webp',
+      '/projects/paymatrix/05-upi-20261102-640.webp',
     ],
     /* Designed case-study frames. Each one already carries its own headline,
        body copy and callout labels, so the page renders them edge to edge and
@@ -162,28 +162,28 @@ const selectedWorkRaw = [
       hero: {
         id: '/projects/paymatrix/01-hero',
         ratio: '16 / 10',
-        alt: 'paymatrix mobile web and native Android dashboards side by side, using fictional Asha and Weekend away demo data.',
+        alt: 'Native Android dashboard and spending insights in paymatrix, showing fictional balances and a spending trend.',
       },
       sections: [
         {
           id: '/projects/paymatrix/02-scan',
-          alt: 'paymatrix mobile web receipt scanner with Take Photo and Choose Photos actions.',
-          sr: 'Mobile web receipt scanning. The current scanner accepts a camera photo or one or more receipt images, then lets the user review extracted details before filling an expense. This frame shows the input screen, not a completed scan.',
+          alt: 'Native Android bill scanner with Take photo, Choose photos, and Type it in instead actions.',
+          sr: 'The scanner accepts up to four photos of a long bill. Users can review the extracted details before saving.',
         },
         {
           id: '/projects/paymatrix/03-split',
-          alt: 'paymatrix native Android itemized split editor for a fictional ₹1,050 expense, with ₹600 and ₹400 item subtotals and ₹50 shared charges.',
-          sr: 'Native Android split editor. Equal, percentage, exact, shares and itemized modes appear in the current interface. The fictional itemized example shows ₹1,000 in items and ₹50 in shared charges. No changes were saved.',
+          alt: 'Native Android expense details showing a fictional ₹1,864.50 lunch split across four people.',
+          sr: 'The expense detail shows who paid and each participant’s share. Two shares are ₹466.13 and two are ₹466.12, which add up to the full expense.',
         },
         {
           id: '/projects/paymatrix/04-balances',
-          alt: 'paymatrix native Android group member balances: Asha gets back ₹420 and Dev owes ₹420 in the fictional Weekend away group.',
-          sr: 'Native Android group balances. The Members tab shows the fictional group’s two members and their opposing ₹420 balances, alongside expense entry, scanning and settle-up actions.',
+          alt: 'Native Android Goa weekend group showing a fictional balance of ₹636.63 owed and four recent expenses.',
+          sr: 'The group page shows what you owe, recent expenses, and tabs for balances and logs.',
         },
         {
           id: '/projects/paymatrix/05-upi',
-          alt: 'paymatrix native Android UPI dialog for a fictional ₹123.45 payment, with app handoff, QR sharing and an explicit settlement-confirmation action.',
-          sr: 'Native Android UPI handoff. The current dialog offers Pay via App, Save QR, Share QR to app, and I Have Paid · Confirm Settlement. It uses an example recipient and fictional data. Opening or returning from a payment app does not verify that money moved.',
+          alt: 'Native Android settlement screen showing a fictional ₹636.63 debt and a separate payment confirmation button.',
+          sr: 'The example recipient has no UPI ID, so the screen asks the user to pay another way and confirm only after payment. No money moved in this demo.',
         },
       ],
     },

@@ -303,6 +303,116 @@
       }
     ]
   },
+  "/projects/flowlite/home.webp": {
+    "w": 2200,
+    "h": 1440,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/flowlite/home-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/flowlite/home-768.webp"
+      },
+      {
+        "w": 1200,
+        "file": "/projects/flowlite/home-1200.webp"
+      },
+      {
+        "w": 1600,
+        "file": "/projects/flowlite/home-1600.webp"
+      }
+    ]
+  },
+  "/projects/flowlite/insights.webp": {
+    "w": 2200,
+    "h": 1440,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/flowlite/insights-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/flowlite/insights-768.webp"
+      },
+      {
+        "w": 1200,
+        "file": "/projects/flowlite/insights-1200.webp"
+      },
+      {
+        "w": 1600,
+        "file": "/projects/flowlite/insights-1600.webp"
+      }
+    ]
+  },
+  "/projects/flowlite/settings.webp": {
+    "w": 2200,
+    "h": 1440,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/flowlite/settings-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/flowlite/settings-768.webp"
+      },
+      {
+        "w": 1200,
+        "file": "/projects/flowlite/settings-1200.webp"
+      },
+      {
+        "w": 1600,
+        "file": "/projects/flowlite/settings-1600.webp"
+      }
+    ]
+  },
+  "/projects/flowlite/vocabulary.webp": {
+    "w": 2200,
+    "h": 1440,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/flowlite/vocabulary-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/flowlite/vocabulary-768.webp"
+      },
+      {
+        "w": 1200,
+        "file": "/projects/flowlite/vocabulary-1200.webp"
+      },
+      {
+        "w": 1600,
+        "file": "/projects/flowlite/vocabulary-1600.webp"
+      }
+    ]
+  },
+  "/projects/flowlite/speed-ai.webp": {
+    "w": 2200,
+    "h": 1440,
+    "srcset": [
+      {
+        "w": 480,
+        "file": "/projects/flowlite/speed-ai-480.webp"
+      },
+      {
+        "w": 768,
+        "file": "/projects/flowlite/speed-ai-768.webp"
+      },
+      {
+        "w": 1200,
+        "file": "/projects/flowlite/speed-ai-1200.webp"
+      },
+      {
+        "w": 1600,
+        "file": "/projects/flowlite/speed-ai-1600.webp"
+      }
+    ]
+  },
   "/projects/esp32/esp32-dashboard-01.webp": {
     "w": 1375,
     "h": 901

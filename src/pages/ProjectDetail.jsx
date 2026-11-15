@@ -290,6 +290,36 @@ export default function ProjectDetail() {
         </div>
       </section>
 
+      {/* ── How it was built + achievements (projects that define them) ── */}
+      {[
+        { key: 'build', label: 'How We Built It', rows: project.build },
+        { key: 'achievements', label: 'Achievements', rows: project.achievements },
+      ].filter((s) => s.rows?.length).map((section) => (
+        <section key={section.key} id={section.key} className="scroll-mt-24 px-[clamp(20px,6vw,96px)] pb-[clamp(48px,6vw,88px)]">
+          <Reveal className="mb-8">
+            <div className="mono-label">{section.label}</div>
+          </Reveal>
+          <div className="border-t border-border">
+            {section.rows.map(([title, text], i) => (
+              <Reveal
+                key={title}
+                className="grid gap-x-8 gap-y-2 py-6 border-b border-border [grid-template-columns:auto_minmax(180px,1fr)_2fr] max-md:[grid-template-columns:auto_1fr]"
+              >
+                <div className="font-mono text-[11px] text-text-faint pt-1 w-8">
+                  {String(i + 1).padStart(2, '0')}
+                </div>
+                <div className="font-semibold text-text text-[16px] md:text-[17px]" style={{ letterSpacing: '-0.01em' }}>
+                  {title}
+                </div>
+                <p className="m-0 text-[14px] leading-relaxed text-text-dim max-md:col-start-2">
+                  {text}
+                </p>
+              </Reveal>
+            ))}
+          </div>
+        </section>
+      ))}
+
       {/* ── System Architecture & Flow Diagrams from PayMatrix repo ── */}
       {project.slug === 'paymatrix' && <PayMatrixDiagrams />}
 

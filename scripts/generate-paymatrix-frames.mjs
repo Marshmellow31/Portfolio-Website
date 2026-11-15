@@ -24,19 +24,19 @@ const hero = svg(1920, 1200,
   text(100, 310, ['Shared expenses.', 'A clearer picture.'], 80, '#f2f2f3', 700) +
   text(100, 570, ['Scan a receipt. Split the bill.', 'See who owes whom.', 'Hand off payment to your UPI app.'], 34, '#a8a8b0') +
   text(100, 1040, ['Native Android'], 28, '#a8a8b0') +
-  text(100, 1090, ['Actual UI · fictional demo data'], 23, '#a8a8b0') +
+  text(100, 1090, ['Latest build · fictional demo data'], 23, '#a8a8b0') +
   text(1030, 170, ['DASHBOARD'], 26, '#a8a8b0') +
   text(1480, 170, ['INSIGHTS'], 26, '#a8a8b0'));
 await sharp(hero).composite([
-  { input: await screen('android-home.png', 350), left: 1030, top: 215 },
-  { input: await screen('android-insights.png', 350), left: 1480, top: 215 },
+  { input: await screen('app-home.png', 350), left: 1030, top: 215 },
+  { input: await screen('app-insights.png', 350), left: 1480, top: 215 },
 ]).png().toFile(path.join(dir, '01-hero.png'));
 
 const frames = [
-  { id: '02-scan', file: 'android-scan.png', title: ['Start with', 'the receipt.'], body: ['Take a photo or choose receipt images.', 'Review extracted details before saving.'] },
-  { id: '03-split', file: 'android-split.png', title: ['A fair share.', 'Down to the paise.'], body: ['See who paid and how the cost was shared.', 'Review each participant’s allocation.'] },
-  { id: '04-balances', file: 'android-group.png', title: ['Group expenses,', 'in one place.'], body: ['See your group balance and recent expenses.', 'Shared expenses, with a clearer ledger.'] },
-  { id: '05-upi', file: 'android-settle.png', title: ['Settle up.', 'Confirm explicitly.'], body: ['See what you owe and who to pay.', 'Confirm only after you have paid.'] },
+  { id: '02-scan', file: 'app-scan.png', title: ['Start with', 'the receipt.'], body: ['Take a photo or choose receipt images.', 'Review extracted details before saving.'] },
+  { id: '03-split', file: 'app-split.png', title: ['A fair share.', 'Down to the paise.'], body: ['See who paid and how the cost was shared.', 'Review each participant’s allocation.'] },
+  { id: '04-balances', file: 'app-group.png', title: ['Group expenses,', 'in one place.'], body: ['See your group balance and recent expenses.', 'Shared expenses, with a clearer ledger.'] },
+  { id: '05-upi', file: 'app-settle.png', title: ['Settle up.', 'Confirm explicitly.'], body: ['See what you owe and who to pay.', 'Confirm only after you have paid.'] },
 ];
 for (const frame of frames) {
   const w = 1280, h = 1600;
@@ -47,12 +47,12 @@ for (const frame of frames) {
   const bg = svg(w, h,
     text(80, 120, frame.title, 64, '#f2f2f3', 700) +
     text(80, 295, frame.body, 27, '#a8a8b0') +
-    text(80, 1540, [`paymatrix · Native Android · fictional demo data`], 23, '#a8a8b0'));
+    text(80, 1540, [`paymatrix · Web app · fictional demo data`], 23, '#a8a8b0'));
   await sharp(bg).composite([{ input, left: Math.round((w - width) / 2), top: 410 }]).png().toFile(path.join(dir, `${frame.id}.png`));
 }
 await sharp(path.join(dir, '01-hero.png')).resize(960).webp({ quality: 82 }).toFile(path.join(root, 'public/projects/paymatrix.webp'));
 console.log('Generated five paymatrix frames and project thumbnail.');
 
 // These imports are fingerprinted by Vite, avoiding stale public image caches.
-await sharp(path.join(dir, 'screens/android-home.png')).webp({ quality: 88 }).toFile(path.join(dir, 'screens/android-mobile.webp'));
-await sharp(path.join(dir, '01-hero.png')).resize(960).webp({ quality: 82 }).toFile(path.join(root, 'public/projects/paymatrix-mobile-20261102.webp'));
+await sharp(path.join(dir, 'screens/app-home.png')).webp({ quality: 88 }).toFile(path.join(dir, 'screens/app-mobile.webp'));
+await sharp(path.join(dir, '01-hero.png')).resize(960).webp({ quality: 82 }).toFile(path.join(root, 'public/projects/paymatrix-mobile-20261115.webp'));

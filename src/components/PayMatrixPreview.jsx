@@ -1,4 +1,4 @@
-import androidScreen from '../../assets/paymatrix/screens/android-mobile.webp';
+import androidScreen from '../../assets/paymatrix/screens/app-mobile.webp';
 import './PayMatrixPreview.css';
 
 export default function PayMatrixPreview({ priority = false }) {
@@ -12,7 +12,7 @@ export default function PayMatrixPreview({ priority = false }) {
         loading={priority ? 'eager' : 'lazy'}
         decoding="async"
       />
-      <figcaption>paymatrix for Android · Fictional demo data</figcaption>
+      <figcaption>paymatrix · Latest build · Fictional demo data</figcaption>
     </figure>
   );
 }

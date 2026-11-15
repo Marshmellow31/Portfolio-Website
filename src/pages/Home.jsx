@@ -22,6 +22,12 @@ import {
   SiGit, SiDocker, SiVercel, SiEslint
 } from 'react-icons/si';
 
+const mergedPRs = [
+  { name: 'Grafana', detail: 'TypeScript · clipboard actions in transformation debug', number: '#133167', href: 'https://github.com/grafana/grafana/pull/133167' },
+  { name: 'Actual Budget', detail: 'TypeScript · typed sync error and recovery UI', number: '#8963', href: 'https://github.com/actualbudget/actual/pull/8963' },
+  { name: 'LocalSend Website', detail: 'Nuxt · locale metadata fix', number: '#186', href: 'https://github.com/localsend/website/pull/186' },
+];
+
 const socialDock = [
   { Icon: FaGithub, color: '#ffffff', label: 'GitHub', href: 'https://github.com/Marshmellow31' },
   { Icon: FaLinkedin, color: '#0A66C2', label: 'LinkedIn', href: 'https://linkedin.com/in/harshil-patel-5a7373333' },
@@ -78,6 +84,7 @@ function SplitLine({ text, delay = 0, reduced }) {
 
 export default function Home() {
   const isDesktop = useMediaQuery('(min-width: 1024px)');
+  const isPhone = useMediaQuery('(max-width: 639px)');
   const [openAccordion, setOpenAccordion] = useState(null);
   const reducedMotion = useReducedMotion();
   useSEO({ description: DEFAULT_DESCRIPTION, path: '/' });
@@ -115,7 +122,7 @@ export default function Home() {
           <h1
             className="m-0 font-bold text-text-bright relative"
             style={{
-              fontSize: 'clamp(58px,11vw,168px)',
+              fontSize: isPhone ? 'min(21.5vw,96px)' : 'clamp(58px,11vw,168px)',
               letterSpacing: '-0.045em',
               lineHeight: 0.92,
             }}
@@ -141,41 +148,45 @@ export default function Home() {
             and client software — engineered for real users, production scale, and strict correctness.
           </p>
 
-          <div className="flex flex-wrap items-center gap-4 mt-11 pointer-events-auto animate-[hpFadeUp_0.8s_ease_0.2s_both]">
+          {/* Phones: full-width primary, two-up secondary row, three-up socials.
+              From sm up the wrappers use `contents`/`flex` so the desktop row is unchanged. */}
+          <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-4 mt-8 sm:mt-11 pointer-events-auto animate-[hpFadeUp_0.8s_ease_0.2s_both]">
             <a
               href="/projects"
-              className="inline-flex items-center justify-center bg-text text-bg no-underline text-[13px] font-semibold px-[26px] h-[46px] rounded-[4px] transition-colors hover:bg-white"
+              className="inline-flex w-full sm:w-auto items-center justify-center bg-text text-bg no-underline text-[14px] sm:text-[13px] font-semibold px-[26px] h-[52px] sm:h-[46px] rounded-[4px] transition-colors hover:bg-white"
             >
               See projects
             </a>
-            <button
-              onClick={() => window.dispatchEvent(new CustomEvent('hp-terminal-toggle'))}
-              aria-label="Open interactive terminal (Cmd or Ctrl plus K)"
-              className="inline-flex items-center justify-between gap-4 text-text no-underline bg-[#111] border border-border-strong px-5 h-[46px] rounded-[6px] transition-colors hover:border-white/50 cursor-pointer shadow-lg"
-            >
-              <span className="font-mono text-[13px] font-medium text-text-muted">Terminal</span>
-              <div className="flex items-center gap-1.5 ml-2 opacity-80">
-                <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]"></div>
-                <div className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]"></div>
-                <div className="w-2.5 h-2.5 rounded-full bg-[#27c93f]"></div>
-              </div>
-            </button>
-            <a
-              href="/creative"
-              className="inline-flex items-center justify-center text-text no-underline text-[13px] font-medium px-[26px] h-[46px] rounded-[4px] border border-border-strong transition-colors hover:border-white/50"
-            >
-              Creative side
-            </a>
+            <div className="flex gap-3 w-full sm:w-auto sm:contents">
+              <button
+                onClick={() => window.dispatchEvent(new CustomEvent('hp-terminal-toggle'))}
+                aria-label="Open interactive terminal (Cmd or Ctrl plus K)"
+                className="inline-flex flex-1 sm:flex-none items-center justify-between gap-4 text-text no-underline bg-[#111] border border-border-strong px-4 sm:px-5 h-[52px] sm:h-[46px] rounded-[6px] transition-colors hover:border-white/50 cursor-pointer shadow-lg"
+              >
+                <span className="font-mono text-[13px] font-medium text-text-muted">Terminal</span>
+                <div className="flex items-center gap-1.5 ml-2 opacity-80">
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#27c93f]"></div>
+                </div>
+              </button>
+              <a
+                href="/creative"
+                className="inline-flex flex-1 sm:flex-none items-center justify-center text-text no-underline text-[14px] sm:text-[13px] font-medium px-4 sm:px-[26px] h-[52px] sm:h-[46px] rounded-[4px] border border-border-strong transition-colors hover:border-white/50"
+              >
+                Creative side
+              </a>
+            </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 mt-4 pointer-events-auto animate-[hpFadeUp_0.8s_ease_0.3s_both]">
+          <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-3 mt-3 sm:mt-4 pointer-events-auto animate-[hpFadeUp_0.8s_ease_0.3s_both]">
             {socialDock.map(({ Icon, color, gradient, label, href }) => (
               <a
                 key={label}
                 href={href}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center justify-center gap-2 text-text no-underline text-[13px] font-medium px-[26px] h-[46px] rounded-[4px] border border-border-strong transition-colors hover:border-white/50"
+                className="inline-flex items-center justify-center gap-1.5 sm:gap-2 text-text no-underline text-[12px] sm:text-[13px] font-medium px-2 sm:px-[26px] h-12 sm:h-[46px] rounded-[4px] border border-border-strong transition-colors hover:border-white/50"
               >
                 {gradient ? (
                   <span
@@ -226,9 +237,25 @@ export default function Home() {
                 React 19 + Kotlin Android
               </span>
             </div>
+            <div className="mt-6 flex items-center gap-3" aria-label="Sample paymatrix profile pictures">
+              <div className="flex -space-x-3">
+                {[1, 3, 2, 0].map((n) => (
+                  <img
+                    key={n}
+                    src={`/avatars/voxel-bot-${n}.svg`}
+                    alt=""
+                    width={44}
+                    height={44}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-11 w-11 rounded-full border-2 border-black bg-surface"
+                  />
+                ))}
+              </div>
+            </div>
             <PayMatrixAvailability />
             <Link to="/projects/paymatrix" className="inline-flex min-h-12 items-center gap-2 text-[13px] font-medium text-text no-underline hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
-              See how it works <FiArrowUpRight aria-hidden="true" />
+              Read the build story <FiArrowUpRight aria-hidden="true" />
             </Link>
           </div>
           <div className="min-w-0 w-full max-w-[600px] justify-self-center lg:w-[88%]">
@@ -314,7 +341,15 @@ export default function Home() {
             Stack
           </h2>
         </Reveal>
-        <div className="relative overflow-hidden flex items-center py-12 bg-transparent">
+        {/* Phones: a swipeable chip row — hover tooltips and a looping marquee don't suit touch. */}
+        <ul className="sm:hidden m-0 -mx-[clamp(20px,6vw,96px)] flex list-none gap-2 overflow-x-auto px-[clamp(20px,6vw,96px)] pb-2 hide-scrollbar" aria-label="Technologies">
+          {stackIcons.map((item) => (
+            <li key={item.name} className="flex-none font-mono text-[12px] text-text border border-border-strong rounded-full px-4 py-2.5 bg-[#0a0a0c]">
+              {item.name}
+            </li>
+          ))}
+        </ul>
+        <div className="relative overflow-hidden hidden sm:flex items-center py-12 bg-transparent">
           <style>{`
             @keyframes marquee {
               0% { transform: translateX(0); }
@@ -455,10 +490,42 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ──────────── OPEN SOURCE ──────────── */}
+      <section id="open-source" className="section-pad border-b border-border">
+        <Reveal className="mb-[clamp(32px,5vw,56px)]">
+          <div className="mono-label mb-4">04 — Open source</div>
+          <h2 className="m-0 font-bold" style={{ fontSize: 'clamp(34px,4.5vw,64px)', lineHeight: 1 }}>
+            Merged upstream
+          </h2>
+        </Reveal>
+        <ul className="m-0 list-none p-0 border-t border-border">
+          {mergedPRs.map((pr) => (
+            <li key={pr.href} className="border-b border-border">
+              <a
+                href={pr.href}
+                target="_blank"
+                rel="noreferrer"
+                className="group flex min-h-[72px] items-center justify-between gap-4 py-3 no-underline text-current hover:bg-white/[0.02] transition-colors"
+              >
+                <span className="flex flex-col gap-1">
+                  <span className="font-bold text-text-bright" style={{ fontSize: 'clamp(20px,2.4vw,30px)', letterSpacing: '-0.03em' }}>{pr.name}</span>
+                  <span className="font-mono text-[10px] tracking-[.1em] text-text-muted">{pr.detail}</span>
+                </span>
+                <span className="inline-flex items-center gap-2 font-mono text-[11px] text-text border border-border-strong rounded-full px-3 py-1.5">
+                  {pr.number}
+                  <FiArrowUpRight className="opacity-60 group-hover:opacity-100 transition-opacity" aria-hidden="true" />
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-4 mb-0 font-mono text-[11px] tracking-[.08em] text-text-dim">+ 4 more pull requests open</p>
+      </section>
+
       {/* ──────────── TESTIMONIALS + CLIENTS ──────────── */}
       <section id="trust" className="section-pad border-b border-border">
         <Reveal className="mb-[clamp(40px,6vw,72px)]">
-          <div className="mono-label mb-4">04 — Word of mouth</div>
+          <div className="mono-label mb-4">05 — Word of mouth</div>
           <h2 className="m-0 font-bold" style={{ fontSize: 'clamp(34px,4.5vw,64px)', lineHeight: 1 }}>
             Clients say
           </h2>
@@ -494,9 +561,10 @@ export default function Home() {
       </section>
 
       {/* ──────────── F1 RACING TEASER ──────────── */}
-      <section id="drive" className="section-pad border-b border-border">
+      {/* Hidden on phones — the 3D teaser and heatmap don't earn their weight there. */}
+      <section id="drive" className="hidden sm:block section-pad border-b border-border">
         <Reveal className="mb-[clamp(32px,4vw,56px)]">
-          <div className="mono-label mb-4">05 — Off the clock</div>
+          <div className="mono-label mb-4">06 — Off the clock</div>
           <h2 className="m-0 font-bold" style={{ fontSize: 'clamp(34px,4.5vw,64px)', lineHeight: 1 }}>
             Work is monochrome.<br />Play isn't.
           </h2>
@@ -515,7 +583,9 @@ export default function Home() {
       </section>
 
       {/* ──────────── GITHUB ACTIVITY ──────────── */}
-      <GithubActivity />
+      <div className="hidden sm:block">
+        <GithubActivity />
+      </div>
 
       {/* ──────────── CONTACT ──────────── */}
       <section id="contact" style={{ padding: 'clamp(100px,12vw,180px) clamp(20px,6vw,96px)' }}>
@@ -538,6 +608,12 @@ export default function Home() {
             </a>
             <CopyButton text="1080patelharshil@gmail.com" />
           </div>
+          <a
+            href="/contact"
+            className="sm:hidden mt-8 flex h-[52px] items-center justify-center rounded-[4px] bg-text text-bg no-underline text-[14px] font-semibold"
+          >
+            Get in touch
+          </a>
           <div className="flex flex-wrap gap-7 mt-12">
             <a
               href="https://github.com/Marshmellow31"

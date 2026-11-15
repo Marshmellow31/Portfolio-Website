@@ -2,11 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import { FiLayers, FiDatabase, FiCpu, FiRepeat, FiShield, FiExternalLink, FiX } from 'react-icons/fi';
 import { paymatrixDiagrams } from '../../data/paymatrixDiagrams';
 import MermaidCanvas from './MermaidCanvas';
-import ArchitectureOverview from './ArchitectureOverview';
 import { Reveal } from '../Reveal/Reveal';
 
 const ICONS = {
-  'system-architecture': FiLayers,
   'data-model': FiDatabase,
   'flow-bill-scan': FiCpu,
   'flow-settle-up': FiRepeat,
@@ -14,9 +12,8 @@ const ICONS = {
 };
 
 export default function PayMatrixDiagrams() {
-  const [activeTabId, setActiveTabId] = useState('system-architecture');
+  const [activeTabId, setActiveTabId] = useState('data-model');
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [showArchitectureDetail, setShowArchitectureDetail] = useState(false);
   const dialogRef = useRef(null);
 
   const activeDiagram = paymatrixDiagrams.find((d) => d.id === activeTabId) || paymatrixDiagrams[0];
@@ -50,7 +47,7 @@ export default function PayMatrixDiagrams() {
               rel="noreferrer"
               className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[.14em] uppercase text-text-dim hover:text-white transition-colors"
             >
-              <span>Source: paymatrix-showcase/README.md</span>
+              <span>Public showcase repo</span>
               <FiExternalLink className="text-[11px]" />
             </a>
           </div>
@@ -59,16 +56,16 @@ export default function PayMatrixDiagrams() {
             className="m-0 text-text-bright font-bold"
             style={{ fontSize: 'clamp(28px,4vw,48px)', letterSpacing: '-0.04em', lineHeight: 1.05 }}
           >
-            System Architecture &amp; Key Flows
+            Data Model &amp; Key Flows
           </h2>
 
           <p
             className="mt-4 max-w-[800px] text-text-muted"
             style={{ fontSize: 'clamp(14px,1.2vw,17px)', lineHeight: 1.65, textWrap: 'pretty' }}
           >
-            Verified technical specifications directly from the canonical PayMatrix codebase.
-            These models govern the hybrid client sync, relational document schema, multimodal
-            OCR pipeline, O(N log N) min-cash-flow graph reduction, and server-side RBAC.
+            Technical specifications drawn from the paymatrix codebase. These models cover the
+            ledger schema, the receipt-scanning pipeline, UPI settlement, and identity and
+            access control.
           </p>
         </Reveal>
       </div>
@@ -130,17 +127,11 @@ export default function PayMatrixDiagrams() {
 
       {/* ── Main Interactive Diagram Canvas ── */}
       <div className="mb-8">
-        {activeTabId === 'system-architecture' && <>
-          <ArchitectureOverview />
-          <button type="button" aria-expanded={showArchitectureDetail} onClick={() => setShowArchitectureDetail(!showArchitectureDetail)} className="mt-4 min-h-11 rounded-lg border border-border-strong px-4 text-sm text-text-muted hover:text-white focus-visible:outline-2 focus-visible:outline-white">
-            {showArchitectureDetail ? 'Hide detailed connections' : 'Explore detailed connections'}
-          </button>
-        </>}
-        {(activeTabId !== 'system-architecture' || showArchitectureDetail) && <div className={activeTabId === 'system-architecture' ? 'mt-4' : ''}><MermaidCanvas
+        <MermaidCanvas
           diagram={activeDiagram}
           isFullscreen={false}
           onToggleFullscreen={() => setIsFullscreen(true)}
-        /></div>}
+        />
       </div>
 
       {/* ── Architecture Highlights Grid ── */}

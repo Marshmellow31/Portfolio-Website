@@ -658,7 +658,7 @@ const LLMS_PREAMBLE = `# ${SITE_NAME}
 > Software Engineer, Mobile App Developer, AI Tooling Engineer, and Content Creator (@guywithblack350). B.Tech Computer Science student at IIIT Vadodara.
 
 ## Bio & Overview
-Harshil Patel is a software engineer and computer science student at IIIT Vadodara (Indian Institute of Information Technology, Vadodara). He specializes in React, TypeScript, Node.js, Firebase, Svelte 5, Android (Kotlin), PWA, and AI API integrations (Gemini, Claude, Ollama).
+Harshil Patel is a software engineer and computer science student at IIIT Vadodara (Indian Institute of Information Technology, Vadodara). He specializes in React, TypeScript, Node.js, Firebase, Supabase/PostgreSQL, Svelte 5, Android (Kotlin), PWA, and AI API integrations (Gemini, Claude, Ollama). He has merged pull requests into open-source projects including Grafana, Actual Budget, and LocalSend.
 
 Alongside software engineering, Harshil is an automotive content creator operating under the handle **@guywithblack350**, with ${creatorViewsLabel} reported by the creator on ${creatorViewsUpdatedAt} and collaborations with automotive and lifestyle brands.
 
@@ -676,7 +676,7 @@ const LLMS_SKILLS = `## Technical Skills & Expertise
 
 - **Languages**: TypeScript, JavaScript, Python, C++, Java, Dart, Kotlin, SQL
 - **Frontend**: React 19, Next.js, Svelte 5, Tailwind CSS, Framer Motion, Three.js, HTML5, CSS3
-- **Backend & Cloud**: Node.js, Express, Firebase (Firestore, Auth), MySQL, REST APIs, Vercel
+- **Backend & Cloud**: Node.js, Express, Supabase (PostgreSQL), Firebase (Firestore, Auth), MySQL, REST APIs, Vercel
 - **Mobile & Embedded**: Android Native (Kotlin), Flutter, PWA, Capacitor, ESP32 (C++/Arduino)
 - **AI & ML**: Gemini Vision API, Claude API, Ollama (Local LLMs), Whisper Speech-to-Text, Embeddings
 - **Tools**: Git, GitHub Actions, Vercel, Docker, Vitest, ESLint, Oxlint

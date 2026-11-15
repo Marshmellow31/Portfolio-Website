@@ -73,7 +73,7 @@ function SplitLine({ text, delay = 0, reduced }) {
           className="inline-block"
           initial={{ y: '105%', rotate: 4 }}
           animate={{ y: 0, rotate: 0 }}
-          transition={{ duration: 0.7, delay: delay + i * 0.035, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.5, delay: delay + i * 0.02, ease: [0.22, 1, 0.36, 1] }}
         >
           {ch === ' ' ? ' ' : ch}
         </motion.span>
@@ -237,7 +237,7 @@ export default function Home() {
                 React 19 + Kotlin Android
               </span>
             </div>
-            <div className="mt-6 flex items-center gap-3" aria-label="Sample paymatrix profile pictures">
+            <div className="mt-6 flex items-center gap-3" role="group" aria-label="Sample paymatrix profile pictures">
               <div className="flex -space-x-3">
                 {[1, 3, 2, 0].map((n) => (
                   <img

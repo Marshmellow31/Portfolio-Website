@@ -19,7 +19,10 @@ import useMediaQuery from './utils/useMediaQuery';
 const StaggeredMenu = lazy(() => import('./components/StaggeredMenu/StaggeredMenu'));
 
 // Lazy-loaded Pages
-const Home = lazy(() => import('./pages/Home'));
+// Home is the landing route and the LCP page: importing it statically lets the
+// browser fetch it in parallel with the entry bundle instead of waiting for
+// React to mount and then discovering a lazy chunk (one less round trip).
+import Home from './pages/Home';
 const Projects = lazy(() => import('./pages/Projects'));
 const ProjectDetail = lazy(() => import('./pages/ProjectDetail'));
 const Contact = lazy(() => import('./pages/Contact'));

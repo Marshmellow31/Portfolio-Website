@@ -369,7 +369,7 @@
           break;
         case 'cv':
           out('Downloading resume.pdf ...');
-          { const a = document.createElement('a'); a.href = '/resume.pdf'; a.download = ''; a.click(); }
+          { const a = document.createElement('a'); a.href = '/resume.pdf'; a.download = 'Harshil-Patel-Resume.pdf'; a.click(); }
           break;
         case 'clear':
           this._out.querySelectorAll('.line:not(.live)').forEach(n => n.remove());

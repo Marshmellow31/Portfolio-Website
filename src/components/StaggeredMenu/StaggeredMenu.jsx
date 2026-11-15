@@ -331,7 +331,7 @@ const StaggeredMenu = ({
                   <a
                     className="sm-panel-item"
                     href={it.link}
-                    download={it.download ? true : undefined}
+                    download={it.download || undefined}
                     aria-label={it.ariaLabel}
                     data-index={idx + 1}
                     onClick={e => handleItemClick(e, it)}

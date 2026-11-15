@@ -41,7 +41,7 @@ const navLinks = [
   { name: 'Creative', to: '/creative' },
   { name: 'Models', to: '/model' },
   { name: 'Contact', to: '/contact' },
-  { name: 'Download CV', href: '/resume.pdf', external: true, download: true },
+  { name: 'Download CV', href: '/resume.pdf', external: true, download: 'Harshil-Patel-Resume.pdf' },
 ];
 
 function openTerminal() {
@@ -126,7 +126,7 @@ export default function App() {
                   href={item.href}
                   target={item.external ? "_blank" : undefined}
                   rel={item.external ? "noopener noreferrer" : undefined}
-                  download={item.download ? true : undefined}
+                  download={item.download || undefined}
                   className="font-mono text-[11px] tracking-[.12em] uppercase text-text-dim no-underline hover:text-text transition-colors"
                 >
                   {item.name}

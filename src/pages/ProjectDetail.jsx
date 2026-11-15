@@ -1,7 +1,8 @@
+import PayMatrixVisuals from '../components/PayMatrixVisuals';
 import PayMatrixPreview from '../components/PayMatrixPreview';
 import { Link, useParams, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FiArrowUpRight, FiFileText, FiGlobe, FiLayers } from 'react-icons/fi';
+import { FiArrowUpRight, FiFileText, FiGlobe } from 'react-icons/fi';
 import { FaGithub } from 'react-icons/fa';
 import { FaInstagram } from 'react-icons/fa6';
 import { selectedWork, getProjectBySlug } from '../data/portfolio';
@@ -9,7 +10,6 @@ import { Reveal } from '../components/Reveal/Reveal';
 import CaseImage from '../components/CaseImage/CaseImage';
 import GalleryImage from '../components/GalleryImage';
 import PayMatrixAvailability from '../components/PayMatrixAvailability';
-import PayMatrixDiagrams from '../components/PayMatrixDiagrams/PayMatrixDiagrams';
 import useSEO from '../utils/useSEO';
 import { SITE_URL } from '../../site.config.mjs';
 import { projectSchema } from '../data/seo';
@@ -163,16 +163,6 @@ export default function ProjectDetail() {
                       <FiArrowUpRight className="text-[11px] opacity-50 group-hover:opacity-100 transition-opacity" />
                     </a>
                   )}
-                  {project.slug === 'paymatrix' && (
-                    <a
-                      href="#architecture-diagrams"
-                      className="group inline-flex items-center gap-1.5 font-mono text-[11px] tracking-[.04em] text-text bg-white/[0.04] hover:bg-white/[0.1] border border-white/10 hover:border-white/25 rounded-md px-2.5 py-1.5 transition-all no-underline shadow-sm"
-                    >
-                      <FiLayers className="text-[13px] opacity-80 group-hover:opacity-100 transition-opacity" />
-                      <span>Architecture Diagrams</span>
-                      <FiArrowUpRight className="text-[11px] opacity-40 group-hover:opacity-100 transition-opacity" />
-                    </a>
-                  )}
                   {project.instagram && (
                     <a
                       href={project.instagram}
@@ -245,6 +235,9 @@ export default function ProjectDetail() {
         </div>
       </section>
 
+      {/* paymatrix tells its story visually; every other project keeps the written sections. */}
+      {project.slug === 'paymatrix' ? <PayMatrixVisuals /> : (
+        <>
       {/* ── Problem & Approach Section ── */}
       <section className="px-[clamp(20px,6vw,96px)] py-[clamp(48px,6vw,88px)]">
         <div className="grid gap-[clamp(36px,5vw,80px)] [grid-template-columns:repeat(auto-fit,minmax(300px,1fr))]">
@@ -289,12 +282,14 @@ export default function ProjectDetail() {
           ))}
         </div>
       </section>
+        </>
+      )}
 
       {/* ── How it was built + achievements (projects that define them) ── */}
       {[
         { key: 'build', label: 'How We Built It', rows: project.build },
         { key: 'achievements', label: 'Achievements', rows: project.achievements },
-      ].filter((s) => s.rows?.length).map((section) => (
+      ].filter((s) => s.rows?.length && project.slug !== 'paymatrix').map((section) => (
         <section key={section.key} id={section.key} className="scroll-mt-24 px-[clamp(20px,6vw,96px)] pb-[clamp(48px,6vw,88px)]">
           <Reveal className="mb-8">
             <div className="mono-label">{section.label}</div>
@@ -319,9 +314,6 @@ export default function ProjectDetail() {
           </div>
         </section>
       ))}
-
-      {/* ── System Architecture & Flow Diagrams from PayMatrix repo ── */}
-      {project.slug === 'paymatrix' && <PayMatrixDiagrams />}
 
       {/* ── Designed frames — 2 × 2 on desktop, stacked below. Every frame is
              4:5, so rows align without a single height override. The band and
